@@ -14,6 +14,9 @@ class MinimaxPlayer(SearchPlayer):
         self.depth = depth
 
     def choose_move(self, board: ChessBoard) -> chess.Move:
+        
+        self.reset_nodes()
+        
         legal_moves = board.legal_moves()
 
         if not legal_moves:
@@ -52,6 +55,9 @@ class MinimaxPlayer(SearchPlayer):
         depth: int,
         maximizing: bool,
     ) -> float:
+        
+        self.nodes += 1
+        
         if depth == 0 or board.is_game_over():
             return self.evaluator.evaluate(board.board())
 
