@@ -3,6 +3,7 @@ import math
 from chess_ai_lab import board
 from chess_ai_lab.board import ChessBoard
 from chess_ai_lab.engine.search import SearchPlayer
+from chess_ai_lab.engine.move_ordering import order_moves
 
 
 class AlphaBetaPlayer(SearchPlayer):
@@ -13,7 +14,10 @@ class AlphaBetaPlayer(SearchPlayer):
         self.depth = depth
 
     def choose_move(self, board: ChessBoard):
-        legal_moves = board.legal_moves()
+        legal_moves = order_moves(
+            board.board(),
+            board.legal_moves(),
+        )
 
         if not legal_moves:
             raise ValueError("No legal moves available.")
@@ -25,14 +29,16 @@ class AlphaBetaPlayer(SearchPlayer):
         if maximizing:
             best_score = -math.inf
 
-            for move in legal_moves:
+            moves = order_moves(
+                board.board(),
+                board.legal_moves(),
+            )
+
+            for move in moves:
                 board.push(move)
 
-                score = self._alphabeta(
+                score = self._search_root(
                     board,
-                    self.depth - 1,
-                    -math.inf,
-                    math.inf,
                     False,
                 )
 
@@ -45,14 +51,16 @@ class AlphaBetaPlayer(SearchPlayer):
         else:
             best_score = math.inf
 
-            for move in legal_moves:
+            moves = order_moves(
+                board.board(),
+                board.legal_moves(),
+            )
+
+            for move in moves:
                 board.push(move)
 
-                score = self._alphabeta(
+                score = self._search_root(
                     board,
-                    self.depth - 1,
-                    -math.inf,
-                    math.inf,
                     True,
                 )
 
@@ -64,6 +72,21 @@ class AlphaBetaPlayer(SearchPlayer):
 
         return best_move
 
+    def _search_root(
+        self,
+        board: ChessBoard,
+        maximizing: bool,
+    ) -> float:
+        """ルートノードからAlpha-Beta探索を開始する"""
+
+        return self._alphabeta(
+            board,
+            self.depth - 1,
+            -math.inf,
+            math.inf,
+            maximizing,
+        )
+    
     def _alphabeta(
         self,
         board: ChessBoard,
