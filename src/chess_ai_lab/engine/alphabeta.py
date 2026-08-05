@@ -14,6 +14,9 @@ class AlphaBetaPlayer(SearchPlayer):
         self.depth = depth
 
     def choose_move(self, board: ChessBoard):
+        
+        self.reset_nodes()
+        
         legal_moves = order_moves(
             board.board(),
             board.legal_moves(),
@@ -95,6 +98,8 @@ class AlphaBetaPlayer(SearchPlayer):
         beta: float,
         maximizing: bool,
     ) -> float:
+        
+        self.nodes += 1
 
         if depth == 0 or board.is_game_over():
             return self.evaluator.evaluate(board.board())
