@@ -13,4 +13,5 @@ PIECE_VALUES = {
 # 各特徴量に掛ける重み
 FEATURE_WEIGHTS = {
     "material": 1.0,
+    "piece_square": 1.0,
 }
