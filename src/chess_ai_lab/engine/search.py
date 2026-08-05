@@ -7,3 +7,7 @@ class SearchPlayer(Player):
 
     def __init__(self):
         self.evaluator = Evaluator()
+        self.nodes = 0
+
+    def reset_nodes(self):
+        self.nodes = 0
