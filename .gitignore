@@ -21,3 +21,9 @@ htmlcov/
 
 # macOS
 .DS_Store
+
+# Editable install
+*.egg-info/
+
+# Self-play output
+*.pgn
