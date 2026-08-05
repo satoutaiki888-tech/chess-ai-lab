@@ -4,6 +4,7 @@ from chess_ai_lab import board
 from chess_ai_lab.board import ChessBoard
 from chess_ai_lab.engine.search import SearchPlayer
 from chess_ai_lab.engine.move_ordering import order_moves
+from chess_ai_lab.engine.transposition import TranspositionTable
 
 
 class AlphaBetaPlayer(SearchPlayer):
@@ -12,10 +13,12 @@ class AlphaBetaPlayer(SearchPlayer):
     def __init__(self, depth: int = 2):
         super().__init__()
         self.depth = depth
+        self.table = TranspositionTable()
 
     def choose_move(self, board: ChessBoard):
         
         self.reset_nodes()
+        self.table.clear()
         
         legal_moves = order_moves(
             board.board(),
@@ -101,8 +104,24 @@ class AlphaBetaPlayer(SearchPlayer):
         
         self.nodes += 1
 
+        key = board.fen()
+
+        cached = self.table.get(key)
+
+        if cached is not None:
+            return cached
+
+
         if depth == 0 or board.is_game_over():
-            return self.evaluator.evaluate(board.board())
+
+            score = self.evaluator.evaluate(board.board())
+
+            self.table.put(
+                key,
+                score,
+            )
+
+            return score
 
         if maximizing:
             value = -math.inf
