@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: chess-ai-lab
+Version: 0.1.0
+Summary: Classical chess engine for evaluation function research
+Requires-Python: >=3.14
