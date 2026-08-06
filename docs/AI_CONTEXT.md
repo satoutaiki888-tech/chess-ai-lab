@@ -16,7 +16,7 @@
 
 # Reading Order
 
-AIは以下の順で情報を読む。
+AIは以下の順で情報を今すぐ読む。
 
 1. architecture.md
    レイヤー構造・責務を理解する。
