@@ -24,14 +24,14 @@ AIは以下の順で情報を今すぐ読む。
 2. invariants.md
    絶対に破ってはいけない設計を理解する。
 
-3. status.md
-   現在の開発状況を把握する。
-
-4. development.md
+3. development.md
    開発ルールを確認する。
 
-5. codebase.md
+4. codebase.md
    各ファイルの責務を確認する。
+
+5. status.md
+   現在の開発状況を把握する。
 
 6. evaluation.md
    Evaluationを変更する場合のみ参照する。
@@ -115,3 +115,4 @@ AIとの共同開発を通して、
 AIとの共同開発で得られた知見は、
 必要に応じて docs に反映し、
 将来の開発効率と品質を継続的に改善する。
+特にstatusにまとめられている今後のタスクは随時更新していくことになる。
