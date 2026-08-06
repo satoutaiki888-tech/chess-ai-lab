@@ -72,48 +72,17 @@ Features
 Evolution
 
 - Match Library (initial implementation)
-
----
-
-# In Progress
-
-Evolution
-
-現在
-
-MatchResult が
-
-white_wins
-
-black_wins
-
-draws
-
-になっている。
-
-これはWeight Evolutionには適さない。
+- Selection 
+- Evolution (evolve_once / evolve) 
 
 ---
 
 # Next Task
 
-MatchResult を
-
-parent_wins
-
-child_wins
-
-draws
-
-へ変更する。
-
-その後
-
-play_match()
-
-selfplay_eval.py
-
-を新仕様へ対応する。
+- Weight 保存フロー
+- Generation 管理
+- Evolution ログ
+- 長時間 Evolution 実験
 
 ---
 
@@ -146,20 +115,6 @@ Neural Network
 Reinforcement Learning
 
 は対象外。
-
----
-
-# Known Issues
-
-MatchResult が色基準である。
-
-Weight比較では
-
-親
-
-子
-
-基準へ変更する必要がある。
 
 ---
 

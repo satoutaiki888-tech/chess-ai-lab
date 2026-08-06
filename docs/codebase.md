@@ -233,6 +233,39 @@ Responsibilities
 
 ---
 
+## selection.py
+
+Responsibilities
+
+- MatchResult を評価する
+- Parent / Child の採用判定
+
+Must Not
+
+- Self Play
+- Mutation
+- Weight Save
+
+---
+
+## evolution.py
+
+Responsibilities
+
+- mutate()
+- play_match()
+- selection()
+- evolve_once()
+- evolve()
+
+Must Not
+
+- JSON Save
+- CLI
+- Benchmark
+
+---
+
 # scripts/
 
 責務
@@ -245,9 +278,16 @@ Responsibilities
 
 ## selfplay_eval.py
 
-Weight Evolution 実験。
+Responsibilities
 
-Benchmark。
+- 2つの Weight を比較する
+- Match 結果を表示する
+
+Must Not
+
+- Mutation
+- Selection
+- Generation
 
 ---
 

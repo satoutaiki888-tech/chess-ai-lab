@@ -180,3 +180,18 @@ Reinforcement Learning
 - 必要性
 
 を説明できなければならない。
+
+## Documentation Update Policy
+
+ドキュメントは実装のたびに更新しなくてもよい。
+
+実装が一区切りしたタイミングで、
+
+- status.md
+- codebase.md
+- architecture.md
+
+をまとめて更新する。
+
+ただし、設計変更を伴う実装では、
+ドキュメント更新を省略してはならない。

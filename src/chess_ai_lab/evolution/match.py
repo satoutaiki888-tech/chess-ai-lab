@@ -42,38 +42,68 @@ def play_game(
 
 
 def play_match(
-    white_weights: WeightManager,
-    black_weights: WeightManager,
+    parent_weights: WeightManager,
+    child_weights: WeightManager,
     *,
     games: int = 10,
     depth: int = 2,
 ) -> MatchResult:
     """
-    2つのWeightManagerを指定して複数局対局する。
+    親Weightと子Weightで複数局対局する。
+
+    色バイアスを避けるため、
+    偶数局は Parent=White,
+    奇数局は Parent=Black
+    として対局する。
     """
-
-    white = AlphaBetaPlayer(
-        depth=depth,
-        evaluator=Evaluator(white_weights),
-    )
-
-    black = AlphaBetaPlayer(
-        depth=depth,
-        evaluator=Evaluator(black_weights),
-    )
 
     result = MatchResult()
 
-    for _ in range(games):
+    for game_index in range(games):
+
+        parent_is_white = (game_index % 2 == 0)
+
+        if parent_is_white:
+            white = AlphaBetaPlayer(
+                depth=depth,
+                evaluator=Evaluator(parent_weights),
+            )
+
+            black = AlphaBetaPlayer(
+                depth=depth,
+                evaluator=Evaluator(child_weights),
+            )
+
+        else:
+            white = AlphaBetaPlayer(
+                depth=depth,
+                evaluator=Evaluator(child_weights),
+            )
+
+            black = AlphaBetaPlayer(
+                depth=depth,
+                evaluator=Evaluator(parent_weights),
+            )
+
         game_result, _ = play_game(
             white,
             black,
         )
 
         if game_result == "1-0":
-            result.white_wins += 1
+
+            if parent_is_white:
+                result.parent_wins += 1
+            else:
+                result.child_wins += 1
+
         elif game_result == "0-1":
-            result.black_wins += 1
+
+            if parent_is_white:
+                result.child_wins += 1
+            else:
+                result.parent_wins += 1
+
         else:
             result.draws += 1
 

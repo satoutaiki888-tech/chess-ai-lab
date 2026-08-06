@@ -1,30 +1,63 @@
+from pathlib import Path
+import argparse
+
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from chess_ai_lab.evolution.match import play_match
 
 
+def load_weights(path: str | Path) -> WeightManager:
+    """JSONからWeightManagerを生成する。"""
+
+    weights = WeightManager()
+    weights.load_json(path)
+    return weights
+
+
 def main():
-    parent_weights = WeightManager()
+    parser = argparse.ArgumentParser(
+        description="Compare two evaluation weight files."
+    )
 
-    child_weights, changes = parent_weights.mutate()
+    parser.add_argument(
+        "parent",
+        help="Path to parent weight JSON.",
+    )
 
-    print("=== Mutation ===")
+    parser.add_argument(
+        "child",
+        help="Path to child weight JSON.",
+    )
 
-    for name, old, new in changes:
-        print(f"{name}: {old:.3f} -> {new:.3f}")
+    parser.add_argument(
+        "--games",
+        type=int,
+        default=10,
+        help="Number of games.",
+    )
 
-    print()
+    parser.add_argument(
+        "--depth",
+        type=int,
+        default=2,
+        help="Search depth.",
+    )
+
+    args = parser.parse_args()
+
+    parent_weights = load_weights(args.parent)
+    child_weights = load_weights(args.child)
 
     result = play_match(
         parent_weights,
         child_weights,
-        games=10,
-        depth=2,
+        games=args.games,
+        depth=args.depth,
     )
 
     print("=== Summary ===")
-    print(f"White wins : {result.white_wins}")
-    print(f"Black wins : {result.black_wins}")
-    print(f"Draws      : {result.draws}")
+    print(f"Parent wins : {result.parent_wins}")
+    print(f"Child wins  : {result.child_wins}")
+    print(f"Draws       : {result.draws}")
 
 
 if __name__ == "__main__":

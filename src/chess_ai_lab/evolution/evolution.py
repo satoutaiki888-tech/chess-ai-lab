@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from chess_ai_lab.evolution.match import MatchResult, play_match
+from chess_ai_lab.evolution.selection import select_winner
 
 
 @dataclass(slots=True)
@@ -27,7 +28,9 @@ def evolve_once(
         ↓
     Match
         ↓
-    Better Weight
+    Selection
+        ↓
+    Winner
     """
 
     child, changes = parent.mutate()
@@ -39,9 +42,13 @@ def evolve_once(
         depth=depth,
     )
 
-    adopted = match.black_wins > match.white_wins
+    winner = select_winner(
+        parent,
+        child,
+        match,
+    )
 
-    winner = child if adopted else parent
+    adopted = winner is child
 
     return EvolutionResult(
         winner=winner,
@@ -49,3 +56,34 @@ def evolve_once(
         adopted=adopted,
         changes=changes,
     )
+def evolve(
+    parent: WeightManager,
+    *,
+    generations: int,
+    games: int = 10,
+    depth: int = 2,
+) -> WeightManager:
+    """
+    複数世代の進化を実行する。
+
+    Parameters
+    ----------
+    parent
+        初期Weight。
+
+    generations
+        進化させる世代数。
+    """
+
+    winner = parent
+
+    for _ in range(generations):
+        result = evolve_once(
+            winner,
+            games=games,
+            depth=depth,
+        )
+
+        winner = result.winner
+
+    return winner

@@ -89,9 +89,9 @@ Self PlayはWeightを変更しない。
 
 責務
 
-- Weight生成
-- Weight比較
-- Weight採用
+- Weight生成(mutation)
+- Weight比較(match)
+- Weight採用(selection)
 
 Evolutionは評価関数そのものを書き換えない。
 
