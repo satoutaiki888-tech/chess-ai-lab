@@ -10,8 +10,12 @@ from chess_ai_lab.engine.transposition import TranspositionTable
 class AlphaBetaPlayer(SearchPlayer):
     """Alpha-Beta探索プレイヤー"""
 
-    def __init__(self, depth: int = 2):
-        super().__init__()
+    def __init__(
+        self,
+        depth: int = 2,
+        evaluator=None,
+    ):
+        super().__init__(evaluator=evaluator)
         self.depth = depth
         self.table = TranspositionTable()
 

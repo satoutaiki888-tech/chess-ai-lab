@@ -3,7 +3,7 @@ import chess
 from chess_ai_lab.evaluation.weights import PIECE_VALUES
 
 
-def evaluate(board: chess.Board) -> int:
+def evaluate_material(board: chess.Board) -> int:
     """
     Material の評価値を返す。
 

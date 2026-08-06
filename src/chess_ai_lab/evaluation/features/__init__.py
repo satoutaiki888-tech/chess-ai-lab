@@ -1,0 +1,42 @@
+from chess_ai_lab.evaluation.features import (
+    material,
+    mobility,
+    pawn_structure,
+    king_safety,
+    bishop_pair,
+    rook_file,
+    pawn_shield,
+    knight_outpost,
+    connected_rooks,
+    rook_seventh,
+    space,
+    bishop_mobility,
+    rook_mobility,
+    knight_mobility,
+    queen_mobility,
+)
+from chess_ai_lab.evaluation.features.piece_square import (
+    evaluate_piece_square,
+)
+
+FEATURES = [
+    ("material", material.evaluate_material),
+    ("piece_square", evaluate_piece_square),
+    ("mobility", mobility.evaluate_mobility),
+    ("isolated_pawn", pawn_structure.evaluate_isolated_pawn),
+    ("doubled_pawn", pawn_structure.evaluate_doubled_pawn),
+    ("passed_pawn", pawn_structure.evaluate_passed_pawn),
+    ("king_safety", king_safety.evaluate_king_safety),
+    ("bishop_pair", bishop_pair.evaluate_bishop_pair),
+    ("open_file", rook_file.evaluate_open_file),
+    ("semi_open_file", rook_file.evaluate_semi_open_file),
+    ("pawn_shield", pawn_shield.evaluate_pawn_shield),
+    ("knight_outpost", knight_outpost.evaluate_knight_outpost),
+    ("connected_rooks", connected_rooks.evaluate_connected_rooks),
+    ("rook_seventh", rook_seventh.evaluate_rook_seventh),
+    ("space", space.evaluate_space),
+    ("bishop_mobility", bishop_mobility.evaluate_bishop_mobility),
+    ("rook_mobility", rook_mobility.evaluate_rook_mobility),
+    ("knight_mobility", knight_mobility.evaluate_knight_mobility),
+    ("queen_mobility", queen_mobility.evaluate_queen_mobility),
+]

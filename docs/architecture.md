@@ -1,0 +1,233 @@
+# Architecture
+
+## Purpose
+
+この文書は chess-ai-lab の現在のアーキテクチャを定義する。
+
+ここに書かれている内容は「現在の設計」であり、
+実装予定やアイデアは含めない。
+
+---
+
+# Layer Architecture
+
+依存方向は以下のみとする。
+
+```
+Board
+    ↓
+Evaluation
+    ↓
+Search
+    ↓
+Self Play
+    ↓
+Evolution
+```
+
+上位レイヤーは下位レイヤーを利用できる。
+
+下位レイヤーは上位レイヤーを参照してはならない。
+
+---
+
+# Layer Responsibilities
+
+## Board
+
+責務
+
+- python-chess のラッパー
+- 盤面状態の管理
+- 合法手生成
+- FEN取得
+- 終局判定
+
+Boardは評価や探索を行わない。
+
+---
+
+## Evaluation
+
+責務
+
+- 盤面を数値評価する
+- Featureを集約する
+- Weightを適用する
+
+Evaluationは探索を行わない。
+
+---
+
+## Search
+
+責務
+
+- 最善手探索
+- ノード数管理
+- AlphaBeta
+- Iterative Deepening
+
+SearchはFeatureを直接利用しない。
+
+SearchはEvaluatorのみ利用する。
+
+---
+
+## Self Play
+
+責務
+
+- Engine同士を対局させる
+- ベンチマークを行う
+
+Self PlayはWeightを変更しない。
+
+---
+
+## Evolution
+
+責務
+
+- Weight生成
+- Weight比較
+- Weight採用
+
+Evolutionは評価関数そのものを書き換えない。
+
+---
+
+# Evaluation Architecture
+
+構造は以下で固定する。
+
+```
+Evaluator
+
+↓
+
+Feature Registry
+
+↓
+
+Feature Function
+
+↓
+
+Raw Score
+
+↓
+
+Weight
+
+↓
+
+Final Score
+```
+
+FeatureはWeightを知らない。
+
+WeightManagerはFeatureを知らない。
+
+Evaluatorのみ両者を利用する。
+
+---
+
+# Feature Design
+
+1 Feature = 1 File
+
+Featureは
+
+```
+raw score
+```
+
+のみ返す。
+
+Weight適用は禁止。
+
+例
+
+```
+bishop_mobility(board)
+
+↓
+
++3
+```
+
+WeightはEvaluatorが掛ける。
+
+---
+
+# Search Architecture
+
+SearchPlayerはEvaluatorのみ保持する。
+
+```
+SearchPlayer
+
+↓
+
+Evaluator
+
+↓
+
+Board
+```
+
+SearchがFeatureを直接呼ぶことは禁止。
+
+---
+
+# Weight Evolution
+
+WeightManagerは
+
+- copy
+- mutate
+- load
+- save
+
+のみ責務とする。
+
+対局処理はEvolution側が担当する。
+
+---
+
+# Dependency Rules
+
+許可
+
+Board
+← Evaluation
+← Search
+← SelfPlay
+← Evolution
+
+禁止
+
+Evaluation → Search
+
+Feature → WeightManager
+
+Feature → Search
+
+Search → Feature
+
+Evolution → Feature
+
+Board → Evaluation
+
+Board → Search
+
+---
+
+# Current State
+
+現在の主探索は AlphaBeta。
+
+Weight Evolution基盤を実装中。
+
+現在の設計ではNNUEやDeep Learningは対象外とする。

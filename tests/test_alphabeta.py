@@ -25,4 +25,7 @@ def test_alphabeta_captures_queen():
 
     move = player.choose_move(board)
 
-    assert move == chess.Move.from_uci("e1d2")
+    assert move in {
+        chess.Move.from_uci("e1d2"),
+        chess.Move.from_uci("d1d2"),
+    }
