@@ -1,7 +1,9 @@
 from chess_ai_lab.evaluation.weights import FEATURE_WEIGHTS
+from chess_ai_lab.evaluation.features import FEATURES
 import json
 from pathlib import Path
 import random
+import numpy as np
 
 class WeightManager:
     """
@@ -23,9 +25,34 @@ class WeightManager:
     def to_dict(self) -> dict[str, float]:
         return self._weights.copy()
     
+    def to_array(self) -> np.ndarray:
+        """
+        重みを FEATURES の順番で NumPy 配列として返す。
+        """
+        return np.array(
+            [self._weights[name] for name, _ in FEATURES],
+            dtype=np.float64,
+        )
+        
+    def from_array(self, weights: np.ndarray) -> None:
+        """
+        NumPy 配列から FEATURES の順番で重みを更新する。
+        """
+        if len(weights) != len(FEATURES):
+            raise ValueError(
+                f"Expected {len(FEATURES)} weights, got {len(weights)}."
+            )
+
+        for (name, _), value in zip(FEATURES, weights):
+            self._weights[name] = float(value)    
+    
     def save_json(self, path: str | Path) -> None:
         """現在の重みを JSON に保存する。"""
         path = Path(path)
+        path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
         with path.open("w", encoding="utf-8") as f:
             json.dump(self._weights, f, indent=4)

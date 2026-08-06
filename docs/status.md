@@ -6,12 +6,6 @@ Last Updated
 
 ---
 
-# Current Phase
-
-Evolution exexution and improving
-
----
-
 # Completed
 
 Board
@@ -72,23 +66,34 @@ Benchmark
 - Benchmark runner
 - Benchmark result
 
+Texel Tuning
+
+- EvaluationSnapshot を用いた特徴量取得
+- Texel Loss の実装
+- 勾配計算
+- SGD Optimizer
+- ミニバッチSGD
+- Validation Loss計測
+- Best Weight保存
+- Resume Training
+- ReduceLROnPlateauScheduler
+- Early Stopping
+- Learning Rate表示
+
 ---
 
 # Next Task
 
-- Resume完成
-- 長時間Evolution実験
+- 長時間学習
+- Weight差分可視化
+- Optimizer追加（Adam等）
+- 正則化
 
 ---
 
 # Future Tasks
 
 - 作ったAIがそこそこの強さになること
-- Tournament Strategy
-- Genetic Evolution
-- Parallel Evolution
-- Population Evolution
-- Automatic Tournament
 - Weight Database
 
 ---

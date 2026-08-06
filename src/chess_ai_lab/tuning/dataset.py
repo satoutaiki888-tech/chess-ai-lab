@@ -1,47 +1,47 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from pathlib import Path
 from typing import Iterator
 
+import pyarrow.parquet as pq
 
-@dataclass(slots=True)
-class PositionSample:
+import chess
+
+from chess_ai_lab.tuning.position import TrainingPosition
+
+
+class ParquetDataset:
     """
-    Texel Tuning 用の1局面。
-
-    Parameters
-    ----------
-    fen
-        Position FEN.
-    cp
-        Stockfish centipawn evaluation.
-    mate
-        Mate score if available.
+    Parquetから学習データをストリーミングで読み込む。
     """
 
-    fen: str
-    cp: int | None
-    mate: int | None
+    def __init__(
+        self,
+        path: str | Path,
+        batch_size: int = 4096,
+    ):
+        self._path = Path(path)
+        self._batch_size = batch_size
 
+    def __iter__(self) -> Iterator[TrainingPosition]:
+        parquet = pq.ParquetFile(self._path)
 
-class PositionDataset(ABC):
-    """
-    Position dataset interface.
+        for batch in parquet.iter_batches(
+            batch_size=self._batch_size,
+        ):
+            table = batch.to_pydict()
 
-    Responsibilities
-    ----------------
-    - Supply training positions.
-    - Support sequential iteration.
+            fens = table["fen"]
+            cps = table["target_cp"]
+            depths = table["source_depth"]
 
-    Must Not
-    --------
-    - Weight update
-    - Loss calculation
-    - Optimization
-    """
-
-    @abstractmethod
-    def __iter__(self) -> Iterator[PositionSample]:
-        """Yield PositionSample objects."""
-        raise NotImplementedError
+            for fen, cp, depth in zip(
+                fens,
+                cps,
+                depths,
+            ):
+                yield TrainingPosition(
+                    board=chess.Board(fen),
+                    target_cp=cp,
+                    source_depth=depth,
+                )

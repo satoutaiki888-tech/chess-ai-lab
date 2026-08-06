@@ -1,5 +1,6 @@
 import chess
 
+from chess_ai_lab.tuning.evaluation_snapshot import EvaluationSnapshot
 from chess_ai_lab.evaluation.features import FEATURES
 from chess_ai_lab.evaluation.result import EvaluationResult
 from chess_ai_lab.evaluation.weight_manager import WeightManager
@@ -26,3 +27,28 @@ class Evaluator:
 
     def evaluate(self, board: chess.Board) -> float:
         return self.evaluate_detail(board).total
+    
+    def snapshot(
+        self,
+        board: chess.Board,
+    ) -> EvaluationSnapshot:
+        """
+        学習用に評価値とFeature生値を取得する。
+        """
+
+        raw_features: dict[str, float] = {}
+
+        total = 0.0
+
+        for name, feature in FEATURES:
+
+            raw = feature(board)
+
+            raw_features[name] = raw
+
+            total += raw * self.weight_manager.get(name)
+
+        return EvaluationSnapshot(
+            total=total,
+            raw_features=raw_features,
+        )
