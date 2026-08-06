@@ -56,34 +56,3 @@ def evolve_once(
         adopted=adopted,
         changes=changes,
     )
-def evolve(
-    parent: WeightManager,
-    *,
-    generations: int,
-    games: int = 10,
-    depth: int = 2,
-) -> WeightManager:
-    """
-    複数世代の進化を実行する。
-
-    Parameters
-    ----------
-    parent
-        初期Weight。
-
-    generations
-        進化させる世代数。
-    """
-
-    winner = parent
-
-    for _ in range(generations):
-        result = evolve_once(
-            winner,
-            games=games,
-            depth=depth,
-        )
-
-        winner = result.winner
-
-    return winner

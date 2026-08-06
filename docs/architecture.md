@@ -87,13 +87,53 @@ Self PlayはWeightを変更しない。
 
 ## Evolution
 
-責務
+Responsibilities
 
-- Weight生成(mutation)
-- Weight比較(match)
-- Weight採用(selection)
+- Evolution Strategy が1世代の進化を実装する
+- Runner が進化実験を実行する
+- Match が自己対局を行う
+- Selection がWeight採用を判定する
 
-Evolutionは評価関数そのものを書き換えない。
+Flow
+
+Runner
+    ↓
+Evolution Strategy
+    ↓
+Mutation
+    ↓
+Match
+    ↓
+Selection
+    ↓
+EvolutionResult
+
+Runner
+
+- 世代管理
+- Weight保存
+- Evolutionログ
+- 実験実行
+
+Runner は進化アルゴリズムを実装しない。
+
+Evolution Strategy
+
+- 1世代だけ進化させる
+
+Examples
+
+- SimpleEvolutionStrategy
+- (Future) TournamentStrategy
+- (Future) GeneticStrategy
+
+Strategy は
+
+- Weight保存
+- Generation管理
+- Evolutionログ
+
+を行わない。
 
 ---
 

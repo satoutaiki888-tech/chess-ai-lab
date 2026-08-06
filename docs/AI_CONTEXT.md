@@ -35,14 +35,6 @@ AIは以下の順で情報を今すぐ読む。
 
 ---
 
-# Current Phase
-
-Weight Evolution Foundation
-
-現在は Weight Evolution の基盤を構築している。
-
----
-
 # AI Working Rules
 
 実装前に設計を確認する。

@@ -8,7 +8,7 @@ Last Updated
 
 # Current Phase
 
-Weight Evolution Foundation
+Weight Evolution Framework
 
 目的
 
@@ -71,32 +71,36 @@ Features
 
 Evolution
 
-- Match Library (initial implementation)
-- Selection 
-- Evolution (evolve_once / evolve) 
+- Match Library
+- Selection
+- Evolution
+- Evolution Runner
+- Evolution Strategy
+- Evolution Config
+- Weight Save
+- Generation Save
+- JSON Evolution Log
+- Resume Foundation
 
 ---
 
 # Next Task
 
-- Weight 保存フロー
-- Generation 管理
-- Evolution ログ
-- 長時間 Evolution 実験
+- Resume完成
+- 長時間Evolution実験
+- Evolution Benchmark
 
 ---
 
 # Future Tasks
 
-Generation管理
-
-Tournament
-
-Weight保存
-
-Benchmark改善
-
-Automatic Evolution
+- 作ったAIがそこそこの強さになること
+- Tournament Strategy
+- Genetic Evolution
+- Parallel Evolution
+- Population Evolution
+- Automatic Tournament
+- Weight Database
 
 ---
 

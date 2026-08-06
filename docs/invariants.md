@@ -134,6 +134,21 @@ Evolutionは
 
 を変更しない。
 
+進化アルゴリズムは Strategy として実装する。
+
+Runner は Strategy のみを利用する。
+
+Runner に進化アルゴリズムを書いてはならない。
+
+Strategy は
+
+- Weight保存
+- Generation管理
+- Evolutionログ
+
+を行ってはならない。
+
+Evolution実験の設定は EvolutionConfig に集約する。
 ---
 
 # Scripts

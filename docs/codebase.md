@@ -266,6 +266,101 @@ Must Not
 
 ---
 
+## runner.py
+
+Responsibilities
+
+- Evolution実行
+- Evolution Strategy 呼び出し
+- Generation管理
+- Weight保存
+- Evolutionログ
+
+Must Not
+
+- Mutation
+- Match
+- Selection
+- Evaluation
+- Search
+
+---
+
+## strategy.py
+
+Responsibilities
+
+Evolution Strategy のインターフェース。
+
+Rule
+
+1 Strategy = 1 Evolution Algorithm
+
+Examples
+
+- SimpleEvolutionStrategy
+- TournamentStrategy
+- GeneticStrategy
+
+---
+
+## simple_strategy.py
+
+Responsibilities
+
+現在採用している進化アルゴリズム。
+
+Flow
+
+Parent
+
+↓
+
+Mutate
+
+↓
+
+Match
+
+↓
+
+Selection
+
+↓
+
+EvolutionResult
+
+Must Not
+
+- Weight保存
+- Generation管理
+- Evolutionログ
+
+---
+
+## config.py
+
+Responsibilities
+
+Evolution実験の設定。
+
+Examples
+
+- generations
+- games
+- depth
+- mutation_amount
+- random_seed
+
+Must Not
+
+- Mutation
+- Match
+- Search
+- Save
+
+---
+
 # scripts/
 
 責務
