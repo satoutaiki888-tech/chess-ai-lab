@@ -17,9 +17,13 @@ class SimpleEvolutionStrategy(EvolutionStrategy):
         games: int = 10,
         depth: int = 2,
         mutation_amount: float = 0.10,
+        mutation_ratio: float = 0.20,
     ) -> EvolutionResult:
 
-        child, changes = parent.mutate(amount=mutation_amount,)
+        child, changes = parent.mutate(
+            amount=mutation_amount,
+            ratio=mutation_ratio,
+        )
 
         match = play_match(
             parent,

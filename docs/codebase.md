@@ -29,6 +29,8 @@ src/
         evolution/
 
         benchmark/
+        
+        tuning/
 
 tests/
 
@@ -434,6 +436,94 @@ nps
 
 ---
 
+# tuning/
+
+責務
+
+Evaluation Weight を学習する。
+
+Texel Tuning を中心とした学習アルゴリズムを管理する。
+
+---
+
+## dataset.py
+Responsibilities
+
+- Position Dataset
+- Streaming
+- Dataset Iterator
+- PositionSample
+
+Must Not
+
+- Weight Update
+- Loss
+- Optimization
+- Search
+
+---
+
+## trainer.py
+Responsibilities
+
+- Training Loop
+- Epoch
+- Checkpoint
+- Resume
+
+Must Not
+
+- Dataset Implementation
+- Loss Formula
+- Search
+
+---
+
+## loss.py
+Responsibilities
+
+- Texel Loss
+- Target Score
+- Probability Conversion
+
+Must Not
+
+- Dataset
+- Weight Update
+- Search
+
+---
+
+## optimizer.py
+Responsibilities
+
+- Update Weight
+- Learning Rate
+- Optimizer State
+
+Must Not
+
+- Dataset
+- Loss
+- Search
+
+---
+
+## checkpoint.py
+Responsibilities
+
+- Save Training State
+- Load Training State
+- Resume Training
+
+Must Not
+
+- Dataset
+- Loss
+- Search
+
+---
+
 # scripts/
 
 Responsibilities
@@ -458,6 +548,39 @@ Must Not
 - Mutation
 - Selection
 - Generation
+
+---
+
+## evolve.py
+
+Responsibilities
+
+- evolve
+
+---
+
+## epd.py
+
+Responsibilities
+
+- epd
+
+---
+
+## benchmark.py
+
+Responsibilities
+
+- 2つの Weight を比較する
+- Match 結果を表示する
+
+Must Not
+
+- Mutation
+- Selection
+- Generation
+
+selfplay_eval.pyと役割が重なっており、統合の必要があるかもしれない
 
 ---
 
@@ -526,14 +649,6 @@ Self Play改善
 ↓
 
 evolution/
-
----
-
-Benchmark
-
-↓
-
-scripts/
 
 ---
 

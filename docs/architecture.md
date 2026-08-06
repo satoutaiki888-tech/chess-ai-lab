@@ -19,11 +19,11 @@ Board
 Evaluation
 ↓
 Search
-├──────────────┐
-↓              │
-Benchmark      │
-↓              │
-Evolution ◀────┘
+├──────────────────────┐
+↓                      │
+Benchmark              │
+↓                      │
+Evolution,tuning ◀────┘
 ```
 
 上位レイヤーは下位レイヤーを利用できる。
@@ -152,6 +152,23 @@ Must Not
 ・Weight Mutation
 ・Selection
 ・Evolution
+
+---
+
+## Tuning
+
+Responsibilities
+
+- Datasetから局面を供給する
+- Texel Lossを計算する
+- OptimizerでWeightを更新する
+- 学習Checkpointを管理する
+
+Must Not
+
+- AlphaBeta探索
+- 対局管理
+- Feature実装
 
 ---
 

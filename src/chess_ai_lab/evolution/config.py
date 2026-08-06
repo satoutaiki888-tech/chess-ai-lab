@@ -13,3 +13,4 @@ class EvolutionConfig:
     
     random_seed: int | None = None
     mutation_amount: float = 0.10
+    mutation_ratio: float = 0.20

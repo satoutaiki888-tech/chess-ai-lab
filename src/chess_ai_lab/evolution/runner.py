@@ -52,12 +52,11 @@ class EvolutionRunner:
         games: int = 10,
         depth: int = 2,
         mutation_amount: float = 0.10,
+        mutation_ratio: float
     ) -> EvolutionResult:
         """
         1世代だけ進化を実行する。
         """
-
-        parent = WeightManager()
 
         return self.strategy.evolve_once(
             parent,
@@ -186,6 +185,7 @@ class EvolutionRunner:
                 games=config.games,
                 depth=config.depth,
                 mutation_amount=config.mutation_amount,
+                mutation_ratio=config.mutation_ratio
             )
 
             self.print_result(result)

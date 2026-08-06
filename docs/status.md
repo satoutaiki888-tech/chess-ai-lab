@@ -8,25 +8,7 @@ Last Updated
 
 # Current Phase
 
-Evolution & Benchmark Foundation
-
-目的
-
-Weight Evolution の基盤を完成させる。
-
-現時点では
-
-Human Designed Features
-
-↓
-
-Weight Evolution
-
-↓
-
-Selection
-
-までを対象とする。
+Evolution exexution and improving
 
 ---
 
@@ -96,7 +78,6 @@ Benchmark
 
 - Resume完成
 - 長時間Evolution実験
-- Evolution Benchmark
 
 ---
 

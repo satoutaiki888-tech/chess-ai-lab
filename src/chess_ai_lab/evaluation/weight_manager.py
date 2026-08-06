@@ -46,6 +46,7 @@ class WeightManager:
     def mutate(
         self,
         amount: float = 0.10,
+        ratio: float = 0.20,
     ) -> tuple["WeightManager", list[tuple[str, float, float]]]:
         """
         現在の重みから少しだけ変化した次世代を生成する。
@@ -70,9 +71,17 @@ class WeightManager:
 
         feature_names = list(child._weights.keys())
 
-        mutation_count = random.randint(1, min(2, len(feature_names)))
+        mutation_ratio = 0.20
 
-        targets = random.sample(feature_names, mutation_count)
+        mutation_count = max(
+            1,
+            int(len(feature_names) * ratio),
+        )
+
+        targets = random.sample(
+            feature_names,
+            mutation_count,
+        )
 
         changes: list[tuple[str, float, float]] = []
 

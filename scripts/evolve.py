@@ -3,6 +3,7 @@ from chess_ai_lab.evolution.runner import EvolutionRunner
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from pathlib import Path 
 from chess_ai_lab.evolution.simple_strategy import SimpleEvolutionStrategy
+import time
 
 def load_initial_weight(
     path: str | Path | None = None,
@@ -83,11 +84,15 @@ def main() -> None:
     initial_weight = load_initial_weight(
         resume_path,
     )
+    
+    start = time.perf_counter()
 
     runner.run(
         initial_weight=initial_weight,
         config=config,
     )
+    
+    print(time.perf_counter() - start)
 
 
 if __name__ == "__main__":

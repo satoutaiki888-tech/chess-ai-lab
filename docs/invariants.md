@@ -151,6 +151,15 @@ Strategy は
 Evolution実験の設定は EvolutionConfig に集約する。
 ---
 
+# Training Components
+
+- Dataset は Position を供給するだけ
+- Loss は誤差を計算するだけ
+- Optimizer は Weight を更新するだけ
+- Trainer だけが学習ループを持つ
+
+---
+
 # Scripts
 
 scriptsはライブラリロジックを持たない。
