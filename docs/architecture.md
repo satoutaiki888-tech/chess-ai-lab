@@ -15,14 +15,15 @@
 
 ```
 Board
-    ↓
+↓
 Evaluation
-    ↓
+↓
 Search
-    ↓
-Self Play
-    ↓
-Evolution
+├──────────────┐
+↓              │
+Benchmark      │
+↓              │
+Evolution ◀────┘
 ```
 
 上位レイヤーは下位レイヤーを利用できる。
@@ -134,6 +135,23 @@ Strategy は
 - Evolutionログ
 
 を行わない。
+
+---
+
+## Benchmark
+
+Responsibilities
+
+・EPD読込
+・局面評価
+・探索性能測定
+・客観的な強さ測定
+
+Must Not
+
+・Weight Mutation
+・Selection
+・Evolution
 
 ---
 

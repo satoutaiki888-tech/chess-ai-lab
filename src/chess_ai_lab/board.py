@@ -4,8 +4,22 @@ import chess
 class ChessBoard:
     """python-chess の Board をラップするクラス"""
 
-    def __init__(self):
-        self._board = chess.Board()
+    def __init__(
+        self,
+        fen: str | None = None,
+    ):
+        """
+        Parameters
+        ----------
+        fen
+            None の場合は通常の初期局面。
+            指定した場合はそのFEN局面を生成する。
+        """
+
+        if fen is None:
+            self._board = chess.Board()
+        else:
+            self._board = chess.Board(fen)
 
     def reset(self):
         """初期局面に戻す"""

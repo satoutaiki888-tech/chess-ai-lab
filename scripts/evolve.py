@@ -2,6 +2,7 @@ from chess_ai_lab.evolution.config import EvolutionConfig
 from chess_ai_lab.evolution.runner import EvolutionRunner
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from pathlib import Path 
+from chess_ai_lab.evolution.simple_strategy import SimpleEvolutionStrategy
 
 def load_initial_weight(
     path: str | Path | None = None,
@@ -54,7 +55,11 @@ def find_latest_weight(
     return generations[-1]
 def main() -> None:
 
-    runner = EvolutionRunner()
+    strategy = SimpleEvolutionStrategy()
+
+    runner = EvolutionRunner(
+        strategy=strategy,
+    )
 
     config = EvolutionConfig(
         generations=1,

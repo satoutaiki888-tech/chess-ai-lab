@@ -28,6 +28,8 @@ src/
 
         evolution/
 
+        benchmark/
+
 tests/
 
 scripts/
@@ -361,13 +363,86 @@ Must Not
 
 ---
 
+# benchmark/
+
+Responsibilities
+
+・EPD Benchmarks
+・BenchmarkResult
+・Performance Measurement
+
+---
+
+## epd.py
+
+Responsibilities
+
+・EPD読み込み
+・EPD解析
+・EPDPosition生成
+
+Must Not
+
+・Search
+・Weight
+
+---
+
+## evaluator.py
+Responsibilities
+
+・1局面評価
+・Best Move判定
+
+Must Not
+
+・EPD読込
+・集計
+
+
+---
+
+## runner.py
+Responsibilities
+
+・Benchmark全体実行
+・BenchmarkResult生成
+
+Must Not
+
+・Mutation
+・Selection
+
+---
+
+## result.py
+Responsibilities
+
+Benchmark結果保持
+
+positions
+
+solved
+
+accuracy
+
+nodes
+
+elapsed
+
+nps
+
+---
+
 # scripts/
 
-責務
+Responsibilities
 
-実験コード。
+ライブラリを呼び出す実験コード。
 
-ライブラリではない。
+Must Not
+
+ライブラリ処理を持たない。
 
 ---
 

@@ -7,7 +7,6 @@ from random import random
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from chess_ai_lab.evolution.evolution import EvolutionResult, evolve_once
 
-from chess_ai_lab.evolution.simple_strategy import SimpleEvolutionStrategy
 from chess_ai_lab.evolution.strategy import EvolutionStrategy
 
 from chess_ai_lab.evolution.config import EvolutionConfig
@@ -33,12 +32,12 @@ class EvolutionRunner:
 
     def __init__(
         self,
+        strategy: EvolutionStrategy,
         *,
-        strategy: EvolutionStrategy | None = None,
         weight_dir: str | Path = "weights",
         log_dir: str | Path = "logs",
     ) -> None:
-        self.strategy = strategy or SimpleEvolutionStrategy()
+        self.strategy = strategy
 
         self.weight_dir = Path(weight_dir)
         self.log_dir = Path(log_dir)

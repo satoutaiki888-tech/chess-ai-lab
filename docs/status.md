@@ -8,7 +8,7 @@ Last Updated
 
 # Current Phase
 
-Weight Evolution Framework
+Evolution & Benchmark Foundation
 
 目的
 
@@ -81,6 +81,14 @@ Evolution
 - Generation Save
 - JSON Evolution Log
 - Resume Foundation
+
+Benchmark
+
+- EPD parser
+- EPD loader
+- Single position evaluation
+- Benchmark runner
+- Benchmark result
 
 ---
 
