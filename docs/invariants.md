@@ -36,6 +36,9 @@ Evolution
 
 逆方向の依存は禁止。
 
+レイヤーは上位から下位へのみ依存する。
+Tuning と Evolution は Evaluation を利用するが、Search への依存を必須としない。
+
 ---
 
 ## Single Responsibility
@@ -62,11 +65,15 @@ Evolution
 
 - Weight改善のみ
 
+Tuning
+
+- 学習のみ
+
 ---
 
 # Evaluation
 
-EvaluatorだけがWeightを適用する。
+EvaluatorだけがSnapshotとWeightを統合する。
 
 FeatureはWeightを知らない。
 
@@ -107,6 +114,11 @@ SearchはBoardを書き換えない。
 # Weight
 
 WeightManagerはWeight管理だけを担当する。
+
+- load_json
+- save_json
+- copy
+- mutate
 
 WeightManagerは
 
@@ -153,9 +165,10 @@ Evolution実験の設定は EvolutionConfig に集約する。
 
 # Training Components
 
-- Dataset は Position を供給するだけ
-- Loss は誤差を計算するだけ
+- Dataset は TrainingPosition を供給するだけ
+- LossEvaluator は Loss を計算するだけ
 - Optimizer は Weight を更新するだけ
+- Scheduler は Learning Rate を更新するだけ
 - Trainer だけが学習ループを持つ
 
 ---
@@ -227,8 +240,6 @@ srcを変更した場合は、対応するTestを追加または更新する。
 Bug修正では再発防止Testを追加する。
 
 既存Testは削除しない。
-
-pytest Greenを維持する。
 
 ---
 

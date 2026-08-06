@@ -19,11 +19,16 @@ Board
 Evaluation
 ↓
 Search
-├──────────────────────┐
-↓                      │
-Benchmark              │
-↓                      │
-Evolution,tuning ◀────┘
+↓
+Benchmark
+
+Evaluation
+↓
+Tuning
+
+Evaluation
+↓
+Evolution
 ```
 
 上位レイヤーは下位レイヤーを利用できる。
@@ -159,10 +164,14 @@ Must Not
 
 Responsibilities
 
-- Datasetから局面を供給する
+- Streaming Datasetを読む
+- TrainingPositionを供給する
 - Texel Lossを計算する
-- OptimizerでWeightを更新する
-- 学習Checkpointを管理する
+- Gradientを集計する
+- SGDでWeight更新する
+- Learning Rate Schedulerを適用する
+- Best Weightを保存する
+- Resume Trainingを行う
 
 Must Not
 
@@ -181,23 +190,23 @@ Evaluator
 
 ↓
 
+Snapshot
+
+↓
+
 Feature Registry
 
 ↓
 
-Feature Function
+Feature
 
 ↓
 
-Raw Score
+WeightManager
 
 ↓
 
-Weight
-
-↓
-
-Final Score
+Score
 ```
 
 FeatureはWeightを知らない。
@@ -258,16 +267,40 @@ SearchがFeatureを直接呼ぶことは禁止。
 
 # Weight Evolution
 
-WeightManagerは
+WeightManager
 
 - copy
 - mutate
-- load
-- save
+- load_json
+- save_json
+- to_dict
+- from_dict
 
 のみ責務とする。
 
 対局処理はEvolution側が担当する。
+
+# Tuning Flow
+
+```
+ParquetDataset
+        ▼
+TrainingPosition
+        ▼
+Evaluator Snapshot
+        ▼
+Gradient
+        ▼
+SGD Optimizer
+        ▼
+WeightManager
+        ▼
+Validation
+        ▼
+ReduceLROnPlateau
+        ▼
+Best Weight
+```
 
 ---
 
@@ -296,13 +329,3 @@ Evolution → Feature
 Board → Evaluation
 
 Board → Search
-
----
-
-# Current State
-
-現在の主探索は AlphaBeta。
-
-Weight Evolution基盤を実装中。
-
-現在の設計ではNNUEやDeep Learningは対象外とする。

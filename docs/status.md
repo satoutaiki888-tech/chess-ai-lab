@@ -2,7 +2,7 @@
 
 Last Updated
 
-2026-08-06
+2026-08-07
 
 ---
 
@@ -18,6 +18,7 @@ Board
 Evaluation
 
 - Feature Registry
+- EvaluationSnapshot
 - Evaluator
 - WeightManager
 
@@ -44,6 +45,10 @@ Features
 - Rook Seventh
 - Space
 - Knight Outpost
+- Bishop Mobility
+- Knight Mobility
+- Rook Mobility
+- Queen Mobility
 
 Evolution
 
@@ -68,23 +73,26 @@ Benchmark
 
 Texel Tuning
 
-- EvaluationSnapshot を用いた特徴量取得
-- Texel Loss の実装
-- 勾配計算
+- Streaming Parquet Dataset
+- EvaluationSnapshot
+- Texel Loss
+- Gradient Accumulation
 - SGD Optimizer
-- ミニバッチSGD
-- Validation Loss計測
-- Best Weight保存
+- Mini-batch SGD
+- Validation Loss
+- Best Weight Checkpoint
 - Resume Training
-- ReduceLROnPlateauScheduler
+- ReduceLROnPlateau Scheduler
 - Early Stopping
-- Learning Rate表示
+- Learning Rate Logging
 
 ---
 
 # Next Task
 
 - 長時間学習
+- 学習結果のWeight比較
+- Self Playによる評価
 - Weight差分可視化
 - Optimizer追加（Adam等）
 - 正則化
@@ -93,8 +101,9 @@ Texel Tuning
 
 # Future Tasks
 
-- 作ったAIがそこそこの強さになること
+- より強い評価関数
 - Weight Database
+- Evolutionとの統合評価
 
 ---
 
@@ -131,5 +140,3 @@ invariants.md
 必要なファイルは要求する。
 
 1回の変更では1つの目的のみ扱う。
-
-pytest green を維持する。

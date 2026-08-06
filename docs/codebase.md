@@ -93,17 +93,33 @@ Must Not
 
 Responsibilities
 
-- Manage Weights
-- Save
-- Load
-- Copy
-- Mutate
+- load_json
+- save_json
+- copy
+- mutate
+- to_dict
+- from_dict
 
 Must Not
 
 - Evaluate
 - Search
 - Self Play
+
+---
+
+## snapshot.py
+
+Responsibilities
+
+- Capture feature values
+- Cache evaluation state
+- Provide immutable evaluation snapshot
+
+Must Not
+
+- Search
+- Weight Update
 
 ---
 
@@ -449,8 +465,7 @@ Texel Tuning を中心とした学習アルゴリズムを管理する。
 ## dataset.py
 Responsibilities
 
-- Position Dataset
-- Streaming
+- Streaming Parquet Dataset
 - Dataset Iterator
 - PositionSample
 
@@ -464,12 +479,14 @@ Must Not
 ---
 
 ## trainer.py
+
 Responsibilities
 
 - Training Loop
-- Epoch
-- Checkpoint
-- Resume
+- Validation
+- Best Weight Save
+- Resume Training
+- Scheduler Integration
 
 Must Not
 
@@ -509,18 +526,51 @@ Must Not
 
 ---
 
-## checkpoint.py
+## gradient.py
+
 Responsibilities
 
-- Save Training State
-- Load Training State
-- Resume Training
+- Accumulate gradients
+- Average gradients
 
 Must Not
 
+- Update weights
+
+---
+
+## loss_evaluator.py
+
+Responsibilities
+
+- Evaluate train loss
+- Evaluate validation loss
+
+Must Not
+
+- Weight update
+
+---
+
+## lr_scheduler.py
+
+Responsibilities
+
+- ReduceLROnPlateau
+- Learning Rate Scheduling
+
+Must Not
+
+- Weight Update
 - Dataset
-- Loss
-- Search
+
+---
+
+## position.py
+
+Responsibilities
+
+TrainingPosition
 
 ---
 
@@ -584,6 +634,16 @@ selfplay_eval.pyと役割が重なっており、統合の必要があるかも�
 
 ---
 
+## train.py
+
+Responsibilities
+
+- Load Dataset
+- Resume Training
+- Run Trainer
+
+---
+
 # tests/
 
 責務
@@ -608,9 +668,13 @@ Evaluation
 
 Search
 
+Evaluation
+
 ↓
 
-Self Play
+Tuning
+
+Evaluation
 
 ↓
 
@@ -649,6 +713,38 @@ Self Play改善
 ↓
 
 evolution/
+
+---
+
+Learning Rate
+
+↓
+
+tuning/lr_scheduler.py
+
+---
+
+Training Loop
+
+↓
+
+tuning/trainer.py
+
+---
+
+Dataset
+
+↓
+
+tuning/dataset.py
+
+---
+
+Gradient
+
+↓
+
+tuning/gradient.py
 
 ---
 
