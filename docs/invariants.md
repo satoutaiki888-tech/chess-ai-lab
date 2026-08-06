@@ -218,6 +218,16 @@ pytest Greenを維持する。
 
 ---
 
+## Development Status
+
+現在の開発方針・進捗・次に行う作業は status.md を唯一の正とする。
+
+AIは実装前に status.md を確認し、現在の開発フェーズと次のタスクを把握する。
+
+status.md は実装が一区切りしたタイミングで更新する。
+
+---
+
 ## Commit
 
 1コミット = 1目的

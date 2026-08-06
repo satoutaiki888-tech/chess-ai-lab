@@ -24,16 +24,13 @@ AIは以下の順で情報を今すぐ読む。
 2. invariants.md
    絶対に破ってはいけない設計を理解する。
 
-3. development.md
-   開発ルールを確認する。
-
-4. codebase.md
+3. codebase.md
    各ファイルの責務を確認する。
 
-5. status.md
+4. status.md
    現在の開発状況を把握する。
 
-6. evaluation.md
+5. evaluation.md
    Evaluationを変更する場合のみ参照する。
 
 ---
