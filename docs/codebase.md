@@ -93,33 +93,22 @@ Must Not
 
 Responsibilities
 
+- Weight storage
 - load_json
 - save_json
 - copy
 - mutate
 - to_dict
 - from_dict
+- to_array
+- from_array
+- feature_names
 
 Must Not
 
 - Evaluate
 - Search
 - Self Play
-
----
-
-## snapshot.py
-
-Responsibilities
-
-- Capture feature values
-- Cache evaluation state
-- Provide immutable evaluation snapshot
-
-Must Not
-
-- Search
-- Weight Update
 
 ---
 
@@ -467,7 +456,7 @@ Responsibilities
 
 - Streaming Parquet Dataset
 - Dataset Iterator
-- PositionSample
+- TrainingPosition generation
 
 Must Not
 
@@ -487,6 +476,9 @@ Responsibilities
 - Best Weight Save
 - Resume Training
 - Scheduler Integration
+- Mini-batch SGD
+- Early Stopping
+- Configurable Validation
 
 Must Not
 
@@ -512,9 +504,10 @@ Must Not
 ---
 
 ## optimizer.py
+
 Responsibilities
 
-- Update Weight
+- Update Weight Array
 - Learning Rate
 - Optimizer State
 
@@ -530,8 +523,9 @@ Must Not
 
 Responsibilities
 
+- Compute Texel gradients
+- Compute gradient vector
 - Accumulate gradients
-- Average gradients
 
 Must Not
 
@@ -571,6 +565,52 @@ Must Not
 Responsibilities
 
 TrainingPosition
+
+---
+
+## evaluation_snapshot.py
+
+Responsibilities
+
+- Hold evaluated score
+- Hold raw feature values
+- Hold NumPy feature vector
+- Provide immutable evaluation snapshot
+
+Must Not
+
+- Search
+- Weight Update
+
+---
+
+## feature_vector.py
+
+Responsibilities
+
+- Snapshot ⇔ NumPy Vector conversion
+- Feature ordering
+- Feature vector serialization support
+
+Must Not
+
+- Weight update
+- Evaluation
+
+---
+
+## config.py
+
+Responsibilities
+
+- Training configuration
+- Development configuration
+- Production configuration
+
+Must Not
+
+- Training loop
+- Weight update
 
 ---
 
@@ -630,7 +670,8 @@ Must Not
 - Selection
 - Generation
 
-selfplay_eval.pyと役割が重なっており、統合の必要があるかもしれない
+Evaluate whether benchmark.py and
+selfplay_eval.py should be unified.
 
 ---
 
@@ -669,15 +710,15 @@ Evaluation
 Search
 
 Evaluation
-
 ↓
-
 Tuning
 
 Evaluation
-
 ↓
-
+Search
+↓
+Self Play
+↓
 Evolution
 
 ---

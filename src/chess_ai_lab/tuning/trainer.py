@@ -4,7 +4,7 @@ from collections.abc import Iterable
 
 from chess_ai_lab.evaluation.evaluator import Evaluator
 from chess_ai_lab.evaluation.weight_manager import WeightManager
-from chess_ai_lab.tuning.gradient import accumulate_gradients
+from chess_ai_lab.tuning.gradient import compute_gradient_array
 from chess_ai_lab.tuning.optimizer import SGDOptimizer
 from chess_ai_lab.tuning.position import TrainingPosition
 
@@ -13,6 +13,8 @@ from chess_ai_lab.tuning.loss_evaluator import LossEvaluator
 
 from pathlib import Path
 from chess_ai_lab.tuning.lr_scheduler import ReduceLROnPlateauScheduler
+
+import numpy as np
 
 class Trainer:
     """
@@ -47,24 +49,12 @@ class Trainer:
     ) -> None:
         """
         1エポック学習する。
-
-        Parameters
-        ----------
-        samples
-            TrainingPosition のIterable
-
-        max_samples
-            学習する最大局面数。
-            Noneなら全件学習。
-
-        batch_size
-            勾配を平均して更新する局面数。
         """
 
-        gradients = {
-            name: 0.0
-            for name in self.weight_manager.to_dict()
-        }
+        gradients = np.zeros(
+            len(self.weight_manager.feature_names()),
+            dtype=np.float64,
+        )
 
         batch_count = 0
         sample_count = 0
@@ -81,10 +71,9 @@ class Trainer:
                 sample.board,
             )
 
-            accumulate_gradients(
-                snapshot=snapshot,
-                target_cp=sample.target_cp,
-                gradients=gradients,
+            gradients += compute_gradient_array(
+                snapshot,
+                sample.target_cp,
             )
 
             batch_count += 1
@@ -92,25 +81,20 @@ class Trainer:
 
             if batch_count >= batch_size:
 
-                for name in gradients:
-                    gradients[name] /= batch_count
+                gradients /= batch_count
 
                 self.optimizer.step(
                     self.weight_manager,
                     gradients,
                 )
 
-                gradients = {
-                    name: 0.0
-                    for name in gradients
-                }
+                gradients.fill(0.0)
 
                 batch_count = 0
 
         if batch_count > 0:
 
-            for name in gradients:
-                gradients[name] /= batch_count
+            gradients /= batch_count
 
             self.optimizer.step(
                 self.weight_manager,
@@ -122,10 +106,13 @@ class Trainer:
         train_dataset: ParquetDataset,
         valid_dataset: ParquetDataset,
         epochs: int,
+        batch_size: int = 1024,
         max_train_samples: int | None = None,
         max_valid_samples: int | None = None,
         best_weight_path: str | Path | None = None,
         patience: int | None = None,
+        train_loss_interval: int = 1,
+        validation_interval: int = 1,
     ) -> None:
         """
         複数エポック学習する。
@@ -144,46 +131,68 @@ class Trainer:
             self.train_epoch(
                 train_dataset,
                 max_samples=max_train_samples,
-                batch_size=1024,
+                batch_size=batch_size,
             )
 
-            train_loss = loss_evaluator.evaluate(
-                train_dataset,
-                max_samples=max_train_samples,
-            )
+            train_loss: float | None = None
 
-            valid_loss = loss_evaluator.evaluate(
-                valid_dataset,
-                max_samples=max_valid_samples,
+            if epoch % train_loss_interval == 0:
+
+                train_loss = loss_evaluator.evaluate(
+                    train_dataset,
+                    max_samples=max_train_samples,
+                )
+
+            valid_loss: float | None = None
+
+            if epoch % validation_interval == 0:
+
+                valid_loss = loss_evaluator.evaluate(
+                    valid_dataset,
+                    max_samples=max_valid_samples,
+                )
+
+                self.scheduler.step(valid_loss)
+            
+            if valid_loss is not None:
+
+                if valid_loss < best_loss:
+
+                    best_loss = valid_loss
+                    no_improve_count = 0
+
+                    if best_weight_path is not None:
+
+                        self.weight_manager.save_json(
+                            best_weight_path,
+                        )
+
+                        print(
+                            f"Best weight saved "
+                            f"(valid={valid_loss:.6f})"
+                        )
+
+                else:
+
+                    no_improve_count += 1
+
+            train_loss_text = (
+                f"{train_loss:.6f}"
+                if train_loss is not None
+                else "-"
             )
             
-            self.scheduler.step(valid_loss)
-            
-            if valid_loss < best_loss:
-
-                best_loss = valid_loss
-                no_improve_count = 0
-
-                if best_weight_path is not None:
-
-                    self.weight_manager.save_json(
-                        best_weight_path,
-                    )
-
-                    print(
-                        f"Best weight saved "
-                        f"(valid={valid_loss:.6f})"
-                    )
-
-            else:
-
-                no_improve_count += 1
+            valid_loss_text = (
+                f"{valid_loss:.6f}"
+                if valid_loss is not None
+                else "-"
+            )            
 
             print(
                 f"Epoch {epoch:3d} | "
                 f"LR = {self.optimizer.learning_rate:.6f} | "
-                f"Train Loss = {train_loss:.6f} | "
-                f"Valid Loss = {valid_loss:.6f}"
+                f"Train Loss = {train_loss_text} | "
+                f"Valid Loss = {valid_loss_text}"
             )
             if (
                 patience is not None

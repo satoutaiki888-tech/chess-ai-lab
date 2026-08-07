@@ -17,21 +17,25 @@
 以下の依存方向は変更しない。
 
 Board
-
 ↓
-
 Evaluation
-
 ↓
-
 Search
 
+Search
 ↓
+Benchmark
 
+Search
+↓
 Self Play
 
+Evaluation
 ↓
+Tuning
 
+Evaluation
+↓
 Evolution
 
 逆方向の依存は禁止。
@@ -115,10 +119,13 @@ SearchはBoardを書き換えない。
 
 WeightManagerはWeight管理だけを担当する。
 
-- load_json
-- save_json
-- copy
-- mutate
+- Weight取得
+- Weight更新
+- JSON保存
+- JSON読込
+- Copy
+- Mutation
+- NumPy変換
 
 WeightManagerは
 
@@ -165,11 +172,36 @@ Evolution実験の設定は EvolutionConfig に集約する。
 
 # Training Components
 
-- Dataset は TrainingPosition を供給するだけ
+- Dataset は学習データを供給するだけ
 - LossEvaluator は Loss を計算するだけ
-- Optimizer は Weight を更新するだけ
+- Optimizer は Weight を更新するだけ、勾配計算を行わない。
 - Scheduler は Learning Rate を更新するだけ
 - Trainer だけが学習ループを持つ
+Trainerだけが
+
+- Optimizer
+- Scheduler
+- LossEvaluator
+
+を協調させる。
+
+---
+
+# EvaluationSnapshot
+
+EvaluationSnapshot は学習専用データである。
+
+保持するもの
+
+- total
+- raw_features
+- feature_vector
+
+feature_vector は学習処理で利用する。
+
+raw_features は可視化・デバッグ用途とする。
+
+EvaluationSnapshot は探索処理では利用しない。
 
 ---
 
@@ -184,6 +216,15 @@ scriptsが行うのは
 - 結果表示
 
 のみとする。
+
+---
+
+# Performance
+
+大量データ処理では可能な限り
+NumPyによるベクトル演算を利用する。
+
+Pythonループは必要な場合のみ使用する。
 
 ---
 
@@ -245,11 +286,9 @@ Bug修正では再発防止Testを追加する。
 
 ## Documentation
 
-ドキュメントは実装のたびに更新しなくてもよい。
+architecture.md と invariants.md は設計変更時のみ更新する。
 
-実装が一区切りしたタイミングでまとめて更新する。
-
-設計変更を伴う場合は、対応するドキュメントも同時に更新する。
+status.md は開発の一区切りで更新する。
 
 ---
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import numpy as np
+
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 
 
@@ -17,16 +19,17 @@ class SGDOptimizer:
     def step(
         self,
         weight_manager: WeightManager,
-        gradients: dict[str, float],
+        gradients: np.ndarray,
     ) -> None:
         """
         Weightを1ステップ更新する。
         """
 
-        for name, gradient in gradients.items():
+        weights = weight_manager.to_array()
 
-            old = weight_manager.get(name)
+        weights -= (
+            self.learning_rate
+            * gradients
+        )
 
-            new = old - self.learning_rate * gradient
-
-            weight_manager.set(name, new)
+        weight_manager.from_array(weights)

@@ -22,30 +22,27 @@ Evaluation の目的は
 Evaluation の構造は以下で固定する。
 
 Board
-
-↓
-
-Evaluator
-
-↓
-
+    │
+    ▼
 Feature Registry
-
-↓
-
+    │
+    ▼
 Feature
-
-↓
-
-Raw Score
-
-↓
-
-Weight
-
-↓
-
-Final Score
+    │
+    ▼
+Raw Feature Values
+    │
+    ▼
+Evaluator
+    │
+    ├── WeightManager
+    │
+    ▼
+EvaluationSnapshot
+    │
+    ├── total
+    ├── raw_features
+    └── feature_vector
 
 ---
 
@@ -53,11 +50,12 @@ Final Score
 
 ## Evaluator
 
-責務
+Responsibilities
 
-- Feature を実行する
-- Weight を取得する
-- 最終評価値を計算する
+- Execute Features
+- Collect raw feature values
+- Apply weights
+- Produce EvaluationSnapshot
 
 Evaluator は Feature の実装詳細を知らない。
 
@@ -85,13 +83,50 @@ Weight を掛けない。
 
 ## WeightManager
 
-責務
+Responsibilities
 
-Feature Weight の管理。
+- Weight storage
+- JSON serialization
+- NumPy conversion
+- Copy
+- Mutation
 
-Weight の保存・読込・複製・突然変異を担当する。
+---
 
-評価計算は行わない。
+## EvaluationSnapshot
+
+Responsibilities
+
+- Hold evaluated score
+- Hold raw feature values
+- Hold NumPy feature vector
+
+Used By
+
+- Tuning
+- Texel Gradient
+- Dataset Cache (future)
+
+Must Not
+
+- Update weights
+- Execute features
+
+---
+
+## Feature Vector
+
+Feature の順序は FEATURES に従う。
+
+NumPy 配列として保持する。
+
+用途
+
+- Texel Tuning
+- Gradient
+- Batch Optimization
+
+Feature の順序は固定である。
 
 ---
 
@@ -99,10 +134,7 @@ Weight の保存・読込・複製・突然変異を担当する。
 
 最終評価値
 
-score = Σ(raw_feature × weight)
-
-Weight は Evaluator が適用する。
-
+score = feature_vector · weight_vector
 ---
 
 # Feature Rules
@@ -160,7 +192,7 @@ Feature は
 
 目的
 
-合法手数を評価する。
+すべての駒の合法手数を評価する。
 
 ---
 
@@ -262,6 +294,8 @@ Piece Coordination
 
 Center Control
 
+
+
 ---
 
 # Weight Evolution
@@ -280,12 +314,10 @@ Feature のアルゴリズムは Evolution の対象外。
 
 Evaluation は
 
-探索
-
-学習
-
-Weight Mutation
+- Search
+- Training
+- Evolution
+- Dataset
+- Gradient Computation
 
 を行わない。
-
-これらは別レイヤーの責務である。

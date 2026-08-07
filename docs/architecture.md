@@ -19,8 +19,14 @@ Board
 Evaluation
 ↓
 Search
+
+Search
 ↓
 Benchmark
+
+Search
+↓
+Self Play
 
 Evaluation
 ↓
@@ -167,6 +173,8 @@ Responsibilities
 - Streaming Datasetを読む
 - TrainingPositionを供給する
 - Texel Lossを計算する
+- EvaluationSnapshotを生成する
+- Feature Vectorを扱う
 - Gradientを集計する
 - SGDでWeight更新する
 - Learning Rate Schedulerを適用する
@@ -186,27 +194,15 @@ Must Not
 構造は以下で固定する。
 
 ```
-Evaluator
-
-↓
-
-Snapshot
-
-↓
-
-Feature Registry
-
-↓
-
-Feature
-
-↓
-
-WeightManager
-
-↓
-
-Score
+Board
+        │
+        ▼
+ Feature Registry
+        │
+        ▼
+     Evaluator
+      ├── WeightManager
+      └── EvaluationSnapshot
 ```
 
 FeatureはWeightを知らない。
@@ -221,27 +217,11 @@ Evaluatorのみ両者を利用する。
 
 1 Feature = 1 File
 
-Featureは
+Featureはraw scoreのみ返す。
 
-```
-raw score
-```
+Featureは状態を保持してはならない。
 
-のみ返す。
-
-Weight適用は禁止。
-
-例
-
-```
-bishop_mobility(board)
-
-↓
-
-+3
-```
-
-WeightはEvaluatorが掛ける。
+詳しくはevaluation.mdに記す。
 
 ---
 
@@ -269,16 +249,18 @@ SearchがFeatureを直接呼ぶことは禁止。
 
 WeightManager
 
-- copy
-- mutate
-- load_json
-- save_json
-- to_dict
-- from_dict
+Responsibilities
+
+- Weight保持
+- Weight取得
+- Weight更新
+- JSON保存
+- JSON読込
+- Copy
+- Mutation
+- NumPy変換
 
 のみ責務とする。
-
-対局処理はEvolution側が担当する。
 
 # Tuning Flow
 
@@ -287,20 +269,39 @@ ParquetDataset
         ▼
 TrainingPosition
         ▼
-Evaluator Snapshot
+Evaluator
+        ▼
+EvaluationSnapshot
         ▼
 Gradient
         ▼
-SGD Optimizer
+Optimizer
         ▼
 WeightManager
         ▼
-Validation
+LossEvaluator
         ▼
 ReduceLROnPlateau
         ▼
 Best Weight
 ```
+---
+
+# EvaluationSnapshot
+
+EvaluationSnapshot は学習専用データである。
+
+保持するもの
+
+- total
+- raw_features
+- feature_vector
+
+feature_vector は FEATURES の順番で保持する。
+
+学習では feature_vector を使用する。
+
+raw_features は可視化・デバッグ用途とする。
 
 ---
 

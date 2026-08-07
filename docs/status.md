@@ -73,11 +73,13 @@ Benchmark
 
 Texel Tuning
 
+Texel Tuning
 - Streaming Parquet Dataset
+- TrainingPosition
 - EvaluationSnapshot
+- NumPy Feature Vector
 - Texel Loss
-- Gradient Accumulation
-- SGD Optimizer
+- Gradient Computation
 - Mini-batch SGD
 - Validation Loss
 - Best Weight Checkpoint
@@ -85,17 +87,20 @@ Texel Tuning
 - ReduceLROnPlateau Scheduler
 - Early Stopping
 - Learning Rate Logging
+- Configurable Training
 
 ---
 
 # Next Task
 
-- 長時間学習
-- 学習結果のWeight比較
-- Self Playによる評価
-- Weight差分可視化
-- Optimizer追加（Adam等）
-- 正則化
+- Snapshot Parquet Cache
+- Snapshot Streaming Dataset
+- Long Training Benchmark
+- Weight Comparison
+- Self Play Evaluation
+- Weight Difference Visualization
+- Adam Optimizer
+- Regularization
 
 ---
 
@@ -103,25 +108,20 @@ Texel Tuning
 
 - より強い評価関数
 - Weight Database
-- Evolutionとの統合評価
+- Feature Cache Versioning
+- Snapshot Compression
+- Parallel Training
+- Distributed Self Play
 
 ---
 
 # Current Constraints
 
-現在は
+Out of Scope
 
-Weight Evolution基盤
-
-のみ実装対象。
-
-NNUE
-
-Neural Network
-
-Reinforcement Learning
-
-は対象外。
+- NNUE
+- Deep Learning
+- Reinforcement Learning
 
 ---
 

@@ -2,12 +2,17 @@ from chess_ai_lab.evaluation import weight_manager
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from chess_ai_lab.tuning.dataset import ParquetDataset
 from chess_ai_lab.tuning.trainer import Trainer
+from chess_ai_lab.tuning.config import TrainingConfig
+from chess_ai_lab.tuning.config import (
+    PRODUCTION_CONFIG, DEV_CONFIG,
+)
 
+config = DEV_CONFIG
 weights = WeightManager()
 
 from pathlib import Path
 
-best_weight_path = Path("weights/best_weight.json")
+best_weight_path = config.best_weight_path
 
 if best_weight_path.exists():
     weights.load_json(best_weight_path)
@@ -15,7 +20,7 @@ if best_weight_path.exists():
 
 trainer = Trainer(
     weight_manager=weights,
-    learning_rate=0.1,
+    learning_rate=config.learning_rate,
 )
 
 train_dataset = ParquetDataset(
@@ -29,13 +34,16 @@ valid_dataset = ParquetDataset(
 trainer.fit(
     train_dataset=train_dataset,
     valid_dataset=valid_dataset,
-    epochs=100,
-    max_train_samples=1000,
-    max_valid_samples=200,
-    best_weight_path="weights/best_weight.json",
-    patience=10,
+    epochs=config.epochs,
+    batch_size=config.batch_size,
+    max_train_samples=config.max_train_samples,
+    max_valid_samples=config.max_valid_samples,
+    best_weight_path=best_weight_path,
+    patience=config.patience,
+    train_loss_interval=config.train_loss_interval,
+    validation_interval=config.validation_interval,
 )
 
 weights.save_json(
-    "weights_trained.json",
+    config.output_weight_path,
 )

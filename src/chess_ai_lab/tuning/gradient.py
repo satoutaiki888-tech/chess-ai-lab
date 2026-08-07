@@ -2,10 +2,66 @@ from __future__ import annotations
 
 import math
 
-from chess_ai_lab.tuning.evaluation_snapshot import EvaluationSnapshot
+import numpy as np
+from chess_ai_lab.evaluation.snapshot import EvaluationSnapshot
 
 TEXEL_SCALE = 400.0
 LN10 = math.log(10.0)
+
+
+def _gradient_coefficient(
+    snapshot: EvaluationSnapshot,
+    target_cp: float,
+) -> float:
+    """
+    Texel Loss の勾配係数を計算する。
+    """
+
+    predicted = 1.0 / (
+        1.0 + math.pow(
+            10.0,
+            -snapshot.total / TEXEL_SCALE,
+        )
+    )
+
+    target = 1.0 / (
+        1.0 + math.pow(
+            10.0,
+            -target_cp / TEXEL_SCALE,
+        )
+    )
+
+    dloss_dprob = 2.0 * (
+        predicted - target
+    )
+
+    dprob_dcp = (
+        LN10
+        / TEXEL_SCALE
+        * predicted
+        * (1.0 - predicted)
+    )
+
+    return dloss_dprob * dprob_dcp
+
+
+def compute_gradient_array(
+    snapshot: EvaluationSnapshot,
+    target_cp: float,
+) -> np.ndarray:
+    """
+    1局面分の勾配を NumPy 配列で返す。
+    """
+
+    coefficient = _gradient_coefficient(
+        snapshot,
+        target_cp,
+    )
+
+    return (
+        coefficient
+        * snapshot.feature_vector
+    )
 
 
 def compute_gradients(
@@ -14,37 +70,26 @@ def compute_gradients(
 ) -> dict[str, float]:
     """
     1局面分のTexel勾配を計算する。
-
-    Returns
-    -------
-    dict[feature_name, gradient]
     """
 
-    predicted = 1.0 / (
-        1.0 + math.pow(10.0, -snapshot.total / TEXEL_SCALE)
+    coefficient = _gradient_coefficient(
+        snapshot,
+        target_cp,
     )
 
-    target = 1.0 / (
-        1.0 + math.pow(10.0, -target_cp / TEXEL_SCALE)
+    gradients = (
+        coefficient
+        * snapshot.feature_vector
     )
 
-    dloss_dprob = 2.0 * (predicted - target)
+    return {
+        name: float(value)
+        for (name, _), value in zip(
+            snapshot.raw_features.items(),
+            gradients,
+        )
+    }
 
-    dprob_dcp = (
-        LN10
-        / TEXEL_SCALE
-        * predicted
-        * (1.0 - predicted)
-    )
-
-    coefficient = dloss_dprob * dprob_dcp
-
-    gradients = {}
-
-    for name, raw in snapshot.raw_features.items():
-        gradients[name] = coefficient * raw
-
-    return gradients
 
 def accumulate_gradients(
     snapshot: EvaluationSnapshot,
@@ -53,37 +98,20 @@ def accumulate_gradients(
 ) -> None:
     """
     1局面分のTexel勾配を gradients に加算する。
-
-    Parameters
-    ----------
-    snapshot
-        Evaluator.snapshot() の結果
-
-    target_cp
-        Stockfish評価値
-
-    gradients
-        Feature名 -> 勾配合計
     """
 
-    predicted = 1.0 / (
-        1.0 + math.pow(10.0, -snapshot.total / TEXEL_SCALE)
+    coefficient = _gradient_coefficient(
+        snapshot,
+        target_cp,
     )
 
-    target = 1.0 / (
-        1.0 + math.pow(10.0, -target_cp / TEXEL_SCALE)
+    gradient_vector = (
+        coefficient
+        * snapshot.feature_vector
     )
 
-    dloss_dprob = 2.0 * (predicted - target)
-
-    dprob_dcp = (
-        LN10
-        / TEXEL_SCALE
-        * predicted
-        * (1.0 - predicted)
-    )
-
-    coefficient = dloss_dprob * dprob_dcp
-
-    for name, raw in snapshot.raw_features.items():
-        gradients[name] += coefficient * raw
+    for (name, _), value in zip(
+        snapshot.raw_features.items(),
+        gradient_vector,
+    ):
+        gradients[name] += float(value)

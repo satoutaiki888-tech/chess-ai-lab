@@ -124,3 +124,44 @@ class WeightManager:
             changes.append((name, old, new))
 
         return child, changes
+    
+    def feature_names(self) -> list[str]:
+        """
+        Feature名を FEATURES の順序で返す。
+        """
+        return [
+            name
+            for name, _ in FEATURES
+        ]
+
+
+    def apply_gradient_array(
+        self,
+        gradients: np.ndarray,
+        learning_rate: float,
+    ) -> None:
+        """
+        NumPy配列の勾配をまとめて適用する。
+
+        Parameters
+        ----------
+        gradients
+            FEATURES の順序に対応した勾配
+
+        learning_rate
+            学習率
+        """
+
+        if len(gradients) != len(FEATURES):
+            raise ValueError(
+                f"Expected {len(FEATURES)} gradients, "
+                f"got {len(gradients)}."
+            )
+
+        for (name, _), gradient in zip(
+            FEATURES,
+            gradients,
+        ):
+            self._weights[name] -= (
+                learning_rate * float(gradient)
+            )

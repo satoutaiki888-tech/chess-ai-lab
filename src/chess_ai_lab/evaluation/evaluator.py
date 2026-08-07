@@ -1,5 +1,5 @@
 import chess
-
+import numpy as np
 from chess_ai_lab.tuning.evaluation_snapshot import EvaluationSnapshot
 from chess_ai_lab.evaluation.features import FEATURES
 from chess_ai_lab.evaluation.result import EvaluationResult
@@ -38,6 +38,8 @@ class Evaluator:
 
         raw_features: dict[str, float] = {}
 
+        feature_values: list[float] = []
+
         total = 0.0
 
         for name, feature in FEATURES:
@@ -46,9 +48,15 @@ class Evaluator:
 
             raw_features[name] = raw
 
+            feature_values.append(raw)
+
             total += raw * self.weight_manager.get(name)
 
         return EvaluationSnapshot(
             total=total,
             raw_features=raw_features,
+            feature_vector=np.array(
+                feature_values,
+                dtype=np.float64,
+            ),
         )
