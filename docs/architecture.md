@@ -49,8 +49,7 @@ Evolution
 
 責務
 
-- python-chess のラッパー
-- 盤面状態の管理
+- python-chess による盤面管理
 - 合法手生成
 - FEN取得
 - 終局判定
@@ -61,11 +60,13 @@ Boardは評価や探索を行わない。
 
 ## Evaluation
 
-責務
+Responsibilities
 
-- 盤面を数値評価する
-- Featureを集約する
-- Weightを適用する
+- 盤面の数値評価
+- Featureの実行
+- Feature Registryの管理
+- Weightの適用
+- EvaluationSnapshotの生成
 
 Evaluationは探索を行わない。
 
@@ -73,7 +74,7 @@ Evaluationは探索を行わない。
 
 ## Search
 
-責務
+Responsibilities
 
 - 最善手探索
 - ノード数管理
@@ -88,10 +89,11 @@ SearchはEvaluatorのみ利用する。
 
 ## Self Play
 
-責務
+Responsibilities
 
-- Engine同士を対局させる
-- ベンチマークを行う
+- Engine同士の対局
+- Match実行
+- 対局結果の取得
 
 Self PlayはWeightを変更しない。
 
@@ -101,10 +103,12 @@ Self PlayはWeightを変更しない。
 
 Responsibilities
 
-- Evolution Strategy が1世代の進化を実装する
-- Runner が進化実験を実行する
-- Match が自己対局を行う
-- Selection がWeight採用を判定する
+- Weightの進化
+- Mutation
+- Match
+- Selection
+- Generation管理
+- Evolution結果の保存
 
 Flow
 
@@ -170,16 +174,18 @@ Must Not
 
 Responsibilities
 
-- Streaming Datasetを読む
-- TrainingPositionを供給する
-- Texel Lossを計算する
-- EvaluationSnapshotを生成する
-- Feature Vectorを扱う
-- Gradientを集計する
-- SGDでWeight更新する
-- Learning Rate Schedulerを適用する
-- Best Weightを保存する
-- Resume Trainingを行う
+- Parquet Datasetの読み込み
+- TrainingPositionの生成
+- EvaluationSnapshotの生成
+- Feature Vectorの利用
+- Texel Loss
+- Gradient計算
+- Mini-batch SGD
+- Validation
+- Learning Rate Scheduling
+- Best Weight保存
+- Resume Training
+- Early Stopping
 
 Must Not
 
@@ -221,7 +227,64 @@ Featureはraw scoreのみ返す。
 
 Featureは状態を保持してはならない。
 
-詳しくはevaluation.mdに記す。
+Featureの実行順序は FEATURES Registry によって決定する。
+
+Feature Vectorの順序はWeightの順序と一致しなければならない。
+
+---
+
+# Feature Registry
+
+Feature の実行順序と Weight の対応関係は `FEATURES` によって定義する。
+
+現在の Feature Registry は以下の順序を正とする。
+
+1. material
+2. piece_square
+3. mobility
+4. isolated_pawn
+5. doubled_pawn
+6. passed_pawn
+7. king_safety
+8. bishop_pair
+9. open_file
+10. semi_open_file
+11. pawn_shield
+12. knight_outpost
+13. connected_rooks
+14. rook_seventh
+15. space
+16. bishop_mobility
+17. rook_mobility
+18. knight_mobility
+19. queen_mobility
+
+Feature Vector のインデックスはこの順序に依存する。
+
+Feature の追加・削除・並び替えを行った場合、Weight と Training Dataset の互換性を確認する必要がある。
+
+---
+
+# Training Data Architecture
+
+Training DatasetはParquet形式で保存する。
+
+現在のデータ形式は以下とする。
+
+train.parquet
+valid.parquet
+
+columns:
+- fen
+- target_cp
+- source_depth
+- feature_values
+
+target_cp はStockfish由来の評価値を学習対象として使用する。
+
+source_depth は元評価の深さを保持する。
+
+feature_values はDataset生成時点で計算されたFeature Vectorを保持する。
 
 ---
 
@@ -245,9 +308,7 @@ SearchがFeatureを直接呼ぶことは禁止。
 
 ---
 
-# Weight Evolution
-
-WeightManager
+# WeightManager
 
 Responsibilities
 
@@ -264,32 +325,80 @@ Responsibilities
 
 # Tuning Flow
 
+Training Dataset の構築と Training は分離する。
+
+## Dataset Build
+
+```
+Lichess Dataset
+▼
+build_training_dataset.py
+▼
+FEN
+▼
+Evaluator
+▼
+EvaluationSnapshot
+▼
+Feature Vector
+▼
+Parquet
+```
+Dataset Build の責務は、元データから学習可能な Parquet Dataset を生成することである。
+
+Parquet Dataset には以下を保存する。
+
+- fen
+- target_cp
+- source_depth
+- feature_values
+
+Feature Vector は Dataset Build 時点の Feature Registry に基づいて生成される。
+
+そのため Feature の構成を変更した場合、学習用 Parquet Dataset を再生成する。
+
+---
+
+## Training
 ```
 ParquetDataset
-        ▼
-TrainingPosition
-        ▼
-Evaluator
-        ▼
-EvaluationSnapshot
-        ▼
+▼
+TrainingPosition / Feature Vector
+▼
 Gradient
-        ▼
+▼
 Optimizer
-        ▼
+▼
 WeightManager
-        ▼
+▼
 LossEvaluator
-        ▼
+▼
 ReduceLROnPlateau
-        ▼
+▼
 Best Weight
 ```
+
+Training は元データから Feature を再計算する責務を持たない。
+
+Dataset Build で生成された Feature Vector を学習に利用する。
+
+---
+
+## Dataset / Weight Separation
+
+Training Dataset と Weight は独立した成果物として扱う。
+
+Feature の変更は Weight の変更とは別の変更である。
+
+Feature の追加・削除・順序変更を行った場合は、対応する Training Dataset を再生成する。
+
+既存の Weight を新しい Feature Vector にそのまま適用してはならない。
+
 ---
 
 # EvaluationSnapshot
 
-EvaluationSnapshot は学習専用データである。
+EvaluationSnapshotは学習用の評価結果を保持する。
 
 保持するもの
 
@@ -297,11 +406,11 @@ EvaluationSnapshot は学習専用データである。
 - raw_features
 - feature_vector
 
-feature_vector は FEATURES の順番で保持する。
+feature_vector は FEATURES の順番で生成される。
 
-学習では feature_vector を使用する。
+raw_features はFeature名とraw scoreの対応を保持する。
 
-raw_features は可視化・デバッグ用途とする。
+学習ではFeature VectorをGradient計算に利用する。
 
 ---
 

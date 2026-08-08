@@ -1,24 +1,28 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-
-from chess_ai_lab.evaluation.evaluator import Evaluator
-from chess_ai_lab.evaluation.weight_manager import WeightManager
-from chess_ai_lab.tuning.gradient import compute_gradient_array
-from chess_ai_lab.tuning.optimizer import SGDOptimizer
-from chess_ai_lab.tuning.position import TrainingPosition
-
-from chess_ai_lab.tuning.dataset import ParquetDataset
-from chess_ai_lab.tuning.loss_evaluator import LossEvaluator
-
 from pathlib import Path
-from chess_ai_lab.tuning.lr_scheduler import ReduceLROnPlateauScheduler
 
 import numpy as np
 
+from chess_ai_lab.evaluation.evaluator import Evaluator
+from chess_ai_lab.evaluation.weight_manager import WeightManager
+from chess_ai_lab.tuning.benchmark import BenchmarkTimer
+from chess_ai_lab.tuning.dataset import ParquetDataset
+from chess_ai_lab.tuning.evaluation_snapshot import EvaluationSnapshot
+from chess_ai_lab.tuning.gradient import (
+    compute_gradient_batch,
+)
+from chess_ai_lab.tuning.loss_evaluator import LossEvaluator
+from chess_ai_lab.tuning.lr_scheduler import ReduceLROnPlateauScheduler
+from chess_ai_lab.tuning.optimizer import SGDOptimizer
+from chess_ai_lab.tuning.position import TrainingPosition
+from chess_ai_lab.tuning.weight_vector import WeightVector
+
+
 class Trainer:
     """
-    Texel Tuning Trainer
+    Texel Tuning Trainer.
     """
 
     def __init__(
@@ -33,7 +37,7 @@ class Trainer:
         self.optimizer = SGDOptimizer(
             learning_rate=learning_rate,
         )
-        
+
         self.scheduler = ReduceLROnPlateauScheduler(
             optimizer=self.optimizer,
             factor=0.5,
@@ -45,61 +49,197 @@ class Trainer:
         self,
         samples: Iterable[TrainingPosition],
         max_samples: int | None = None,
-        batch_size: int = 1024,
+        batch_size: int = 4096,
     ) -> None:
         """
         1エポック学習する。
+
+        ParquetDatasetの場合は、Parquetのバッチを
+        そのままNumPy計算へ渡す。
         """
 
-        gradients = np.zeros(
-            len(self.weight_manager.feature_names()),
-            dtype=np.float64,
+        weight_vector = WeightVector(
+            self.weight_manager,
         )
 
-        batch_count = 0
+        weights = weight_vector.array
+
+        benchmark = BenchmarkTimer()
+
         sample_count = 0
 
-        for sample in samples:
+        if isinstance(samples, ParquetDataset):
 
-            if (
-                max_samples is not None
-                and sample_count >= max_samples
-            ):
-                break
+            for batch in samples.iter_batches():
 
-            snapshot = self.evaluator.snapshot(
-                sample.board,
-            )
+                if (
+                    max_samples is not None
+                    and sample_count >= max_samples
+                ):
+                    break
 
-            gradients += compute_gradient_array(
-                snapshot,
-                sample.target_cp,
-            )
+                remaining: int | None = None
 
-            batch_count += 1
-            sample_count += 1
+                if max_samples is not None:
+                    remaining = (
+                        max_samples - sample_count
+                    )
 
-            if batch_count >= batch_size:
+                if (
+                    remaining is not None
+                    and batch.size > remaining
+                ):
 
-                gradients /= batch_count
+                    if batch.feature_matrix is not None:
 
-                self.optimizer.step(
-                    self.weight_manager,
-                    gradients,
+                        X = batch.feature_matrix[
+                            :remaining
+                        ]
+
+                        targets = batch.target_cps[
+                            :remaining
+                        ]
+
+                    else:
+                        raise RuntimeError(
+                            "Batch training requires "
+                            "feature_values."
+                        )
+
+                else:
+
+                    if batch.feature_matrix is None:
+                        raise RuntimeError(
+                            "Batch training requires "
+                            "feature_values."
+                        )
+
+                    X = batch.feature_matrix
+                    targets = batch.target_cps
+
+                if len(X) == 0:
+                    break
+
+                # -------------------------
+                # Evaluation
+                # -------------------------
+
+                with benchmark.measure("evaluation"):
+
+                    totals = X @ weights
+
+                # -------------------------
+                # Gradient
+                # -------------------------
+
+                with benchmark.measure("gradient"):
+
+                    gradients = compute_gradient_batch(
+                        feature_matrix=X,
+                        totals=totals,
+                        target_cps=targets,
+                    )
+
+                    gradients /= len(X)
+
+                # -------------------------
+                # Optimizer
+                # -------------------------
+
+                with benchmark.measure("optimizer"):
+
+                    self.optimizer.step(
+                        weight_vector,
+                        gradients,
+                    )
+
+                sample_count += len(X)
+
+                if (
+                    max_samples is not None
+                    and sample_count >= max_samples
+                ):
+                    break
+
+        else:
+            # ParquetDataset以外のIterable用。
+            # 既存APIとの互換性を維持する。
+
+            feature_batch: list[np.ndarray] = []
+            target_batch: list[float] = []
+
+            def process_batch() -> None:
+
+                if not feature_batch:
+                    return
+
+                X = np.asarray(
+                    feature_batch,
+                    dtype=np.float64,
                 )
 
-                gradients.fill(0.0)
+                targets = np.asarray(
+                    target_batch,
+                    dtype=np.float64,
+                )
 
-                batch_count = 0
+                with benchmark.measure("evaluation"):
 
-        if batch_count > 0:
+                    totals = X @ weights
 
-            gradients /= batch_count
+                with benchmark.measure("gradient"):
 
-            self.optimizer.step(
-                self.weight_manager,
-                gradients,
-            )
+                    gradients = compute_gradient_batch(
+                        feature_matrix=X,
+                        totals=totals,
+                        target_cps=targets,
+                    )
+
+                    gradients /= len(X)
+
+                with benchmark.measure("optimizer"):
+
+                    self.optimizer.step(
+                        weight_vector,
+                        gradients,
+                    )
+
+                feature_batch.clear()
+                target_batch.clear()
+
+            for sample in samples:
+
+                if (
+                    max_samples is not None
+                    and sample_count >= max_samples
+                ):
+                    break
+
+                if sample.feature_values is None:
+                    raise RuntimeError(
+                        "Batch training requires "
+                        "feature_values."
+                    )
+
+                feature_batch.append(
+                    sample.feature_values
+                )
+
+                target_batch.append(
+                    sample.target_cp
+                )
+
+                sample_count += 1
+
+                if len(feature_batch) >= batch_size:
+                    process_batch()
+
+            process_batch()
+
+        weight_vector.sync_to_manager()
+
+        benchmark.report()
+
         
     def fit(
         self,
@@ -121,9 +261,9 @@ class Trainer:
         loss_evaluator = LossEvaluator(
             self.evaluator,
         )
-        
+
         best_loss = float("inf")
-        
+
         no_improve_count = 0
 
         for epoch in range(1, epochs + 1):
@@ -137,7 +277,6 @@ class Trainer:
             train_loss: float | None = None
 
             if epoch % train_loss_interval == 0:
-
                 train_loss = loss_evaluator.evaluate(
                     train_dataset,
                     max_samples=max_train_samples,
@@ -146,14 +285,13 @@ class Trainer:
             valid_loss: float | None = None
 
             if epoch % validation_interval == 0:
-
                 valid_loss = loss_evaluator.evaluate(
                     valid_dataset,
                     max_samples=max_valid_samples,
                 )
 
                 self.scheduler.step(valid_loss)
-            
+
             if valid_loss is not None:
 
                 if valid_loss < best_loss:
@@ -173,7 +311,6 @@ class Trainer:
                         )
 
                 else:
-
                     no_improve_count += 1
 
             train_loss_text = (
@@ -181,12 +318,12 @@ class Trainer:
                 if train_loss is not None
                 else "-"
             )
-            
+
             valid_loss_text = (
                 f"{valid_loss:.6f}"
                 if valid_loss is not None
                 else "-"
-            )            
+            )
 
             print(
                 f"Epoch {epoch:3d} | "
@@ -194,6 +331,7 @@ class Trainer:
                 f"Train Loss = {train_loss_text} | "
                 f"Valid Loss = {valid_loss_text}"
             )
+
             if (
                 patience is not None
                 and no_improve_count >= patience

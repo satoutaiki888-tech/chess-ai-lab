@@ -16,11 +16,18 @@ class TrainingPosition:
 
     Feature の順序は evaluation.features.FEATURES に従う。
 
-    現在は None のまま使用し、
-    Feature を保存するようになってから利用する。
+    feature_values は Parquet に保存された Feature の生値を保持する。
+    旧形式のデータセットとの互換性のため None の場合もある。
+    """
+    """
+    board
+
+    feature_values が存在しないデータセットとの互換性のため保持する。
+
+    feature_values が利用可能な場合は None のことがある。
     """
 
-    board: chess.Board
+    board: chess.Board | None
 
     target_cp: int
 

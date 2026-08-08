@@ -7,7 +7,7 @@ from chess_ai_lab.tuning.config import (
     PRODUCTION_CONFIG, DEV_CONFIG,
 )
 
-config = DEV_CONFIG
+config = PRODUCTION_CONFIG
 weights = WeightManager()
 
 from pathlib import Path

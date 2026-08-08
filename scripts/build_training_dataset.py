@@ -7,6 +7,9 @@ import random
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+import chess
+
+from chess_ai_lab.evaluation.evaluator import Evaluator
 
 class ParquetStreamWriter:
     """
@@ -94,6 +97,7 @@ def parse_args() -> argparse.Namespace:
 def process_position(
     row: dict,
     *,
+    evaluator: Evaluator,
     min_depth: int,
     cp_limit: int,
 ) -> dict | None:
@@ -116,14 +120,21 @@ def process_position(
         min(cp_limit, row["cp"]),
     )
 
+    board = chess.Board(row["fen"])
+
+    snapshot = evaluator.snapshot(board)
+
     return {
         "fen": row["fen"],
         "target_cp": cp,
         "source_depth": row["depth"],
+        "feature_values": snapshot.feature_vector.tolist(),
     }
     
 def main() -> None:
     args = parse_args()
+    
+    evaluator = Evaluator()
 
     args.output_dir.mkdir(
         parents=True,
@@ -198,6 +209,7 @@ def main() -> None:
 
             sample = process_position(
                 row,
+                evaluator=evaluator,
                 min_depth=args.min_depth,
                 cp_limit=args.cp_limit,
             )

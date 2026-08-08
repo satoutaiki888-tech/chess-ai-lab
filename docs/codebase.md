@@ -122,41 +122,31 @@ Rule
 
 1 Feature = 1 File
 
-Current Files
+Current Features
 
-material.py
+- material
+- piece_square
+- mobility
+- isolated_pawn
+- doubled_pawn
+- passed_pawn
+- king_safety
+- bishop_pair
+- open_file
+- semi_open_file
+- pawn_shield
+- knight_outpost
+- connected_rooks
+- rook_seventh
+- space
+- bishop_mobility
+- rook_mobility
+- knight_mobility
+- queen_mobility
 
-mobility.py
+Feature Registry の実行順序は `evaluation/evaluator.py` 側の `FEATURES` を正とする。
 
-piece_square.py
-
-pawn_structure.py
-
-king_safety.py
-
-bishop_pair.py
-
-pawn_shield.py
-
-rook_file.py
-
-connected_rooks.py
-
-rook_seventh.py
-
-space.py
-
-bishop_mobility.py
-
-knight_mobility.py
-
-rook_mobility.py
-
-queen_mobility.py
-
-knight_outpost.py
-
-mobility_utils.py
+Feature Vector はこの順序に従って生成される。
 
 ---
 
@@ -464,6 +454,9 @@ Must Not
 - Loss
 - Optimization
 - Search
+- Feature の再計算
+
+Dataset Build 済みの Feature Vector を利用する。
 
 ---
 
@@ -482,8 +475,8 @@ Responsibilities
 
 Must Not
 
-- Dataset Implementation
-- Loss Formula
+- Dataset Generation
+- Feature Implementation
 - Search
 
 ---
@@ -564,7 +557,12 @@ Must Not
 
 Responsibilities
 
-TrainingPosition
+- TrainingPosition
+
+Must Not
+
+- Feature calculation
+- Weight update
 
 ---
 
@@ -606,6 +604,19 @@ Responsibilities
 - Training configuration
 - Development configuration
 - Production configuration
+
+Current Configuration
+
+- learning_rate
+- epochs
+- batch_size
+- max_train_samples
+- max_valid_samples
+- patience
+- train_loss_interval
+- validation_interval
+- best_weight_path
+- output_weight_path
 
 Must Not
 
@@ -679,9 +690,48 @@ selfplay_eval.py should be unified.
 
 Responsibilities
 
-- Load Dataset
-- Resume Training
-- Run Trainer
+- TrainingConfig の選択
+- WeightManager の生成
+- Best Weight の Resume
+- ParquetDataset の生成
+- Trainer の実行
+- 最終 Weight の保存
+
+Must Not
+
+- Dataset Generation
+- Feature Implementation
+- Training Algorithm の実装
+
+---
+
+## build_training_dataset.py
+
+Responsibilities
+
+- Lichess/chess-position-evaluations の読み込み
+- Streaming Dataset 処理
+- Mate 局面の除外
+- Minimum Depth によるフィルタリング
+- Centipawn 値の Clamp
+- EvaluationSnapshot の生成
+- Feature Vector の生成
+- Train / Validation 分割
+- Parquet への Streaming 保存
+
+Output
+
+- train.parquet
+- valid.parquet
+
+Stored Fields
+
+- fen
+- target_cp
+- source_depth
+- feature_values
+
+Feature の構成を変更した場合は、この Script を再実行して Training Dataset を再生成する。
 
 ---
 
@@ -770,22 +820,6 @@ Training Loop
 ↓
 
 tuning/trainer.py
-
----
-
-Dataset
-
-↓
-
-tuning/dataset.py
-
----
-
-Gradient
-
-↓
-
-tuning/gradient.py
 
 ---
 

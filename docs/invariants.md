@@ -187,9 +187,58 @@ Trainerだけが
 
 ---
 
+# Training Dataset
+
+## Dataset Generation
+
+Training Dataset は `build_training_dataset.py` によって生成する。
+
+Dataset Build と Training は別の処理として扱う。
+
+Dataset Build は
+
+- 元データの読み込み
+- 局面のフィルタリング
+- Target Score の前処理
+- Feature Vector の生成
+- Parquet への保存
+
+を担当する。
+
+Trainer は元データセットから Feature を再計算してはならない。
+
+---
+
+## Feature Vector Consistency
+
+Parquet に保存された Feature Vector は、Dataset Build 時点の Feature Registry に対応する。
+
+Feature の
+
+- 追加
+- 削除
+- 順序変更
+- Feature の計算内容の変更
+
+を行った場合、既存の Training Dataset をそのまま使用してはならない。
+
+必要に応じて Training Dataset を再生成する。
+
+---
+
+## Feature / Weight Compatibility
+
+Feature Vector の次元数と Weight の次元数は一致しなければならない。
+
+Feature Registry の順序と Weight の順序は一致しなければならない。
+
+異なる Feature Registry から生成された Dataset と Weight を組み合わせて学習してはならない。
+
+---
+
 # EvaluationSnapshot
 
-EvaluationSnapshot は学習専用データである。
+EvaluationSnapshot は Evaluation 結果を学習用 Feature Vector に変換するためのデータ構造である。
 
 保持するもの
 
@@ -197,12 +246,13 @@ EvaluationSnapshot は学習専用データである。
 - raw_features
 - feature_vector
 
-feature_vector は学習処理で利用する。
+Dataset Build 時に Evaluator が EvaluationSnapshot を生成する。
 
-raw_features は可視化・デバッグ用途とする。
+生成された feature_vector は Training Dataset に保存される。
 
-EvaluationSnapshot は探索処理では利用しない。
+Training 時には保存済みの Feature Vector を利用し、Feature の再計算を行わない。
 
+EvaluationSnapshot 自体は探索処理では利用しない。
 ---
 
 # Scripts

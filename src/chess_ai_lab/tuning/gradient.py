@@ -3,7 +3,11 @@ from __future__ import annotations
 import math
 
 import numpy as np
-from chess_ai_lab.evaluation.snapshot import EvaluationSnapshot
+
+from chess_ai_lab.tuning.evaluation_snapshot import (
+    EvaluationSnapshot,
+)
+
 
 TEXEL_SCALE = 400.0
 LN10 = math.log(10.0)
@@ -18,14 +22,16 @@ def _gradient_coefficient(
     """
 
     predicted = 1.0 / (
-        1.0 + math.pow(
+        1.0
+        + math.pow(
             10.0,
             -snapshot.total / TEXEL_SCALE,
         )
     )
 
     target = 1.0 / (
-        1.0 + math.pow(
+        1.0
+        + math.pow(
             10.0,
             -target_cp / TEXEL_SCALE,
         )
@@ -115,3 +121,59 @@ def accumulate_gradients(
         gradient_vector,
     ):
         gradients[name] += float(value)
+
+
+def compute_gradient_batch(
+    feature_matrix: np.ndarray,
+    totals: np.ndarray,
+    target_cps: np.ndarray,
+) -> np.ndarray:
+    """
+    複数局面分のTexel勾配を一括計算する。
+
+    Parameters
+    ----------
+    feature_matrix:
+        shape = (batch_size, feature_count)
+
+    totals:
+        shape = (batch_size,)
+
+    target_cps:
+        shape = (batch_size,)
+
+    Returns
+    -------
+    np.ndarray
+        shape = (feature_count,)
+        バッチ全体の勾配の合計。
+    """
+
+    predicted = 1.0 / (
+        1.0
+        + np.power(
+            10.0,
+            -totals / TEXEL_SCALE,
+        )
+    )
+
+    target = 1.0 / (
+        1.0
+        + np.power(
+            10.0,
+            -target_cps / TEXEL_SCALE,
+        )
+    )
+
+    coefficients = (
+        2.0
+        * (predicted - target)
+        * (
+            LN10
+            / TEXEL_SCALE
+            * predicted
+            * (1.0 - predicted)
+        )
+    )
+
+    return coefficients @ feature_matrix

@@ -3,7 +3,9 @@ from __future__ import annotations
 import numpy as np
 
 from chess_ai_lab.evaluation.weight_manager import WeightManager
-
+from chess_ai_lab.tuning.weight_vector import (
+    WeightVector,
+)
 
 class SGDOptimizer:
     """
@@ -18,18 +20,14 @@ class SGDOptimizer:
 
     def step(
         self,
-        weight_manager: WeightManager,
+        weight_vector: WeightVector,
         gradients: np.ndarray,
     ) -> None:
         """
         Weightを1ステップ更新する。
         """
 
-        weights = weight_manager.to_array()
-
-        weights -= (
-            self.learning_rate
-            * gradients
+        weight_vector.apply_gradient(
+            gradients,
+            self.learning_rate,
         )
-
-        weight_manager.from_array(weights)
