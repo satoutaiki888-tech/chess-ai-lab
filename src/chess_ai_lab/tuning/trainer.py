@@ -47,16 +47,10 @@ class Trainer:
 
     def train_epoch(
         self,
-        samples: Iterable[TrainingPosition],
-        max_samples: int | None = None,
+        X: np.ndarray,
+        targets: np.ndarray,
         batch_size: int = 4096,
     ) -> None:
-        """
-        1エポック学習する。
-
-        ParquetDatasetの場合は、Parquetのバッチを
-        そのままNumPy計算へ渡す。
-        """
 
         weight_vector = WeightVector(
             self.weight_manager,
@@ -66,175 +60,42 @@ class Trainer:
 
         benchmark = BenchmarkTimer()
 
-        sample_count = 0
+        sample_count = len(X)
 
-        if isinstance(samples, ParquetDataset):
+        for start in range(
+            0,
+            sample_count,
+            batch_size,
+        ):
 
-            for batch in samples.iter_batches():
+            end = min(
+                start + batch_size,
+                sample_count,
+            )
 
-                if (
-                    max_samples is not None
-                    and sample_count >= max_samples
-                ):
-                    break
+            X_batch = X[start:end]
+            targets_batch = targets[start:end]
 
-                remaining: int | None = None
+            with benchmark.measure("evaluation"):
 
-                if max_samples is not None:
-                    remaining = (
-                        max_samples - sample_count
-                    )
+                totals = X_batch @ weights
 
-                if (
-                    remaining is not None
-                    and batch.size > remaining
-                ):
+            with benchmark.measure("gradient"):
 
-                    if batch.feature_matrix is not None:
-
-                        X = batch.feature_matrix[
-                            :remaining
-                        ]
-
-                        targets = batch.target_cps[
-                            :remaining
-                        ]
-
-                    else:
-                        raise RuntimeError(
-                            "Batch training requires "
-                            "feature_values."
-                        )
-
-                else:
-
-                    if batch.feature_matrix is None:
-                        raise RuntimeError(
-                            "Batch training requires "
-                            "feature_values."
-                        )
-
-                    X = batch.feature_matrix
-                    targets = batch.target_cps
-
-                if len(X) == 0:
-                    break
-
-                # -------------------------
-                # Evaluation
-                # -------------------------
-
-                with benchmark.measure("evaluation"):
-
-                    totals = X @ weights
-
-                # -------------------------
-                # Gradient
-                # -------------------------
-
-                with benchmark.measure("gradient"):
-
-                    gradients = compute_gradient_batch(
-                        feature_matrix=X,
-                        totals=totals,
-                        target_cps=targets,
-                    )
-
-                    gradients /= len(X)
-
-                # -------------------------
-                # Optimizer
-                # -------------------------
-
-                with benchmark.measure("optimizer"):
-
-                    self.optimizer.step(
-                        weight_vector,
-                        gradients,
-                    )
-
-                sample_count += len(X)
-
-                if (
-                    max_samples is not None
-                    and sample_count >= max_samples
-                ):
-                    break
-
-        else:
-            # ParquetDataset以外のIterable用。
-            # 既存APIとの互換性を維持する。
-
-            feature_batch: list[np.ndarray] = []
-            target_batch: list[float] = []
-
-            def process_batch() -> None:
-
-                if not feature_batch:
-                    return
-
-                X = np.asarray(
-                    feature_batch,
-                    dtype=np.float64,
+                gradients = compute_gradient_batch(
+                    feature_matrix=X_batch,
+                    totals=totals,
+                    target_cps=targets_batch,
                 )
 
-                targets = np.asarray(
-                    target_batch,
-                    dtype=np.float64,
+                gradients /= len(X_batch)
+
+            with benchmark.measure("optimizer"):
+
+                self.optimizer.step(
+                    weight_vector,
+                    gradients,
                 )
-
-                with benchmark.measure("evaluation"):
-
-                    totals = X @ weights
-
-                with benchmark.measure("gradient"):
-
-                    gradients = compute_gradient_batch(
-                        feature_matrix=X,
-                        totals=totals,
-                        target_cps=targets,
-                    )
-
-                    gradients /= len(X)
-
-                with benchmark.measure("optimizer"):
-
-                    self.optimizer.step(
-                        weight_vector,
-                        gradients,
-                    )
-
-                feature_batch.clear()
-                target_batch.clear()
-
-            for sample in samples:
-
-                if (
-                    max_samples is not None
-                    and sample_count >= max_samples
-                ):
-                    break
-
-                if sample.feature_values is None:
-                    raise RuntimeError(
-                        "Batch training requires "
-                        "feature_values."
-                    )
-
-                feature_batch.append(
-                    sample.feature_values
-                )
-
-                target_batch.append(
-                    sample.target_cp
-                )
-
-                sample_count += 1
-
-                if len(feature_batch) >= batch_size:
-                    process_batch()
-
-            process_batch()
 
         weight_vector.sync_to_manager()
 
@@ -254,40 +115,62 @@ class Trainer:
         train_loss_interval: int = 1,
         validation_interval: int = 1,
     ) -> None:
-        """
-        複数エポック学習する。
-        """
+
+        print("Loading training dataset into memory...")
+
+        train_X, train_targets = self._load_dataset_arrays(
+            train_dataset,
+            max_samples=max_train_samples,
+        )
+
+        print(
+            f"Training samples: {len(train_X):,}"
+        )
+
+        print("Loading validation dataset into memory...")
+
+        valid_X, valid_targets = self._load_dataset_arrays(
+            valid_dataset,
+            max_samples=max_valid_samples,
+        )
+
+        print(
+            f"Validation samples: {len(valid_X):,}"
+        )
 
         loss_evaluator = LossEvaluator(
             self.evaluator,
         )
 
         best_loss = float("inf")
-
         no_improve_count = 0
 
         for epoch in range(1, epochs + 1):
 
             self.train_epoch(
-                train_dataset,
-                max_samples=max_train_samples,
+                train_X,
+                train_targets,
                 batch_size=batch_size,
             )
 
-            train_loss: float | None = None
+            train_loss = None
 
             if epoch % train_loss_interval == 0:
-                train_loss = loss_evaluator.evaluate(
-                    train_dataset,
-                    max_samples=max_train_samples,
+
+                train_loss = self._evaluate_arrays(
+                    train_X,
+                    train_targets,
+                    batch_size=batch_size,
                 )
 
-            valid_loss: float | None = None
+            valid_loss = None
 
             if epoch % validation_interval == 0:
-                valid_loss = loss_evaluator.evaluate(
-                    valid_dataset,
-                    max_samples=max_valid_samples,
+
+                valid_loss = self._evaluate_arrays(
+                    valid_X,
+                    valid_targets,
+                    batch_size=batch_size,
                 )
 
                 self.scheduler.step(valid_loss)
@@ -311,6 +194,7 @@ class Trainer:
                         )
 
                 else:
+
                     no_improve_count += 1
 
             train_loss_text = (
@@ -340,4 +224,65 @@ class Trainer:
                     f"Early stopping "
                     f"({patience} epochs without improvement)"
                 )
+                break        
+            
+    def _load_dataset_arrays(
+        self,
+        dataset: ParquetDataset,
+        max_samples: int | None = None,
+    ) -> tuple[np.ndarray, np.ndarray]:
+
+        feature_batches: list[np.ndarray] = []
+        target_batches: list[np.ndarray] = []
+
+        collected = 0
+
+        for batch in dataset.iter_batches():
+
+            if batch.feature_matrix is None:
+                raise RuntimeError(
+                    "Dataset batch does not contain "
+                    "feature_matrix."
+                )
+
+            X = batch.feature_matrix
+            targets = batch.target_cps
+
+            if max_samples is not None:
+
+                remaining = max_samples - collected
+
+                if remaining <= 0:
+                    break
+
+                if len(X) > remaining:
+                    X = X[:remaining]
+                    targets = targets[:remaining]
+
+            feature_batches.append(X)
+            target_batches.append(targets)
+
+            collected += len(X)
+
+            if (
+                max_samples is not None
+                and collected >= max_samples
+            ):
                 break
+
+        if not feature_batches:
+            raise RuntimeError(
+                "Dataset contains no training samples."
+            )
+
+        X = np.concatenate(
+            feature_batches,
+            axis=0,
+        )
+
+        targets = np.concatenate(
+            target_batches,
+            axis=0,
+        )
+
+        return X, targets        
