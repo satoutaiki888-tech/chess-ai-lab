@@ -1,44 +1,53 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-from datasets import load_dataset
+import hashlib
+import json
 import random
+from pathlib import Path
 
+from datasets import load_dataset
 import pyarrow as pa
 import pyarrow.parquet as pq
 import chess
 
 from chess_ai_lab.evaluation.evaluator import Evaluator
+from chess_ai_lab.evaluation.features import FEATURES
 
-class ParquetStreamWriter:
+
+def build_feature_metadata() -> dict[bytes, bytes]:
     """
-    Parquetへ逐次書き込む。
+    現在のFeature Registry情報をParquet metadata用に生成する。
     """
 
-    def __init__(self, path: Path):
-        self.path = path
-        self.writer: pq.ParquetWriter | None = None
+    feature_names = [
+        name
+        for name, _ in FEATURES
+    ]
 
-    def write(self, rows: list[dict]) -> None:
-        if not rows:
-            return
+    canonical = json.dumps(
+        feature_names,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
 
-        table = pa.Table.from_pylist(rows)
+    feature_schema_hash = hashlib.sha256(
+        canonical.encode("utf-8")
+    ).hexdigest()
 
-        if self.writer is None:
-            self.writer = pq.ParquetWriter(
-                self.path,
-                table.schema,
-                compression="zstd",
-            )
+    return {
+        b"chess_ai_lab.feature_names": (
+            canonical.encode("utf-8")
+        ),
+        b"chess_ai_lab.feature_count": str(
+            len(feature_names)
+        ).encode("utf-8"),
+        b"chess_ai_lab.feature_schema_hash": (
+            feature_schema_hash.encode("utf-8")
+        ),
+    }
 
-        self.writer.write_table(table)
 
-    def close(self) -> None:
-        if self.writer is not None:
-            self.writer.close()
-            
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build Texel training dataset."
@@ -85,7 +94,7 @@ def parse_args() -> argparse.Namespace:
         default=42,
         help="Random seed.",
     )
-    
+
     parser.add_argument(
         "--buffer-size",
         type=int,
@@ -94,6 +103,8 @@ def parse_args() -> argparse.Namespace:
     )
 
     return parser.parse_args()
+
+
 def process_position(
     row: dict,
     *,
@@ -130,10 +141,52 @@ def process_position(
         "source_depth": row["depth"],
         "feature_values": snapshot.feature_vector.tolist(),
     }
-    
+
+
+def apply_feature_metadata(
+    table: pa.Table,
+) -> pa.Table:
+    """
+    Parquet schema metadataへFeature Registry情報を付与する。
+    """
+
+    metadata = dict(table.schema.metadata or {})
+    metadata.update(build_feature_metadata())
+
+    return table.replace_schema_metadata(metadata)
+
+
+def write_table(
+    writer: pq.ParquetWriter | None,
+    path: Path,
+    rows: list[dict],
+) -> pq.ParquetWriter:
+    """
+    rowsをParquetへ書き込む。
+
+    最初のTableにFeature metadataを付与し、
+    そのschemaをParquetWriterで固定する。
+    """
+
+    table = pa.Table.from_pylist(rows)
+
+    table = apply_feature_metadata(table)
+
+    if writer is None:
+        writer = pq.ParquetWriter(
+            path,
+            table.schema,
+            compression="zstd",
+        )
+
+    writer.write_table(table)
+
+    return writer
+
+
 def main() -> None:
     args = parse_args()
-    
+
     evaluator = Evaluator()
 
     args.output_dir.mkdir(
@@ -152,8 +205,8 @@ def main() -> None:
     train_path = args.output_dir / "train.parquet"
     valid_path = args.output_dir / "valid.parquet"
 
-    train_writer = None
-    valid_writer = None
+    train_writer: pq.ParquetWriter | None = None
+    valid_writer: pq.ParquetWriter | None = None
 
     train_buffer: list[dict] = []
     valid_buffer: list[dict] = []
@@ -168,16 +221,11 @@ def main() -> None:
         if not train_buffer:
             return
 
-        table = pa.Table.from_pylist(train_buffer)
-
-        if train_writer is None:
-            train_writer = pq.ParquetWriter(
-                train_path,
-                table.schema,
-                compression="zstd",
-            )
-
-        train_writer.write_table(table)
+        train_writer = write_table(
+            train_writer,
+            train_path,
+            train_buffer,
+        )
 
         train_count += len(train_buffer)
 
@@ -189,16 +237,11 @@ def main() -> None:
         if not valid_buffer:
             return
 
-        table = pa.Table.from_pylist(valid_buffer)
-
-        if valid_writer is None:
-            valid_writer = pq.ParquetWriter(
-                valid_path,
-                table.schema,
-                compression="zstd",
-            )
-
-        valid_writer.write_table(table)
+        valid_writer = write_table(
+            valid_writer,
+            valid_path,
+            valid_buffer,
+        )
 
         valid_count += len(valid_buffer)
 
@@ -248,6 +291,7 @@ def main() -> None:
     print(f"Collected : {collected:,}")
     print(f"Train     : {train_count:,}")
     print(f"Valid     : {valid_count:,}")
-    
+
+
 if __name__ == "__main__":
     main()

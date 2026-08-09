@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,6 +11,7 @@ import chess
 import numpy as np
 import pyarrow.parquet as pq
 
+from chess_ai_lab.evaluation.features import FEATURES
 from chess_ai_lab.tuning.position import TrainingPosition
 
 
@@ -53,6 +56,118 @@ class ParquetDataset:
         self._path = Path(path)
         self._batch_size = batch_size
 
+    @staticmethod
+    def _current_feature_names() -> list[str]:
+        return [
+            name
+            for name, _ in FEATURES
+        ]
+
+    @classmethod
+    def _current_feature_schema_hash(cls) -> str:
+        canonical = json.dumps(
+            cls._current_feature_names(),
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+
+        return hashlib.sha256(
+            canonical.encode("utf-8")
+        ).hexdigest()
+
+    def _validate_feature_metadata(
+        self,
+        parquet: pq.ParquetFile,
+    ) -> None:
+        metadata = parquet.schema_arrow.metadata
+
+        if metadata is None:
+            raise ValueError(
+                f"Parquet dataset has no schema metadata: "
+                f"{self._path}"
+            )
+
+        feature_names_raw = metadata.get(
+            b"chess_ai_lab.feature_names"
+        )
+
+        feature_count_raw = metadata.get(
+            b"chess_ai_lab.feature_count"
+        )
+
+        feature_schema_hash_raw = metadata.get(
+            b"chess_ai_lab.feature_schema_hash"
+        )
+
+        if (
+            feature_names_raw is None
+            or feature_count_raw is None
+            or feature_schema_hash_raw is None
+        ):
+            raise ValueError(
+                "Parquet dataset is missing required "
+                "Feature Registry metadata: "
+                f"{self._path}"
+            )
+
+        try:
+            dataset_feature_names = json.loads(
+                feature_names_raw.decode("utf-8")
+            )
+
+            dataset_feature_count = int(
+                feature_count_raw.decode("utf-8")
+            )
+
+            dataset_feature_schema_hash = (
+                feature_schema_hash_raw.decode("utf-8")
+            )
+
+        except (UnicodeDecodeError, ValueError, TypeError, json.JSONDecodeError) as exc:
+            raise ValueError(
+                "Invalid Feature Registry metadata in "
+                f"{self._path}"
+            ) from exc
+
+        current_feature_names = (
+            self._current_feature_names()
+        )
+
+        current_feature_count = len(
+            current_feature_names
+        )
+
+        current_feature_schema_hash = (
+            self._current_feature_schema_hash()
+        )
+
+        if dataset_feature_count != current_feature_count:
+            raise ValueError(
+                "Feature count mismatch.\n"
+                f"Dataset: {dataset_feature_count}\n"
+                f"Current: {current_feature_count}\n"
+                f"Path: {self._path}"
+            )
+
+        if dataset_feature_names != current_feature_names:
+            raise ValueError(
+                "Feature Registry order/name mismatch.\n"
+                f"Dataset: {dataset_feature_names}\n"
+                f"Current: {current_feature_names}\n"
+                f"Path: {self._path}"
+            )
+
+        if (
+            dataset_feature_schema_hash
+            != current_feature_schema_hash
+        ):
+            raise ValueError(
+                "Feature schema hash mismatch.\n"
+                f"Dataset: {dataset_feature_schema_hash}\n"
+                f"Current: {current_feature_schema_hash}\n"
+                f"Path: {self._path}"
+            )
+
     def iter_batches(self) -> Iterator[TrainingBatch]:
         """
         学習データをTrainingBatch単位で返す。
@@ -63,6 +178,8 @@ class ParquetDataset:
         print(f"Opening Parquet: {self._path}")
 
         parquet = pq.ParquetFile(self._path)
+
+        self._validate_feature_metadata(parquet)
 
         print(
             f"Parquet opened in "
@@ -113,6 +230,23 @@ class ParquetDataset:
                     raise ValueError(
                         "feature_values must be a "
                         "2-dimensional array."
+                    )
+
+                expected_feature_count = len(
+                    FEATURES
+                )
+
+                if (
+                    feature_matrix.shape[1]
+                    != expected_feature_count
+                ):
+                    raise ValueError(
+                        "Feature vector dimension mismatch.\n"
+                        f"Dataset: "
+                        f"{feature_matrix.shape[1]}\n"
+                        f"Current: "
+                        f"{expected_feature_count}\n"
+                        f"Path: {self._path}"
                     )
 
                 if batch_index == 0:
