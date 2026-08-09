@@ -1,16 +1,28 @@
+import argparse
+
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from chess_ai_lab.tuning.config import PRODUCTION_CONFIG
 from chess_ai_lab.tuning.dataset import ParquetDataset
 from chess_ai_lab.tuning.trainer import Trainer
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--fresh",
+    action="store_true",
+    help="Start training from the built-in evaluation weights instead of resuming from best_weight.json.",
+)
+args = parser.parse_args()
 
 config = PRODUCTION_CONFIG
 weights = WeightManager()
 
 best_weight_path = config.best_weight_path
 
-if best_weight_path.exists():
+if best_weight_path.exists() and not args.fresh:
     weights.load_json(best_weight_path)
     print(f"Resume training from {best_weight_path}")
+elif args.fresh:
+    print("Fresh training from built-in evaluation weights")
 
 trainer = Trainer(
     weight_manager=weights,
