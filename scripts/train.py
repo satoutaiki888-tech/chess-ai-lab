@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 from chess_ai_lab.evaluation.weight_manager import WeightManager
 from chess_ai_lab.tuning.config import PRODUCTION_CONFIG
@@ -10,6 +11,12 @@ parser.add_argument(
     "--fresh",
     action="store_true",
     help="Start training from the built-in evaluation weights instead of resuming from best_weight.json.",
+)
+parser.add_argument(
+    "--data-dir",
+    type=Path,
+    default=Path("data/training"),
+    help="Directory containing train.parquet and valid.parquet.",
 )
 args = parser.parse_args()
 
@@ -30,11 +37,11 @@ trainer = Trainer(
 )
 
 train_dataset = ParquetDataset(
-    "data/training/train.parquet",
+    args.data_dir / "train.parquet",
 )
 
 valid_dataset = ParquetDataset(
-    "data/training/valid.parquet",
+    args.data_dir / "valid.parquet",
 )
 
 trainer.fit(
