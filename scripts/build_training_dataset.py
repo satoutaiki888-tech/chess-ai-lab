@@ -63,7 +63,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-samples",
         type=int,
-        default=100_000,
+        default=500_000,
         help="Maximum number of positions.",
     )
 

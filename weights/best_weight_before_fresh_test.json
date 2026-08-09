@@ -1,0 +1,21 @@
+{
+    "material": 0.3218827618344807,
+    "piece_square": 0.45209802632891394,
+    "mobility": 0.683644239671142,
+    "isolated_pawn": 1.063617194442677,
+    "doubled_pawn": 0.9690430653278544,
+    "passed_pawn": 0.6056981054060611,
+    "king_safety": 0.7222562969171105,
+    "bishop_pair": 0.853672359286662,
+    "open_file": 1.0140340336074818,
+    "semi_open_file": 0.9799382347959017,
+    "pawn_shield": 0.9105144556086929,
+    "knight_outpost": 0.9905739667265354,
+    "connected_rooks": 0.9364019767614166,
+    "rook_seventh": 1.0146193163828852,
+    "space": 1.2157051043130553,
+    "bishop_mobility": 0.239594017222356,
+    "rook_mobility": 0.17806791765416444,
+    "knight_mobility": -0.018253652113675318,
+    "queen_mobility": 0.11323976004718446
+}
