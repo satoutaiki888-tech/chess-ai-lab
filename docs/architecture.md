@@ -11,7 +11,7 @@
 
 # Layer Architecture
 
-依存方向は以下のみとする。
+依存方向は以下で固定する。
 
 ```
 Board
@@ -41,20 +41,31 @@ Evolution
 
 下位レイヤーは上位レイヤーを参照してはならない。
 
+Tuning と Evolution は Evaluation を利用するが、
+Search への依存を必須としない。
+
 ---
 
 # Layer Responsibilities
 
 ## Board
 
-責務
+盤面管理のみを担当する。
 
-- python-chess による盤面管理
+Responsibilities
+
+- python-chessによる盤面管理
 - 合法手生成
 - FEN取得
+- 手の適用
+- Undo
 - 終局判定
 
-Boardは評価や探索を行わない。
+Boardは以下を行わない。
+
+Evaluation
+Search
+Weight管理
 
 ---
 
@@ -68,7 +79,9 @@ Responsibilities
 - Weightの適用
 - EvaluationSnapshotの生成
 
-Evaluationは探索を行わない。
+Evaluator だけが Feature と Weight を統合する。
+
+Evaluation は Search を行わない。
 
 ---
 
@@ -157,10 +170,15 @@ Strategy は
 
 Responsibilities
 
-・EPD読込
-・局面評価
-・探索性能測定
-・客観的な強さ測定
+Engine の性能・強さを測定する。
+
+EPD 読み込み
+局面ごとの探索
+正解手との比較
+Accuracy
+Nodes
+NPS
+Elapsed Time
 
 Must Not
 
@@ -353,9 +371,17 @@ Parquet Dataset には以下を保存する。
 - source_depth
 - feature_values
 
-Feature Vector は Dataset Build 時点の Feature Registry に基づいて生成される。
+さらに Parquet metadata に Feature Registry の
+
+feature_names
+feature_count
+feature_schema_hash
+
+を保存する。
 
 そのため Feature の構成を変更した場合、学習用 Parquet Dataset を再生成する。
+
+Training 側ではこの metadata を検証する。
 
 ---
 

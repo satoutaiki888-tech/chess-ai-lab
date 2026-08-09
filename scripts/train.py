@@ -1,16 +1,10 @@
-from chess_ai_lab.evaluation import weight_manager
 from chess_ai_lab.evaluation.weight_manager import WeightManager
+from chess_ai_lab.tuning.config import PRODUCTION_CONFIG
 from chess_ai_lab.tuning.dataset import ParquetDataset
 from chess_ai_lab.tuning.trainer import Trainer
-from chess_ai_lab.tuning.config import TrainingConfig
-from chess_ai_lab.tuning.config import (
-    PRODUCTION_CONFIG, DEV_CONFIG,
-)
 
 config = PRODUCTION_CONFIG
 weights = WeightManager()
-
-from pathlib import Path
 
 best_weight_path = config.best_weight_path
 

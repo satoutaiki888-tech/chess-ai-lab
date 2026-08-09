@@ -445,18 +445,22 @@ Texel Tuning を中心とした学習アルゴリズムを管理する。
 Responsibilities
 
 - Streaming Parquet Dataset
-- Dataset Iterator
-- TrainingPosition generation
+- TrainingBatch の生成
+- Feature Vector の NumPy 化
+- Target / Source Depth の NumPy 化
+- Feature Registry metadata validation
+- Feature Vector dimension validation
+- TrainingPosition への互換展開
+
+Dataset Build 済みの Feature Vector を利用する。
 
 Must Not
 
+- Feature の再計算
 - Weight Update
-- Loss
+- Loss 計算
 - Optimization
 - Search
-- Feature の再計算
-
-Dataset Build 済みの Feature Vector を利用する。
 
 ---
 
@@ -588,7 +592,7 @@ Responsibilities
 
 - Snapshot ⇔ NumPy Vector conversion
 - Feature ordering
-- Feature vector serialization support
+- NumPy Vector との変換
 
 Must Not
 
@@ -730,6 +734,12 @@ Stored Fields
 - target_cp
 - source_depth
 - feature_values
+
+Parquet metadata として以下を保存する。
+
+- feature_names
+- feature_count
+- feature_schema_hash
 
 Feature の構成を変更した場合は、この Script を再実行して Training Dataset を再生成する。
 
