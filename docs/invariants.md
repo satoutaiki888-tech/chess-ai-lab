@@ -236,6 +236,40 @@ Feature Registry の順序と Weight の順序は一致しなければならな�
 
 ---
 
+## Dataset Cache
+
+Training Dataset は、Training 実行中に毎Epoch Parquetから再読み込みしてはならない。
+
+ParquetDataset は、可能な場合に Feature Vector と Target をNumPy配列としてメモリにキャッシュし、複数Epochで再利用する。
+
+Dataset Cache は学習結果を保持するものではない。
+
+Cache に保持するのは以下のみとする。
+
+- Feature Matrix
+- Target Values
+- 必要な Dataset Metadata
+
+Weight は Dataset Cache に含めない。
+
+Cache は Training Dataset と Weight を独立した成果物として扱う設計を壊してはならない。
+
+Dataset の内容または Feature Registry が変更された場合、既存 Cache をそのまま再利用してはならない。
+
+---
+
+## Dataset / Memory Representation
+
+Training 時に利用する Feature Vector は NumPy の2次元配列として扱う。
+
+Feature Matrix の shape は以下を満たさなければならない。
+
+```
+(sample_count, feature_count)
+```
+
+---
+
 # EvaluationSnapshot
 
 EvaluationSnapshot は Evaluation 結果を学習用 Feature Vector に変換するためのデータ構造である。

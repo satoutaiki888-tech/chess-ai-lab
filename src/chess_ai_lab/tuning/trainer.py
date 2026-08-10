@@ -285,4 +285,63 @@ class Trainer:
             axis=0,
         )
 
-        return X, targets        
+        return X, targets 
+    
+    def _evaluate_arrays(
+            self,
+            X: np.ndarray,
+            targets: np.ndarray,
+            batch_size: int = 4096,
+        ) -> float:
+            """
+            メモリ上のNumPy配列からTexel Lossを計算する。
+
+            Datasetを再読込せず、キャッシュ済み配列を使う。
+            """
+
+            weights = self.weight_manager.to_array()
+
+            total_loss = 0.0
+            sample_count = len(X)
+
+            for start in range(
+                0,
+                sample_count,
+                batch_size,
+            ):
+                end = min(
+                    start + batch_size,
+                    sample_count,
+                )
+
+                X_batch = X[start:end]
+                targets_batch = targets[start:end]
+
+                scores = X_batch @ weights
+
+                predicted = 1.0 / (
+                    1.0
+                    + np.power(
+                        10.0,
+                        -scores / 400.0,
+                    )
+                )
+
+                target = 1.0 / (
+                    1.0
+                    + np.power(
+                        10.0,
+                        -targets_batch / 400.0,
+                    )
+                )
+
+                total_loss += float(
+                    np.sum(
+                        (predicted - target) ** 2
+                    )
+                )
+
+            if sample_count == 0:
+                return 0.0
+
+            return total_loss / sample_count       

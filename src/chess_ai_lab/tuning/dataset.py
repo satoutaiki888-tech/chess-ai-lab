@@ -45,7 +45,20 @@ class TrainingBatch:
 
 class ParquetDataset:
     """
-    Parquetから学習データをバッチ単位で読み込む。
+    Parquetから学習データを読み込む。
+
+    初回アクセス時にParquet全体をNumPyへ読み込み、
+    以後はメモリ上のキャッシュを使用する。
+
+    これにより、
+
+        Epoch 1: Parquet読み込み
+        Epoch 2: キャッシュ
+        Epoch 3: キャッシュ
+        ...
+
+    となり、同じデータを毎epochディスクから
+    読み直すことを防ぐ。
     """
 
     def __init__(
@@ -55,6 +68,18 @@ class ParquetDataset:
     ):
         self._path = Path(path)
         self._batch_size = batch_size
+
+        # -------------------------
+        # Memory cache
+        # -------------------------
+
+        self._feature_matrix: np.ndarray | None = None
+        self._target_cps: np.ndarray | None = None
+        self._source_depths: np.ndarray | None = None
+
+        self._positions: list[TrainingPosition] | None = None
+
+        self._loaded = False
 
     @staticmethod
     def _current_feature_names() -> list[str]:
@@ -123,7 +148,12 @@ class ParquetDataset:
                 feature_schema_hash_raw.decode("utf-8")
             )
 
-        except (UnicodeDecodeError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        except (
+            UnicodeDecodeError,
+            ValueError,
+            TypeError,
+            json.JSONDecodeError,
+        ) as exc:
             raise ValueError(
                 "Invalid Feature Registry metadata in "
                 f"{self._path}"
@@ -168,42 +198,46 @@ class ParquetDataset:
                 f"Path: {self._path}"
             )
 
-    def iter_batches(self) -> Iterator[TrainingBatch]:
+    def _load_into_memory(self) -> None:
         """
-        学習データをTrainingBatch単位で返す。
+        Parquet全体をメモリへ読み込む。
+
+        初回のiter_batches()からのみ呼ばれる。
         """
+
+        if self._loaded:
+            return
 
         start = time.perf_counter()
 
-        print(f"Opening Parquet: {self._path}")
+        print(f"Loading Parquet into memory: {self._path}")
 
         parquet = pq.ParquetFile(self._path)
 
         self._validate_feature_metadata(parquet)
 
-        print(
-            f"Parquet opened in "
-            f"{time.perf_counter() - start:.3f} sec"
-        )
+        # --------------------------------
+        # feature_values がある新形式
+        # --------------------------------
 
-        batch_index = 0
+        feature_batches: list[np.ndarray] = []
+        target_batches: list[np.ndarray] = []
+        depth_batches: list[np.ndarray] = []
+
+        # --------------------------------
+        # 旧形式用
+        # --------------------------------
+
+        positions: list[TrainingPosition] = []
+
+        has_feature_values: bool | None = None
+
+        total_rows = 0
 
         for batch in parquet.iter_batches(
             batch_size=self._batch_size,
         ):
-            if batch_index == 0:
-                print(
-                    f"First batch loaded in "
-                    f"{time.perf_counter() - start:.3f} sec"
-                )
-
             table = batch.to_pydict()
-
-            if batch_index == 0:
-                print(
-                    f"First batch converted in "
-                    f"{time.perf_counter() - start:.3f} sec"
-                )
 
             target_cps = np.asarray(
                 table["target_cp"],
@@ -219,7 +253,19 @@ class ParquetDataset:
                 "feature_values"
             )
 
+            # --------------------------------
+            # 新形式
+            # --------------------------------
+
             if feature_values is not None:
+
+                if has_feature_values is False:
+                    raise ValueError(
+                        "Parquet dataset contains "
+                        "mixed feature formats."
+                    )
+
+                has_feature_values = True
 
                 feature_matrix = np.asarray(
                     feature_values,
@@ -249,22 +295,35 @@ class ParquetDataset:
                         f"Path: {self._path}"
                     )
 
-                if batch_index == 0:
-                    print(
-                        f"First sample ready in "
-                        f"{time.perf_counter() - start:.3f} sec"
-                    )
-
-                yield TrainingBatch(
-                    feature_matrix=feature_matrix,
-                    target_cps=target_cps,
-                    source_depths=source_depths,
+                feature_batches.append(
+                    feature_matrix
                 )
 
-            else:
-                fens = table["fen"]
+                target_batches.append(
+                    target_cps
+                )
 
-                positions: list[TrainingPosition] = []
+                depth_batches.append(
+                    source_depths
+                )
+
+                total_rows += len(target_cps)
+
+            # --------------------------------
+            # 旧形式
+            # --------------------------------
+
+            else:
+
+                if has_feature_values is True:
+                    raise ValueError(
+                        "Parquet dataset contains "
+                        "mixed feature formats."
+                    )
+
+                has_feature_values = False
+
+                fens = table["fen"]
 
                 for fen, cp, depth in zip(
                     fens,
@@ -280,20 +339,167 @@ class ParquetDataset:
                         )
                     )
 
-                if batch_index == 0:
-                    print(
-                        f"First sample ready in "
-                        f"{time.perf_counter() - start:.3f} sec"
-                    )
+                total_rows += len(fens)
+
+        # --------------------------------
+        # Cache construction
+        # --------------------------------
+
+        if has_feature_values is True:
+
+            if not feature_batches:
+                raise ValueError(
+                    "Parquet dataset contains no rows."
+                )
+
+            self._feature_matrix = np.concatenate(
+                feature_batches,
+                axis=0,
+            )
+
+            self._target_cps = np.concatenate(
+                target_batches,
+                axis=0,
+            )
+
+            self._source_depths = np.concatenate(
+                depth_batches,
+                axis=0,
+            )
+
+            self._positions = None
+
+        elif has_feature_values is False:
+
+            if not positions:
+                raise ValueError(
+                    "Parquet dataset contains no rows."
+                )
+
+            self._feature_matrix = None
+            self._target_cps = np.asarray(
+                [
+                    position.target_cp
+                    for position in positions
+                ],
+                dtype=np.float64,
+            )
+
+            self._source_depths = np.asarray(
+                [
+                    position.source_depth
+                    for position in positions
+                ],
+                dtype=np.int32,
+            )
+
+            self._positions = positions
+
+        else:
+            raise ValueError(
+                "Parquet dataset contains no rows."
+            )
+
+        self._loaded = True
+
+        elapsed = (
+            time.perf_counter() - start
+        )
+
+        print(
+            f"Dataset cached: "
+            f"{total_rows:,} samples "
+            f"in {elapsed:.3f} sec"
+        )
+
+    def iter_batches(self) -> Iterator[TrainingBatch]:
+        """
+        学習データをTrainingBatch単位で返す。
+
+        初回:
+            Parquet -> NumPy cache
+
+        2回目以降:
+            NumPy cache -> TrainingBatch
+        """
+
+        self._load_into_memory()
+
+        if self._feature_matrix is not None:
+
+            total = len(
+                self._target_cps
+            )
+
+            for start in range(
+                0,
+                total,
+                self._batch_size,
+            ):
+                end = min(
+                    start + self._batch_size,
+                    total,
+                )
+
+                yield TrainingBatch(
+                    feature_matrix=(
+                        self._feature_matrix[
+                            start:end
+                        ]
+                    ),
+                    target_cps=(
+                        self._target_cps[
+                            start:end
+                        ]
+                    ),
+                    source_depths=(
+                        self._source_depths[
+                            start:end
+                        ]
+                    ),
+                )
+
+        else:
+
+            if self._positions is None:
+                raise RuntimeError(
+                    "Dataset cache is invalid."
+                )
+
+            total = len(
+                self._positions
+            )
+
+            for start in range(
+                0,
+                total,
+                self._batch_size,
+            ):
+                end = min(
+                    start + self._batch_size,
+                    total,
+                )
+
+                batch_positions = (
+                    self._positions[
+                        start:end
+                    ]
+                )
 
                 yield TrainingBatch(
                     feature_matrix=None,
-                    target_cps=target_cps,
-                    source_depths=source_depths,
-                    positions=positions,
+                    target_cps=(
+                        self._target_cps[
+                            start:end
+                        ]
+                    ),
+                    source_depths=(
+                        self._source_depths[
+                            start:end
+                        ]
+                    ),
+                    positions=batch_positions,
                 )
-
-            batch_index += 1
 
     def __iter__(self) -> Iterator[TrainingPosition]:
         """

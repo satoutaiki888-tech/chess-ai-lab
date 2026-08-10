@@ -2,7 +2,7 @@
 
 Last Updated
 
-2026-08-07
+2026-08-09
 
 ---
 
@@ -71,11 +71,13 @@ Benchmark
 - Benchmark runner
 - Benchmark result
 
-Texel Tuning
+# Texel Tuning
 
 Texel Tuning
 
-- Streaming Parquet Dataset
+- Parquet Dataset
+- TrainingBatch
+- In-memory Dataset Cache
 - TrainingPosition
 - EvaluationSnapshot
 - NumPy Feature Vector
@@ -85,16 +87,20 @@ Texel Tuning
 - Validation Loss
 - Best Weight Checkpoint
 - Resume Training
+- Fresh Training
 - ReduceLROnPlateau Scheduler
 - Early Stopping
 - Learning Rate Logging
 - Configurable Training
+- Configurable Training Dataset Directory
 - Training Dataset Builder
 - Train / Validation Parquet Generation
 - Feature Vector Parquet Serialization
-- 100,000 position dataset generation
-- Train 89,924 positions
-- Validation 10,076 positions
+- Feature Registry metadata
+- Feature schema validation
+- 500,000 position dataset generation
+- Train 449,662 positions
+- Validation 50,338 positions
 
 ---
 
@@ -108,7 +114,7 @@ Source
 
 Current Dataset
 
-- Maximum samples: 100,000
+- Maximum samples: 500,000
 - Minimum Stockfish depth: 20
 - CP limit: ±1000
 - Train ratio: 0.9
@@ -117,9 +123,9 @@ Current Dataset
 
 Generated Dataset
 
-- Total: 100,000
-- Train: 89,924
-- Validation: 10,076
+- Total: 500,000
+- Train: 449,662
+- Validation: 50,338
 
 Feature Vector
 
@@ -130,42 +136,178 @@ Feature Vector
 
 ---
 
-# Current Training
+## Dataset Loading
 
-Configuration
+Training and validation datasets are loaded into memory
+before the first training epoch.
 
+Training Dataset
+
+- 449,662 samples
+- Initial load: approximately 6.4–6.8 sec
+
+Validation Dataset
+
+- 50,338 samples
+- Current training configuration loads 10,000 validation samples
+- Initial load: approximately 0.6–0.7 sec
+
+After loading, the dataset is reused across epochs.
+
+The Parquet files are not reopened for every epoch.
+
+This removes repeated Parquet I/O from the main training loop.
+
+---
+
+## Training Configuration
+
+Experiment
+
+- Fresh training
+- Dataset: `data/training_500k`
+- Learning rate: 1.0
 - Epochs: 100
 - Batch size: 1024
-- Learning rate: 0.1
+- Training samples: 449,662
+- Validation samples: 10,000
 - Validation interval: 5
 - Train loss interval: 10
 - Patience: 10
-- Production configuration
 
-Training Result
+Initial weights
 
-- Final validation loss: 0.026262
-- Best validation loss: 0.026262
-- Best validation loss occurred at epoch 100
+- Built-in evaluation weights
+- Training started with `--fresh`
 
-Validation Loss Trend
+---
 
-- Epoch 60: 0.026328
-- Epoch 65: 0.026319
-- Epoch 70: 0.026311
-- Epoch 75: 0.026302
-- Epoch 80: 0.026294
-- Epoch 85: 0.026286
-- Epoch 90: 0.026278
-- Epoch 95: 0.026270
-- Epoch 100: 0.026262
+## Training Result
 
-The validation loss continued to improve slowly
-through the end of the 100 epoch run.
+Best validation loss
+
+- Validation loss: 0.024605
+- Epoch: 100
+
+Final training loss
+
+- Train loss: 0.024462
+
+Final validation loss
+
+- Validation loss: 0.024605
+
+The LR=1.0 experiment improved validation loss
+relative to the earlier LR=0.1 experiment.
+
+However, the difference in validation loss alone
+does not establish a corresponding increase in playing strength.
+
+---
+
+## Training Performance
+
+Previous implementation
+
+- Dataset was reopened/read during training epochs
+- 100 epoch experiments took several minutes
+
+Current implementation
+
+- Dataset loaded once into memory
+- Training data reused across epochs
+- Dataset processing is effectively removed from epoch timing
+
+Typical epoch benchmark
+
+- Total: approximately 0.03–0.08 sec
+- Evaluation: approximately 0.006–0.017 sec
+- Gradient: approximately 0.024–0.059 sec
+- Optimizer: approximately 0.000–0.002 sec
+
+The current bottleneck is gradient computation,
+not Parquet loading.
+
+This makes repeated hyperparameter experiments
+substantially cheaper.
+---
+
+# Current Training
+
+## Current Experimental Configuration
+
+- Dataset: `data/training_500k`
+- Epochs: 100
+- Batch size: 1024
+- Learning rate: 1.0
+- Validation interval: 5
+- Train loss interval: 10
+- Patience: 10
+- Fresh training: yes
+- Training samples: 449,662
+- Validation samples: 10,000
+
+---
+
+## Learning Rate Experiments
+
+The learning rate is currently being treated as
+an experimental variable.
+
+Previous experiments
+
+- LR = 0.1
+- LR = 0.3
+- LR = 1.0
+
+Observed best validation losses
+
+- LR = 0.1: approximately 0.025093
+- LR = 0.3: approximately 0.024733
+- LR = 1.0: approximately 0.024605
+
+These results suggest that the previous learning rate
+may have been too conservative.
+
+Further experiments are required before selecting
+a production learning rate.
+
+Validation loss alone must not be treated as proof
+of stronger chess play.
+
+---
+
+## Current Best Experimental Result
+
+Configuration
+
+- Dataset: `data/training_500k`
+- Learning rate: 1.0
+- Epochs: 100
+- Batch size: 1024
+- Fresh training: yes
+- Validation samples: 10,000
+
+Result
+
+- Best validation loss: 0.024605
+- Best epoch: 100
+- Final train loss: 0.024462
+- Final validation loss: 0.024605
 
 ---
 
 # Weight Benchmark
+
+## Historical Baseline
+
+The following results were obtained before the current
+500,000-position training experiment.
+
+They must not be interpreted as the benchmark result
+of the current LR=1.0 experiment.
+
+---
 
 WAC Benchmark
 
@@ -248,17 +390,74 @@ experimental baseline rather than a validated improvement.
 
 The following questions are currently under investigation.
 
-1. Is the current Training Dataset large and diverse enough?
-2. Is the Train / Validation split sufficiently independent?
-3. Is repeated tuning on the same dataset causing overfitting
-   to the validation set?
-4. Is the current learning rate and tuning duration sufficient?
-5. Are the learned weights materially different from the
-   built-in weights?
-6. Does lower Texel validation loss correlate with stronger
-   chess playing performance?
-7. Does WAC accuracy improve when evaluated on a larger
-   benchmark set?
+1. Does increasing the Training Dataset from 100,000
+   to 500,000 positions improve learned evaluation quality?
+
+2. Is the current learning rate of 1.0 better than
+   lower learning rates such as 0.1 and 0.3?
+
+3. Does increasing the number of epochs continue to
+   reduce validation loss meaningfully?
+
+4. Does ReduceLROnPlateau improve convergence compared
+   with a fixed learning rate?
+
+5. Does lower Texel validation loss correlate with
+   stronger chess playing performance?
+
+6. How much do the learned weights differ from the
+   built-in evaluation weights?
+
+7. Does the trained evaluation function improve
+   WAC accuracy under identical benchmark conditions?
+
+8. Does the trained evaluation function improve
+   self-play results against the built-in evaluation?
+
+9. Is the current validation set sufficiently
+   independent from the training data?
+
+10. Does repeated tuning on the same dataset eventually
+    overfit the validation set?
+
+11. What dataset size provides a useful trade-off
+    between training quality and experiment speed?
+
+---
+
+# Experiment Infrastructure
+
+The training system is being optimized not only for
+training quality but also for experiment throughput.
+
+Current improvements
+
+- Dataset loaded once into memory
+- NumPy feature matrices reused across epochs
+- Validation dataset cached in memory
+- Configurable dataset directory
+- Fresh training mode
+- Configurable learning rate
+- Configurable epoch count
+- Configurable validation interval
+- Configurable train loss interval
+- Early stopping
+- ReduceLROnPlateau
+
+Goal
+
+The system should make it inexpensive to run many
+controlled experiments with different:
+
+- Dataset sizes
+- Learning rates
+- Epoch counts
+- Batch sizes
+- Scheduler settings
+- Feature combinations
+
+The priority is to reduce experiment turnaround time
+before performing large-scale hyperparameter searches.
 
 ---
 
@@ -292,76 +491,103 @@ invariants.md
 
 # Next Task
 
-## 1. Rebuild a Larger Training Dataset
+1. Complete Training Infrastructure Validation
 
-Create a new sufficiently large Training Dataset.
+Verify that the new in-memory dataset path produces
+the same training behavior as the previous implementation.
 
-The new Dataset must be treated as a new experimental artifact.
+Check:
+
+- Dataset sample count
+- Feature vector dimension
+- Target values
+- Training loss
+- Validation loss
+- Weight updates
+- Best weight checkpoint
+- Final weight output
+
+The cache must not change the mathematical result
+of training.
+
+---
+
+2. Controlled Learning Rate Experiment
+
+Run fresh training from the same built-in weights
+using identical dataset and training conditions.
+
+Compare:
+
+LR = 0.1
+LR = 0.3
+LR = 1.0
 
 Record:
 
-- Source
-- Maximum samples
-- Minimum depth
-- CP limit
-- Train / Validation split
-- Random seed
-- Feature Registry
-- Feature schema hash
+Learning rate
+Epoch
+Best validation loss
+Best epoch
+Final validation loss
+Final training loss
+Training time
+Final weights
+
+Only one experimental variable should be changed
+between runs.
 
 ---
 
-## 2. Fresh Tuning Run
+3. Epoch / Convergence Experiment
 
-Run tuning from the initial built-in weights.
+After selecting a reasonable learning-rate range,
+test whether additional epochs continue to improve
+validation loss.
 
-Do not resume from the previous trained weights.
+Example:
 
-Record:
+100 epochs
+200 epochs
+500 epochs
 
-- initial weights
-- learning rate
-- epochs
-- batch size
-- validation interval
-- training loss
-- validation loss
-- best epoch
-- final weights
+Do not assume that more epochs produce stronger play.
 
----
+Record the complete validation-loss trend.
 
-## 3. Independent Weight Evaluation
+4. Independent Playing Strength Evaluation
 
-Evaluate built-in and trained weights using the same benchmark conditions.
+For each promising trained weight:
 
-At minimum record:
+Run WAC benchmark.
+Run self-play against the built-in weight.
+Use identical search depth and benchmark conditions.
+Record accuracy, nodes, NPS, elapsed time,
+and match results.
 
-- Weight
-- Dataset
-- Depth
-- Positions
-- Accuracy
-- Nodes
-- NPS
-- Elapsed time
+Training loss and playing strength must be tracked
+as separate measurements.
 
-Do not compare results produced with different
-benchmark conditions as if they were equivalent.
+5. Experiment Record
 
----
+Every significant experiment should record:
 
-## 4. Benchmark Before / After Tuning
+Dataset identifier
+Dataset size
+Feature Registry
+Feature schema hash
+Learning rate
+Epochs
+Batch size
+Validation size
+Scheduler configuration
+Initial weight source
+Best validation loss
+Best epoch
+Final validation loss
+Final weight path
+WAC result
+Self-play result
 
-For the same WAC configuration:
-
-```text
-Built-in Weight
-      ↓
-Benchmark
-      ↓
-Freshly Tuned Weight
-      ↓
-Benchmark
-
-The benchmark condition must remain identical.
+The goal is to make experiments reproducible
+and directly comparable.

@@ -345,80 +345,259 @@ Responsibilities
 
 Training Dataset の構築と Training は分離する。
 
+Dataset Build は学習用データを生成する処理であり、
+Training は生成済み Dataset を利用して Weight を最適化する処理である。
+
+---
+
 ## Dataset Build
 
-```
+```text
 Lichess Dataset
-▼
+      │
+      ▼
 build_training_dataset.py
-▼
-FEN
-▼
+      │
+      ▼
+FEN / Target / Source Depth
+      │
+      ▼
 Evaluator
-▼
+      │
+      ▼
 EvaluationSnapshot
-▼
+      │
+      ▼
 Feature Vector
-▼
-Parquet
+      │
+      ▼
+Parquet Dataset
 ```
+
 Dataset Build の責務は、元データから学習可能な Parquet Dataset を生成することである。
 
 Parquet Dataset には以下を保存する。
 
-- fen
-- target_cp
-- source_depth
-- feature_values
+* fen
+* target_cp
+* source_depth
+* feature_values
 
-さらに Parquet metadata に Feature Registry の
+さらに Parquet metadata に Feature Registry の情報を保存する。
 
-feature_names
-feature_count
-feature_schema_hash
+* feature_names
+* feature_count
+* feature_schema_hash
 
-を保存する。
+Dataset Build は Streaming Dataset を利用し、
+必要な局面だけを前処理して Parquet に保存する。
 
-そのため Feature の構成を変更した場合、学習用 Parquet Dataset を再生成する。
+現在の Dataset Build の標準条件は以下である。
 
-Training 側ではこの metadata を検証する。
+* minimum depth: 20
+* cp limit: ±1000
+* train ratio: 0.9
+* seed: 42
+* buffer size: 5000
+* maximum samples: 500000
+
+これらは実験ごとに変更可能であり、
+実験結果とともに記録する。
+
+Feature の構成を変更した場合、
+対応する Training Dataset を再生成する。
 
 ---
 
 ## Training
-```
+
+Training は Dataset Build 済みの Parquet Dataset を利用する。
+
+```text
 ParquetDataset
-▼
-TrainingPosition / Feature Vector
-▼
-Gradient
-▼
-Optimizer
-▼
-WeightManager
-▼
-LossEvaluator
-▼
-ReduceLROnPlateau
-▼
-Best Weight
+      │
+      ▼
+NumPy Feature Matrix
+      │
+      ▼
+In-Memory Training Data
+      │
+      ├──────────────┐
+      ▼              ▼
+Mini-batch SGD    Loss Evaluation
+      │              │
+      ▼              ▼
+WeightManager    Validation
+      │              │
+      └──────┬───────┘
+             ▼
+      LR Scheduler
+             │
+             ▼
+       Best Weight
 ```
 
-Training は元データから Feature を再計算する責務を持たない。
+Training 時には Feature を再計算しない。
 
-Dataset Build で生成された Feature Vector を学習に利用する。
+Parquet に保存された Feature Vector をそのまま NumPy 配列として利用する。
+
+Training 開始時に Dataset を読み込み、
+Training 用 Feature Matrix と Target 配列をメモリ上に保持する。
+
+これにより、各 epoch で Parquet を再読み込みする必要をなくす。
 
 ---
 
-## Dataset / Weight Separation
+## Training Data Cache
 
-Training Dataset と Weight は独立した成果物として扱う。
+Training Dataset の読み込みは Training 開始時に一度だけ行う。
 
-Feature の変更は Weight の変更とは別の変更である。
+```text
+Parquet
+   │
+   ▼
+ParquetDataset
+   │
+   ▼
+Feature Matrix + Target
+   │
+   ▼
+Memory
+   │
+   ├── Epoch 1
+   ├── Epoch 2
+   ├── Epoch 3
+   ├── ...
+   └── Epoch N
+```
 
-Feature の追加・削除・順序変更を行った場合は、対応する Training Dataset を再生成する。
+Training Dataset は読み取り専用データとして扱う。
 
-既存の Weight を新しい Feature Vector にそのまま適用してはならない。
+Training 中に Dataset の Feature Vector や Target を変更してはならない。
+
+Training の各 epoch は、メモリ上の NumPy 配列を Mini-batch に分割して処理する。
+
+Dataset のロード時間と Training epoch の処理時間は分離して考える。
+
+---
+
+## Mini-batch Training
+
+Trainer は Training Dataset 全体を一度に Optimizer に渡さない。
+
+Feature Matrix を batch_size 単位に分割する。
+
+```text
+Feature Matrix
+      │
+      ├── Batch 1
+      ├── Batch 2
+      ├── Batch 3
+      ├── ...
+      └── Batch N
+             │
+             ▼
+          Evaluation
+             │
+             ▼
+          Gradient
+             │
+             ▼
+          Optimizer
+```
+
+各 batch では以下を行う。
+
+1. Feature Matrix と Weight の行列積
+2. Texel Gradient の計算
+3. Gradient の batch 平均
+4. Optimizer による Weight 更新
+
+epoch 完了後に Weight Vector を WeightManager と同期する。
+
+---
+
+## Validation
+
+Validation Dataset は Training Dataset と分離して保持する。
+
+Validation は Weight 更新を行わない。
+
+```text
+Validation Feature Matrix
+          │
+          ▼
+       Evaluation
+          │
+          ▼
+       Texel Loss
+```
+
+Validation Loss は Learning Rate Scheduler と Early Stopping の判定に利用する。
+
+Validation Dataset は Training Dataset と同じ Feature Registry によって生成されていなければならない。
+
+---
+
+## Training Configuration
+
+Training の実験条件は `TrainingConfig` に集約する。
+
+主な設定項目は以下である。
+
+* learning_rate
+* epochs
+* batch_size
+* max_train_samples
+* max_valid_samples
+* patience
+* train_loss_interval
+* validation_interval
+* best_weight_path
+* output_weight_path
+
+Development 用設定と Production 用設定を分離する。
+
+Training の実験結果を比較する場合は、
+Learning Rate だけでなく Dataset、Epochs、Batch Size、Validation 条件も記録する。
+
+---
+
+## Training Performance
+
+Training の性能改善では、まずデータアクセスコストを削減する。
+
+優先順位は以下とする。
+
+```text
+Parquet I/O
+    ↓
+Dataset Conversion
+    ↓
+NumPy Vectorization
+    ↓
+Gradient Calculation
+    ↓
+Optimizer
+```
+
+Dataset が一度メモリにロードされた後は、
+epoch ごとの Dataset I/O を発生させない。
+
+大量データ処理では Python の逐次ループよりも
+NumPy によるベクトル演算を優先する。
+
+Training Benchmark では少なくとも以下を区別する。
+
+* Dataset
+* Evaluation
+* Gradient
+* Optimizer
+* Total
+
+```
+```
+
 
 ---
 
@@ -438,6 +617,74 @@ raw_features はFeature名とraw scoreの対応を保持する。
 
 学習ではFeature VectorをGradient計算に利用する。
 
+---
+
+# Training Dataset Compatibility
+
+Training Dataset と現在の Feature Registry の互換性は、
+Training 開始時に検証する。
+
+Parquet metadata に保存された
+
+* feature_names
+* feature_count
+* feature_schema_hash
+
+を現在の `FEATURES` Registry と比較する。
+
+以下のいずれかが一致しない場合、
+Training を開始してはならない。
+
+* Feature 数
+* Feature 名
+* Feature 順序
+* Feature Schema Hash
+
+Feature Registry の変更は、
+Training Dataset の Feature Vector の意味を変更する可能性がある。
+
+したがって Feature の
+
+* 追加
+* 削除
+* 並び替え
+* 計算内容の変更
+
+を行った場合は、原則として Training Dataset を再生成する。
+
+---
+
+# Experiment Artifacts
+
+Training 実験では、Dataset と Weight を別々の成果物として扱う。
+
+Dataset Artifact
+
+* train.parquet
+* valid.parquet
+* Dataset build parameters
+* Feature Registry
+* Feature schema hash
+* sample counts
+
+Training Artifact
+
+* initial weight
+* learning rate
+* epochs
+* batch size
+* validation interval
+* train loss
+* validation loss
+* best epoch
+* best weight
+* final weight
+
+異なる Dataset や異なる Benchmark 条件で得られた結果を、
+同一条件の実験結果として比較してはならない。
+
+```
+```
 ---
 
 # Dependency Rules
