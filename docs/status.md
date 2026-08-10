@@ -2,27 +2,53 @@
 
 Last Updated
 
-2026-08-09
+2026-08-10
+
+---
+
+# Current Phase
+
+## Phase
+
+AI Collaboration Infrastructure / Documentation Organization
+
+## Current State
+
+The core Board, Evaluation, Search, Evolution, Benchmark, and Texel Tuning foundations are implemented.
+
+The current development focus is improving reproducibility, documentation, testing discipline, and AI collaboration so future implementation work can be resumed without relying on previous chat history.
+
+The runtime implementation is not changed by this documentation phase.
+
+---
+
+# Current Focus
+
+1. Maintain the AI development entry and workflow documentation.
+2. Keep architecture and invariants synchronized with the actual implementation.
+3. Improve Test coverage and architecture verification.
+4. Record important Training / Tuning / Benchmark experiments in `docs/experiments/`.
+5. Keep this file focused on current state and next actions rather than historical experiment detail.
 
 ---
 
 # Completed
 
-Board
+## Board
 
 - ChessBoard wrapper
 - Move generation
 - Undo
 - FEN
 
-Evaluation
+## Evaluation
 
 - Feature Registry
 - EvaluationSnapshot
 - Evaluator
 - WeightManager
 
-Search
+## Search
 
 - Greedy
 - Minimax
@@ -31,7 +57,7 @@ Search
 - Move Ordering
 - Transposition Table
 
-Features
+## Features
 
 - Material
 - Piece Square
@@ -50,7 +76,7 @@ Features
 - Rook Mobility
 - Queen Mobility
 
-Evolution
+## Evolution
 
 - Match Library
 - Selection
@@ -63,7 +89,7 @@ Evolution
 - JSON Evolution Log
 - Resume Foundation
 
-Benchmark
+## Benchmark
 
 - EPD parser
 - EPD loader
@@ -71,7 +97,7 @@ Benchmark
 - Benchmark runner
 - Benchmark result
 
-Texel Tuning
+## Texel Tuning
 
 - Parquet Dataset
 - TrainingBatch
@@ -136,8 +162,7 @@ Feature Vector
 
 ## Dataset Loading
 
-Training and validation datasets are loaded into memory
-before the first training epoch.
+Training and validation datasets are loaded into memory before the first training epoch.
 
 Training Dataset
 
@@ -186,21 +211,15 @@ The current `PRODUCTION_CONFIG` is:
 - Train loss interval: 10
 - Patience: 10
 
-The current production configuration is defined in
-`src/chess_ai_lab/tuning/config.py`.
+The current production configuration is defined in `src/chess_ai_lab/tuning/config.py`.
 
-The training entry point uses `PRODUCTION_CONFIG`
-directly.
+The training entry point uses `PRODUCTION_CONFIG` directly.
 
-Therefore, the last recorded LR=1.0 experiment and the
-current default training configuration must be treated
-as separate states.
+Therefore, the last recorded LR=1.0 experiment and the current default training configuration must be treated as separate states.
 
-Initial weights for a fresh run are the built-in
-evaluation weights.
+Initial weights for a fresh run are the built-in evaluation weights.
 
-Training can also resume from
-`weights/best_weight.json` when `--fresh` is not specified.
+Training can also resume from `weights/best_weight.json` when `--fresh` is not specified.
 
 Initial weights
 
@@ -224,11 +243,11 @@ Final validation loss
 
 - Validation loss: 0.024605
 
-The LR=1.0 experiment improved validation loss
-relative to the earlier LR=0.1 experiment.
+The LR=1.0 experiment improved validation loss relative to the earlier LR=0.1 experiment.
 
-However, the difference in validation loss alone
-does not establish a corresponding increase in playing strength.
+However, the difference in validation loss alone does not establish a corresponding increase in playing strength.
+
+Detailed experiment information belongs in `docs/experiments/`.
 
 ---
 
@@ -252,457 +271,42 @@ Typical epoch benchmark
 - Gradient: approximately 0.024–0.059 sec
 - Optimizer: approximately 0.000–0.002 sec
 
-The current bottleneck is gradient computation,
-not Parquet loading.
+The current bottleneck is gradient computation, not Parquet loading.
 
-This makes repeated hyperparameter experiments
-substantially cheaper.
----
-
-# Current Training
-
-## Last Recorded Experimental Configuration
-
-The latest recorded training experiment used:
-
-- Dataset: `data/training_500k`
-- Epochs: 100
-- Batch size: 1024
-- Learning rate: 1.0
-- Validation interval: 5
-- Train loss interval: 10
-- Patience: 10
-- Fresh training: yes
-- Training samples: 449,662
-- Validation samples: 10,000
-
-This configuration corresponds to the recorded LR=1.0
-training result below.
-
-## Current Code Configuration
-
-The current default `PRODUCTION_CONFIG` is:
-
-- Epochs: 100
-- Batch size: 4096
-- Learning rate: 5.0
-- Validation interval: 5
-- Train loss interval: 10
-- Patience: 10
-- Maximum training samples: unlimited
-- Maximum validation samples: 10,000
-
-The current configuration has not yet been associated
-with a recorded training result in this document.
-
-Therefore, the LR=5.0 configuration must not be described
-as a measured training result until an experiment has
-actually been run and recorded.
+This makes repeated hyperparameter experiments substantially cheaper.
 
 ---
 
-## Learning Rate Experiments
+# Next Tasks
 
-The learning rate is currently being treated as
-an experimental variable.
+## Immediate
 
-### Recorded Experiments
+- Add or strengthen architecture verification Tests where dependency rules can be checked mechanically.
+- Keep Test guidance in `docs/testing.md` synchronized with actual Test structure.
+- Record new Training / Tuning experiments under `docs/experiments/`.
 
-Previous experiments:
+## Evaluation / Training
 
-- LR = 0.1
-- LR = 0.3
-- LR = 1.0
+- Validate current `PRODUCTION_CONFIG` with Learning Rate = 5.0.
+- Run controlled Learning Rate comparisons under identical conditions.
+- Evaluate promising trained weights with identical WAC / Self-play conditions before drawing playing-strength conclusions.
 
-Observed best validation losses:
+## Documentation
 
-- LR = 0.1: approximately 0.025093
-- LR = 0.3: approximately 0.024733
-- LR = 1.0: approximately 0.024605
-
-These results suggest that the previous learning rate
-may have been too conservative.
-
-### Current Code Setting
-
-The current `PRODUCTION_CONFIG` uses:
-
-- LR = 5.0
-
-This is a configuration change, not yet a measured
-experimental result.
-
-No conclusion should be drawn about LR=5.0 until a
-controlled training run has been completed.
-
-Further experiments are required before selecting
-a production learning rate.
-
-Validation loss alone must not be treated as proof
-of stronger chess play.
+- Keep `architecture.md`, `invariants.md`, and `codebase.md` aligned with implementation.
+- Update this file when a development milestone or current task changes.
+- Do not accumulate detailed historical experiment logs here; use `docs/experiments/` instead.
 
 ---
 
-## Current Best Experimental Result
-
-The best recorded result in the current experiment log
-is still the LR=1.0 experiment.
-
-Configuration
-
-- Dataset: `data/training_500k`
-- Learning rate: 1.0
-- Epochs: 100
-- Batch size: 1024
-- Fresh training: yes
-- Validation samples: 10,000
-
-Result
-
-- Best validation loss: 0.024605
-- Best epoch: 100
-- Final train loss: 0.024462
-- Final validation loss: 0.024605
-
-This is the best recorded experimental result,
-not necessarily the result of the current default
-training configuration.
-
-The current default configuration uses LR=5.0 and
-batch size=4096, but its training result has not yet
-been recorded here.
-
----
-
-# Weight Benchmark
-
-## Historical Baseline
-
-The following results were obtained before the current
-500,000-position training experiment.
-
-They must not be interpreted as the benchmark result
-of the current LR=1.0 experiment.
-
----
-
-WAC Benchmark
-
-Dataset
-
-- data/wac.epd
-- Limit: 32 positions
-
-## Built-in Weight
-
-Configuration
-
-- Weight: built-in FEATURE_WEIGHTS
-- Depth: 2
-- Positions: 32
-
-Result
-
-- Solved: 6
-- Accuracy: 18.8%
-- Nodes: 41,160
-- NPS: approximately 1,948
-
-## Trained Weight
-
-Configuration
-
-- Weight: weights_trained.json
-- Depth: 2
-- Positions: 32
-
-Result
-
-- Solved: 6
-- Accuracy: 18.8%
-- Nodes: 41,160
-- NPS: approximately 1,712
-
-## Trained Weight / Depth 3
-
-Configuration
-
-- Weight: weights_trained.json
-- Depth: 3
-- Positions: 32
-
-Result
-
-- Solved: 8
-- Accuracy: 25.0%
-- Nodes: 474,687
-- NPS: approximately 1,697
-- Time: 279.59 sec
-
----
-
-# Current Interpretation
-
-The current WAC benchmark does not yet demonstrate
-a clear strength improvement from the trained weights.
-
-At depth 2, built-in and trained weights produced the
-same 18.8% accuracy on the first 32 WAC positions.
-
-The depth 3 benchmark with trained weights reached 25.0%,
-but this result is not directly comparable to the depth 2 results.
-
-The current benchmark sample is too small to draw a strong
-conclusion about the quality of the trained weights.
-
-Validation loss improvement is also very small across the
-100 epoch run.
-
-Therefore the current results should be treated as an
-experimental baseline rather than a validated improvement.
-
----
-
-# Current Investigation
-
-The following questions are currently under investigation.
-
-1. Does increasing the Training Dataset from 100,000
-   to 500,000 positions improve learned evaluation quality?
-
-2. Is the current learning rate of 5.0 appropriate,
-   compared with the previously tested values 0.1, 0.3,
-   and 1.0?
-
-3. Does increasing the number of epochs continue to
-   reduce validation loss meaningfully?
-
-4. Does ReduceLROnPlateau improve convergence compared
-   with a fixed learning rate?
-
-5. Does lower Texel validation loss correlate with
-   stronger chess playing performance?
-
-6. How much do the learned weights differ from the
-   built-in evaluation weights?
-
-7. Does the trained evaluation function improve
-   WAC accuracy under identical benchmark conditions?
-
-8. Does the trained evaluation function improve
-   self-play results against the built-in evaluation?
-
-9. Is the current validation set sufficiently
-   independent from the training data?
-
-10. Does repeated tuning on the same dataset eventually
-    overfit the validation set?
-
-11. What dataset size provides a useful trade-off
-    between training quality and experiment speed?
-
-12. Does the current in-memory training path preserve
-    the mathematical behavior of the previous training
-    implementation?
-
----
-
-# Experiment Infrastructure
-
-The training system is being optimized not only for
-training quality but also for experiment throughput.
-
-Current improvements
-
-- Dataset loaded once into memory
-- NumPy feature matrices reused across epochs
-- Validation dataset cached in memory
-- Configurable dataset directory
-- Fresh training mode
-- Configurable learning rate
-- Configurable epoch count
-- Configurable validation interval
-- Configurable train loss interval
-- Early stopping
-- ReduceLROnPlateau
-
-Goal
-
-The system should make it inexpensive to run many
-controlled experiments with different:
-
-- Dataset sizes
-- Learning rates
-- Epoch counts
-- Batch sizes
-- Scheduler settings
-- Feature combinations
-
-The priority is to reduce experiment turnaround time
-before performing large-scale hyperparameter searches.
-
----
-
-# Current Constraints
-
-Out of Scope
-
-- NNUE
-- Deep Learning
-- Reinforcement Learning
-
----
-
-# AI Instructions
-
-作業前に
-
-architecture.md
-
-invariants.md
-
-を確認する。
-
-推測でコードを書き換えない。
-
-必要なファイルは要求する。
-
-1回の変更では1つの目的のみ扱う。
-
----
-
-# Next Task
-
-## 1. Validate the Current Training Configuration
-
-Run the current `PRODUCTION_CONFIG` and record its actual
-training behavior.
-
-Current configuration:
-
-- Learning rate: 5.0
-- Epochs: 100
-- Batch size: 4096
-- Training samples: unlimited
-- Validation samples: 10,000
-- Validation interval: 5
-- Train loss interval: 10
-- Patience: 10
-
-Record:
-
-- Training time
-- Best validation loss
-- Best epoch
-- Final training loss
-- Final validation loss
-- Final learning rate
-- Best weight path
-- Final weight path
-
-Do not interpret the result as a strength improvement
-until it is compared under identical benchmark conditions.
-
----
-
-## 2. Controlled Learning Rate Experiment
-
-Compare learning rates under identical conditions.
-
-Candidate learning rates:
-
-- LR = 0.1
-- LR = 0.3
-- LR = 1.0
-- LR = 5.0
-
-For each run:
-
-- Start from the same built-in weights
-- Use the same dataset
-- Use the same validation set
-- Use the same epoch count
-- Use the same batch size
-- Use the same scheduler configuration
-
-Record:
-
-- Learning rate
-- Epoch
-- Best validation loss
-- Best epoch
-- Final validation loss
-- Final training loss
-- Training time
-- Final weights
-
-Only the intended experimental variable should change.
-
----
-
-## 3. Epoch / Convergence Experiment
-
-After identifying a reasonable learning-rate range,
-test whether additional epochs continue to improve
-validation loss.
-
-Example:
-
-- 100 epochs
-- 200 epochs
-- 500 epochs
-
-Record the complete validation-loss trend.
-
-Do not assume that lower validation loss or more epochs
-produce stronger chess play.
-
----
-
-## 4. Independent Playing Strength Evaluation
-
-For each promising trained weight:
-
-- Run WAC benchmark
-- Run self-play against the built-in weight
-- Use identical search depth
-- Use identical benchmark conditions
-
-Record:
-
-- Accuracy
-- Nodes
-- NPS
-- Elapsed time
-- Match results
-
-Training loss and playing strength must remain separate
-measurements.
-
----
-
-## 5. Experiment Record
-
-Every significant experiment should record:
-
-- Dataset identifier
-- Dataset size
-- Feature Registry
-- Feature schema hash
-- Learning rate
-- Epochs
-- Batch size
-- Validation size
-- Scheduler configuration
-- Initial weight source
-- Best validation loss
-- Best epoch
-- Final validation loss
-- Final training loss
-- Training time
-- Final weight path
-- WAC result
-- Self-play result
-
-The goal is to make experiments reproducible
-and directly comparable.
+# Important Notes
+
+- `docs/AI_CONTEXT.md` is the project-level AI context entry.
+- `AGENTS.md` defines AI development rules.
+- `docs/ai_workflow.md` defines the AI collaboration workflow.
+- `docs/decisions.md` records important design rationale.
+- `docs/testing.md` defines Test strategy.
+- `docs/experiments/` contains detailed experiment records.
+- `docs/changelog.md` contains important project-level changes.
+
+When these documents conflict, do not guess. Stop and reconcile the source of truth explicitly.
