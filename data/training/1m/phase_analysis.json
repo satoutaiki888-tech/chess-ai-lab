@@ -1,0 +1,5502 @@
+{
+  "dataset": {
+    "data_dir": "data\\training\\1m",
+    "feature_count": 19,
+    "feature_names": [
+      "material",
+      "piece_square",
+      "mobility",
+      "isolated_pawn",
+      "doubled_pawn",
+      "passed_pawn",
+      "king_safety",
+      "bishop_pair",
+      "open_file",
+      "semi_open_file",
+      "pawn_shield",
+      "knight_outpost",
+      "connected_rooks",
+      "rook_seventh",
+      "space",
+      "bishop_mobility",
+      "rook_mobility",
+      "knight_mobility",
+      "queen_mobility"
+    ]
+  },
+  "phase_definition": {
+    "material_phase_weights": {
+      "q": 4,
+      "r": 2,
+      "b": 1,
+      "n": 1
+    },
+    "maximum_material_phase": 24,
+    "game_phase_boundaries": {
+      "opening": "20-24",
+      "early_middlegame": "14-19",
+      "middlegame": "9-13",
+      "late_middlegame": "5-8",
+      "endgame": "0-4"
+    }
+  },
+  "game_phase": {
+    "opening": {
+      "target": {
+        "count": 770825,
+        "mean": 24.046044173450525,
+        "std": 129.81959447250958,
+        "mae": 72.60933934420913,
+        "positive_ratio": 0.633170953199494,
+        "negative_ratio": 0.2942535594979405,
+        "zero_ratio": 0.07257548730256544
+      },
+      "features": {
+        "material": {
+          "mean": -8.973424577563001,
+          "std": 100.89714235396372,
+          "target_correlation": 0.2290453865662031
+        },
+        "piece_square": {
+          "mean": 4.703784905782765,
+          "std": 36.980735876169796,
+          "target_correlation": 0.06725339588203053
+        },
+        "mobility": {
+          "mean": 2.8346498881068984,
+          "std": 10.047210785616452,
+          "target_correlation": 0.2687814816792492
+        },
+        "isolated_pawn": {
+          "mean": -0.0844549670807252,
+          "std": 9.416722854792003,
+          "target_correlation": 0.01077267572171895
+        },
+        "doubled_pawn": {
+          "mean": 0.45448707553595175,
+          "std": 4.44769886104429,
+          "target_correlation": -0.054088546078880334
+        },
+        "passed_pawn": {
+          "mean": -0.065475302435702,
+          "std": 12.878448500567691,
+          "target_correlation": 0.0398282549127307
+        },
+        "king_safety": {
+          "mean": 1.345169136963643,
+          "std": 14.130191778178112,
+          "target_correlation": 0.06839153494910308
+        },
+        "bishop_pair": {
+          "mean": -0.6370706710342815,
+          "std": 10.886705487825644,
+          "target_correlation": 0.0769959221227325
+        },
+        "open_file": {
+          "mean": 0.23372360782278728,
+          "std": 4.6844019794271725,
+          "target_correlation": 0.0891031622674799
+        },
+        "semi_open_file": {
+          "mean": 0.17233483605228164,
+          "std": 3.2927236518256353,
+          "target_correlation": 0.033175649736226845
+        },
+        "pawn_shield": {
+          "mean": 1.559484967405053,
+          "std": 12.608691135946133,
+          "target_correlation": 0.07602000856644196
+        },
+        "knight_outpost": {
+          "mean": 0.05485032270619142,
+          "std": 2.471825720536118,
+          "target_correlation": 0.017020392706021716
+        },
+        "connected_rooks": {
+          "mean": 0.4379982486297149,
+          "std": 5.114854810753279,
+          "target_correlation": 0.048372835944404835
+        },
+        "rook_seventh": {
+          "mean": 0.010560114163396361,
+          "std": 0.9444150301597931,
+          "target_correlation": 0.02711476379544446
+        },
+        "space": {
+          "mean": 2.8747484837673922,
+          "std": 7.539945093925469,
+          "target_correlation": 0.22282166204636727
+        },
+        "bishop_mobility": {
+          "mean": 1.3421593746959426,
+          "std": 4.63015546925501,
+          "target_correlation": 0.12553796079037258
+        },
+        "rook_mobility": {
+          "mean": 0.42513670418058574,
+          "std": 2.155965868293238,
+          "target_correlation": 0.14865531157942408
+        },
+        "knight_mobility": {
+          "mean": 0.49097006454123826,
+          "std": 4.488145865420486,
+          "target_correlation": 0.08588022695667841
+        },
+        "queen_mobility": {
+          "mean": 0.6284811727694354,
+          "std": 4.038035348692634,
+          "target_correlation": 0.08219029069181424
+        }
+      },
+      "linear_model": {
+        "r2": 0.1614585201702648,
+        "rmse": 118.87828290207266,
+        "intercept": 13.256307198344683,
+        "coefficients": {
+          "material": 0.28306645300747163,
+          "piece_square": -0.018620901660523607,
+          "mobility": 3.535308392819659,
+          "isolated_pawn": 0.252237442855971,
+          "doubled_pawn": -0.004800879760428916,
+          "passed_pawn": 0.2332053901727867,
+          "king_safety": 0.3445859229917731,
+          "bishop_pair": 1.2500453222024643,
+          "open_file": 1.473866524557973,
+          "semi_open_file": 0.8337006086673654,
+          "pawn_shield": 1.0387909293939146,
+          "knight_outpost": 0.42598865034591027,
+          "connected_rooks": -0.18218931227975446,
+          "rook_seventh": 0.3973651312546208,
+          "space": 0.5292197409332376,
+          "bishop_mobility": -0.7953103802874909,
+          "rook_mobility": 3.785261202990443,
+          "knight_mobility": 1.9928033014216224,
+          "queen_mobility": -2.1159924552817584
+        },
+        "standardized_coefficients": {
+          "mobility": 35.51998861481804,
+          "material": 28.560596204726444,
+          "bishop_pair": 13.608875269252344,
+          "pawn_shield": 13.097793983550297,
+          "knight_mobility": 8.943991897871749,
+          "queen_mobility": -8.544452331994657,
+          "rook_mobility": 8.160893956221996,
+          "open_file": 6.904183265050816,
+          "king_safety": 4.869065175934268,
+          "space": 3.9902877892580726,
+          "bishop_mobility": -3.6824107070434082,
+          "passed_pawn": 3.003323607395028,
+          "semi_open_file": 2.745145712700462,
+          "isolated_pawn": 2.375250092976114,
+          "knight_outpost": 1.052969702581488,
+          "connected_rooks": -0.9318718803819336,
+          "piece_square": -0.6886146460839551,
+          "rook_seventh": 0.37527760241828284,
+          "doubled_pawn": -0.021352867442470273
+        }
+      }
+    },
+    "early_middlegame": {
+      "target": {
+        "count": 79812,
+        "mean": 37.74145491905979,
+        "std": 326.07056872113674,
+        "mae": 219.421728562121,
+        "positive_ratio": 0.5347942665263369,
+        "negative_ratio": 0.37029519370520725,
+        "zero_ratio": 0.09491053976845587
+      },
+      "features": {
+        "material": {
+          "mean": -17.303538315040345,
+          "std": 286.9477288267761,
+          "target_correlation": 0.3278744124282473
+        },
+        "piece_square": {
+          "mean": 2.473374931088057,
+          "std": 26.11080762476389,
+          "target_correlation": 0.09584842916963493
+        },
+        "mobility": {
+          "mean": 2.6198441337142286,
+          "std": 12.817203997901562,
+          "target_correlation": 0.3579558721119236
+        },
+        "isolated_pawn": {
+          "mean": 0.7598481431363705,
+          "std": 18.610247909041895,
+          "target_correlation": 0.04770948634354128
+        },
+        "doubled_pawn": {
+          "mean": -0.028316543878113568,
+          "std": 5.836888111423316,
+          "target_correlation": -0.011319229055454063
+        },
+        "passed_pawn": {
+          "mean": 1.958978599709317,
+          "std": 33.66048741432114,
+          "target_correlation": 0.12665222902554005
+        },
+        "king_safety": {
+          "mean": 1.1971883927228988,
+          "std": 19.032738483433267,
+          "target_correlation": 0.07052006615281937
+        },
+        "bishop_pair": {
+          "mean": -0.9957149300857014,
+          "std": 14.159299885533182,
+          "target_correlation": 0.06461154965375766
+        },
+        "open_file": {
+          "mean": 1.56141933543828,
+          "std": 13.656536029483604,
+          "target_correlation": 0.1201057745609177
+        },
+        "semi_open_file": {
+          "mean": -0.05112013231093069,
+          "std": 6.644821589783903,
+          "target_correlation": 0.002926927385235041
+        },
+        "pawn_shield": {
+          "mean": 1.8502230241066506,
+          "std": 14.442858808983466,
+          "target_correlation": 0.0932503231015931
+        },
+        "knight_outpost": {
+          "mean": 0.22527940660552298,
+          "std": 4.553360431343764,
+          "target_correlation": 0.05959404861892419
+        },
+        "connected_rooks": {
+          "mean": 0.39091865884829347,
+          "std": 10.33239681871999,
+          "target_correlation": 0.029911307233255722
+        },
+        "rook_seventh": {
+          "mean": 0.19119931839823587,
+          "std": 5.430269341298394,
+          "target_correlation": 0.06465537229343207
+        },
+        "space": {
+          "mean": 2.3061694983210543,
+          "std": 10.457766875082353,
+          "target_correlation": 0.31821957527616407
+        },
+        "bishop_mobility": {
+          "mean": 0.22040545281411317,
+          "std": 6.154824976524492,
+          "target_correlation": 0.12175454661557868
+        },
+        "rook_mobility": {
+          "mean": 0.7920613441587732,
+          "std": 5.444377379619938,
+          "target_correlation": 0.13402459760720792
+        },
+        "knight_mobility": {
+          "mean": 0.4474264521625821,
+          "std": 5.125323113659425,
+          "target_correlation": 0.0642478091640249
+        },
+        "queen_mobility": {
+          "mean": 0.3446474214403849,
+          "std": 5.753634061075321,
+          "target_correlation": 0.22143058532831578
+        }
+      },
+      "linear_model": {
+        "r2": 0.26780211792183034,
+        "rmse": 279.0138971035007,
+        "intercept": 12.126289065600925,
+        "coefficients": {
+          "material": 0.39468382259140156,
+          "piece_square": 0.835522498294227,
+          "mobility": 5.440238211083946,
+          "isolated_pawn": 1.043895630032724,
+          "doubled_pawn": -0.22250834848253442,
+          "passed_pawn": 1.1668563250006192,
+          "king_safety": -0.6146403805031038,
+          "bishop_pair": 0.610147731157684,
+          "open_file": 1.6719903858047283,
+          "semi_open_file": 2.0677884630684993,
+          "pawn_shield": 2.834777975342102,
+          "knight_outpost": 3.466418273780032,
+          "connected_rooks": 0.15365292136418054,
+          "rook_seventh": 1.3513982444709725,
+          "space": 2.060547628738012,
+          "bishop_mobility": 3.744843537534197,
+          "rook_mobility": -1.3556171619074389,
+          "knight_mobility": 2.3082925411555615,
+          "queen_mobility": -0.006510959584182668
+        },
+        "standardized_coefficients": {
+          "material": 113.25362649727289,
+          "mobility": 69.72864294864199,
+          "pawn_shield": 40.94229805268199,
+          "passed_pawn": 39.27695264200436,
+          "bishop_mobility": 23.04885653799181,
+          "open_file": 22.833596944692463,
+          "piece_square": 21.816167219122676,
+          "space": 21.54872673634587,
+          "isolated_pawn": 19.427156466074475,
+          "knight_outpost": 15.783851806316951,
+          "semi_open_file": 13.740085422503638,
+          "knight_mobility": 11.830745114272249,
+          "king_safety": -11.698289623473489,
+          "bishop_pair": 8.639264699939325,
+          "rook_mobility": -7.3804914117134395,
+          "rook_seventh": 7.338456454835193,
+          "connected_rooks": 1.587602955890292,
+          "doubled_pawn": -1.2987563339501413,
+          "queen_mobility": -0.037461678833838205
+        }
+      }
+    },
+    "middlegame": {
+      "target": {
+        "count": 40238,
+        "mean": 30.319076494855608,
+        "std": 349.7404161307412,
+        "mae": 232.86885531090013,
+        "positive_ratio": 0.4947810527362195,
+        "negative_ratio": 0.3776032605994334,
+        "zero_ratio": 0.12761568666434714
+      },
+      "features": {
+        "material": {
+          "mean": -0.8400019881703862,
+          "std": 248.53377922086938,
+          "target_correlation": 0.4847828069347434
+        },
+        "piece_square": {
+          "mean": -0.33960435409314577,
+          "std": 20.570926998773757,
+          "target_correlation": 0.0492300354497285
+        },
+        "mobility": {
+          "mean": 1.8902281425518166,
+          "std": 11.724866400712617,
+          "target_correlation": 0.37006734081105813
+        },
+        "isolated_pawn": {
+          "mean": 0.422734728366221,
+          "std": 22.11150528557695,
+          "target_correlation": 0.06521982119646957
+        },
+        "doubled_pawn": {
+          "mean": 0.09095879516874596,
+          "std": 6.339365999894813,
+          "target_correlation": 0.0024933836521688606
+        },
+        "passed_pawn": {
+          "mean": 0.7152442964362046,
+          "std": 39.351591740137316,
+          "target_correlation": 0.08423957829653829
+        },
+        "king_safety": {
+          "mean": 2.375366568914956,
+          "std": 19.612759433709996,
+          "target_correlation": 0.07568428894906283
+        },
+        "bishop_pair": {
+          "mean": -1.0400616332819723,
+          "std": 13.055656133704792,
+          "target_correlation": 0.0783976247985632
+        },
+        "open_file": {
+          "mean": 0.979173915204533,
+          "std": 15.595141024474984,
+          "target_correlation": 0.1373037843138226
+        },
+        "semi_open_file": {
+          "mean": -0.04821313186540086,
+          "std": 6.672537095656471,
+          "target_correlation": 0.0014518276731862684
+        },
+        "pawn_shield": {
+          "mean": 2.2650231124807396,
+          "std": 13.70661557571732,
+          "target_correlation": 0.10600062693605314
+        },
+        "knight_outpost": {
+          "mean": 0.12326656394453005,
+          "std": 4.62143235435572,
+          "target_correlation": 0.0431703232288453
+        },
+        "connected_rooks": {
+          "mean": -0.2733734281027884,
+          "std": 10.456303520915446,
+          "target_correlation": 0.013519329088924661
+        },
+        "rook_seventh": {
+          "mean": 0.5701078582434514,
+          "std": 7.149747252382307,
+          "target_correlation": 0.10783110271767231
+        },
+        "space": {
+          "mean": 1.9837964113524529,
+          "std": 10.428015726167331,
+          "target_correlation": 0.32164620263729576
+        },
+        "bishop_mobility": {
+          "mean": -0.18882648242954422,
+          "std": 6.251050503467473,
+          "target_correlation": 0.08265987141087214
+        },
+        "rook_mobility": {
+          "mean": 0.5699587454644863,
+          "std": 6.735383439886571,
+          "target_correlation": 0.12865266843439913
+        },
+        "knight_mobility": {
+          "mean": 0.3220338983050847,
+          "std": 5.075039777932373,
+          "target_correlation": 0.047213558198057455
+        },
+        "queen_mobility": {
+          "mean": 0.4439087429792733,
+          "std": 6.4021400746536665,
+          "target_correlation": 0.1887360194552255
+        }
+      },
+      "linear_model": {
+        "r2": 0.3456116550383644,
+        "rmse": 282.91996799794094,
+        "intercept": 11.305741853287053,
+        "coefficients": {
+          "material": 0.6479400613589724,
+          "piece_square": 0.3889199659955951,
+          "mobility": 6.946453673705961,
+          "isolated_pawn": 0.9665763345523564,
+          "doubled_pawn": 0.48111886894674993,
+          "passed_pawn": 0.8751474806721256,
+          "king_safety": -0.3036475260248874,
+          "bishop_pair": 1.7471783755483812,
+          "open_file": 1.5393814577184168,
+          "semi_open_file": 2.7469750453459154,
+          "pawn_shield": 2.048824837792594,
+          "knight_outpost": 1.3390964152125457,
+          "connected_rooks": 0.95687843846143,
+          "rook_seventh": 2.6575317388155897,
+          "space": 2.6724147736754897,
+          "bishop_mobility": -3.1714020185866727,
+          "rook_mobility": -5.932148410650397,
+          "knight_mobility": -1.5093841877220309,
+          "queen_mobility": -3.2616133258573714
+        },
+        "standardized_coefficients": {
+          "material": 161.03499215814742,
+          "mobility": 81.44624128294176,
+          "rook_mobility": -39.95529416804413,
+          "passed_pawn": 34.4384463718192,
+          "pawn_shield": 28.082454433604482,
+          "space": 27.867983286729917,
+          "open_file": 24.006870923580585,
+          "bishop_pair": 22.8105600754046,
+          "isolated_pawn": 21.372457730368023,
+          "queen_mobility": -20.881305381495906,
+          "bishop_mobility": -19.824594184983983,
+          "rook_seventh": 19.000680247715536,
+          "semi_open_file": 18.329292890913237,
+          "connected_rooks": 10.005411385172325,
+          "piece_square": 8.000444228860959,
+          "knight_mobility": -7.66018479287145,
+          "knight_outpost": 6.1885434988650205,
+          "king_safety": -5.955365880567313,
+          "doubled_pawn": 3.049988599708875
+        }
+      }
+    },
+    "late_middlegame": {
+      "target": {
+        "count": 33853,
+        "mean": 105.57457241603403,
+        "std": 414.0154657332289,
+        "mae": 281.2466841934245,
+        "positive_ratio": 0.5089356925530972,
+        "negative_ratio": 0.2862375564942546,
+        "zero_ratio": 0.2048267509526482
+      },
+      "features": {
+        "material": {
+          "mean": 47.64422650872891,
+          "std": 261.6356610360133,
+          "target_correlation": 0.5513224234187966
+        },
+        "piece_square": {
+          "mean": 0.3868194842406877,
+          "std": 17.214624479821452,
+          "target_correlation": 0.14692117403611996
+        },
+        "mobility": {
+          "mean": 1.8830827400821197,
+          "std": 10.006223865150206,
+          "target_correlation": 0.39756159972470306
+        },
+        "isolated_pawn": {
+          "mean": 0.3792869169645231,
+          "std": 19.924628275622247,
+          "target_correlation": 0.015535648647714614
+        },
+        "doubled_pawn": {
+          "mean": 0.11490857531090302,
+          "std": 4.999787327890848,
+          "target_correlation": -0.03318107129034248
+        },
+        "passed_pawn": {
+          "mean": 5.332909934126961,
+          "std": 51.475008370307776,
+          "target_correlation": 0.11731527032254034
+        },
+        "king_safety": {
+          "mean": 0.6167843322600656,
+          "std": 16.221447714038316,
+          "target_correlation": 0.014129232267300661
+        },
+        "bishop_pair": {
+          "mean": -0.4882875963725519,
+          "std": 7.5744585364306,
+          "target_correlation": 0.030423463602248763
+        },
+        "open_file": {
+          "mean": -0.8572356955070451,
+          "std": 15.013580063814455,
+          "target_correlation": -0.03795525186928593
+        },
+        "semi_open_file": {
+          "mean": -0.5748382713496588,
+          "std": 5.258265489475014,
+          "target_correlation": -0.03636890455868194
+        },
+        "pawn_shield": {
+          "mean": 0.8102679230791954,
+          "std": 9.843357612783157,
+          "target_correlation": 0.059822971835100464
+        },
+        "knight_outpost": {
+          "mean": -0.01949605647948483,
+          "std": 3.8199637149953403,
+          "target_correlation": 0.0845778026938086
+        },
+        "connected_rooks": {
+          "mean": -0.22922636103151864,
+          "std": 4.772375199427862,
+          "target_correlation": 0.0712130372122078
+        },
+        "rook_seventh": {
+          "mean": 0.9878001949605648,
+          "std": 9.209066146171887,
+          "target_correlation": 0.09576595814939808
+        },
+        "space": {
+          "mean": 3.6721117773904823,
+          "std": 12.389145637571447,
+          "target_correlation": 0.4396952130107448
+        },
+        "bishop_mobility": {
+          "mean": 0.2678935397158302,
+          "std": 5.594699885525203,
+          "target_correlation": 0.045650835980036594
+        },
+        "rook_mobility": {
+          "mean": -0.597229196821552,
+          "std": 7.385601343268236,
+          "target_correlation": -0.07761119371211585
+        },
+        "knight_mobility": {
+          "mean": 0.019052964286769267,
+          "std": 4.084573636332831,
+          "target_correlation": 0.05447134253932796
+        },
+        "queen_mobility": {
+          "mean": 1.8560245768469559,
+          "std": 8.821199158700153,
+          "target_correlation": 0.37220016120028765
+        }
+      },
+      "linear_model": {
+        "r2": 0.4112698479605293,
+        "rmse": 317.66890363800536,
+        "intercept": 35.124508705829456,
+        "coefficients": {
+          "material": 0.725804285371582,
+          "piece_square": 3.0717603368629423,
+          "mobility": 8.548474980100346,
+          "isolated_pawn": 0.14115797296261517,
+          "doubled_pawn": 1.959674204562366,
+          "passed_pawn": 0.9116848136294352,
+          "king_safety": -1.225156052830699,
+          "bishop_pair": -0.5129657224199705,
+          "open_file": -0.5550182020625073,
+          "semi_open_file": 2.2682834931499105,
+          "pawn_shield": 1.9346295844866008,
+          "knight_outpost": 0.728480357787706,
+          "connected_rooks": 4.47981911740467,
+          "rook_seventh": 0.5976108925450114,
+          "space": 5.175441059677286,
+          "bishop_mobility": -8.42934891363504,
+          "rook_mobility": -7.924098802916302,
+          "knight_mobility": -5.71772794966381,
+          "queen_mobility": -4.154238098332145
+        },
+        "standardized_coefficients": {
+          "material": 189.89628398596508,
+          "mobility": 85.53795435651952,
+          "space": 64.11929302700901,
+          "rook_mobility": -58.52423476300886,
+          "piece_square": 52.879200691105396,
+          "bishop_mobility": -47.159677402165954,
+          "passed_pawn": 46.928983412657665,
+          "queen_mobility": -36.645361618047644,
+          "knight_mobility": -23.354480842920168,
+          "connected_rooks": 21.37937765382486,
+          "king_safety": -19.87380485253075,
+          "pawn_shield": 19.0432508483717,
+          "semi_open_file": 11.927236812376009,
+          "doubled_pawn": 9.797954254765497,
+          "open_file": -8.332810213539803,
+          "rook_seventh": 5.50343823911983,
+          "bishop_pair": -3.8854375950802353,
+          "isolated_pawn": 2.812520139420443,
+          "knight_outpost": 2.7827685338358603
+        }
+      }
+    },
+    "endgame": {
+      "target": {
+        "count": 75272,
+        "mean": 189.0744234243809,
+        "std": 433.2732024852403,
+        "mae": 285.0189977680944,
+        "positive_ratio": 0.40935540440004253,
+        "negative_ratio": 0.14973695398023168,
+        "zero_ratio": 0.4409076416197258
+      },
+      "features": {
+        "material": {
+          "mean": 99.98326070783293,
+          "std": 240.0462826391189,
+          "target_correlation": 0.4396170439108469
+        },
+        "piece_square": {
+          "mean": 0.3255526623445637,
+          "std": 11.596275557813769,
+          "target_correlation": 0.058522063275820574
+        },
+        "mobility": {
+          "mean": 1.9575140822616643,
+          "std": 7.690956688141574,
+          "target_correlation": 0.2705785559754627
+        },
+        "isolated_pawn": {
+          "mean": 0.4272505048357955,
+          "std": 17.63826828595666,
+          "target_correlation": -0.01499793255386423
+        },
+        "doubled_pawn": {
+          "mean": 0.20113720905515994,
+          "std": 4.625918606017822,
+          "target_correlation": -0.05438847023030866
+        },
+        "passed_pawn": {
+          "mean": 8.581809969178446,
+          "std": 67.5683748723974,
+          "target_correlation": 0.2647666030166755
+        },
+        "king_safety": {
+          "mean": 0.22040068019980869,
+          "std": 8.879936533185209,
+          "target_correlation": 0.012824789248747725
+        },
+        "bishop_pair": {
+          "mean": 0.2423211818471676,
+          "std": 4.016287750876581,
+          "target_correlation": 0.031593666598232706
+        },
+        "open_file": {
+          "mean": 0.4065256669146562,
+          "std": 8.69558777883552,
+          "target_correlation": 0.05984284735022663
+        },
+        "semi_open_file": {
+          "mean": -0.33026889148687427,
+          "std": 3.835601465667851,
+          "target_correlation": -0.1458189365251951
+        },
+        "pawn_shield": {
+          "mean": 0.2079126368370709,
+          "std": 3.451388283341628,
+          "target_correlation": 0.0235271380433984
+        },
+        "knight_outpost": {
+          "mean": 0.12674035497927516,
+          "std": 2.59373867193635,
+          "target_correlation": 0.00710446356360976
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.2920076522478478,
+          "std": 7.128683041204045,
+          "target_correlation": -0.0070633345306096275
+        },
+        "space": {
+          "mean": 3.0421670740780105,
+          "std": 10.943779800214694,
+          "target_correlation": 0.26692661200160317
+        },
+        "bishop_mobility": {
+          "mean": 0.5910830056329046,
+          "std": 4.140313767549312,
+          "target_correlation": 0.20158877340748893
+        },
+        "rook_mobility": {
+          "mean": 0.30497396110107344,
+          "std": 4.129256931162309,
+          "target_correlation": 0.07061466454554216
+        },
+        "knight_mobility": {
+          "mean": 0.7478876607503454,
+          "std": 3.5585022036808684,
+          "target_correlation": 0.15303976399935093
+        },
+        "queen_mobility": {
+          "mean": 0.20443192687852058,
+          "std": 2.4896912592825435,
+          "target_correlation": -0.015704064082671183
+        }
+      },
+      "linear_model": {
+        "r2": 0.31967946641842954,
+        "rmse": 357.3704333253508,
+        "intercept": 80.12778715604367,
+        "coefficients": {
+          "material": 1.1198673258225065,
+          "piece_square": 3.08949223675077,
+          "mobility": 1.5638751958547779,
+          "isolated_pawn": 2.787175689234812,
+          "doubled_pawn": 8.932048588649764,
+          "passed_pawn": 1.5665576707083475,
+          "king_safety": 1.5036952383920896,
+          "bishop_pair": -1.8114101824215327,
+          "open_file": -3.2088584007214327,
+          "semi_open_file": -8.91095659790302,
+          "pawn_shield": -2.093307714878949,
+          "knight_outpost": 1.7597416760156788,
+          "connected_rooks": 0.0,
+          "rook_seventh": -2.2761990857017698,
+          "space": 1.336551795456425,
+          "bishop_mobility": -7.739961984496129,
+          "rook_mobility": -5.178734877238579,
+          "knight_mobility": -19.562881541707444,
+          "queen_mobility": -36.46551638340155
+        },
+        "standardized_coefficients": {
+          "material": 268.81998861270364,
+          "passed_pawn": 105.84975595365131,
+          "queen_mobility": -90.78787740497923,
+          "knight_mobility": -69.61455707651372,
+          "isolated_pawn": 49.16095256681977,
+          "doubled_pawn": 41.31892975609017,
+          "piece_square": 35.82660331108834,
+          "semi_open_file": -34.17887818741943,
+          "bishop_mobility": -32.04587116471762,
+          "open_file": -27.90290989332698,
+          "rook_mobility": -21.38432688648939,
+          "rook_seventh": -16.22630182064636,
+          "space": 14.626928541056705,
+          "king_safety": 13.352718282174559,
+          "mobility": 12.027696396978017,
+          "bishop_pair": -7.2751445274727145,
+          "pawn_shield": -7.224817720561843,
+          "knight_outpost": 4.564310037699954,
+          "connected_rooks": 0.0
+        }
+      }
+    }
+  },
+  "material_phase": {
+    "30": {
+      "game_phase": "opening",
+      "target": {
+        "count": 8,
+        "mean": 925.25,
+        "std": 147.93305073579737,
+        "mae": 925.25,
+        "positive_ratio": 1.0,
+        "negative_ratio": 0.0,
+        "zero_ratio": 0.0
+      },
+      "features": {
+        "material": {
+          "mean": 1150.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "piece_square": {
+          "mean": 40.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "mobility": {
+          "mean": -6.0,
+          "std": 9.5,
+          "target_correlation": 0.9866661005759237
+        },
+        "isolated_pawn": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "doubled_pawn": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "passed_pawn": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "king_safety": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "bishop_pair": {
+          "mean": -30.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "semi_open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "pawn_shield": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "knight_outpost": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "space": {
+          "mean": 0.25,
+          "std": 1.5612494995995996,
+          "target_correlation": -0.9257539330165467
+        },
+        "bishop_mobility": {
+          "mean": -3.375,
+          "std": 2.496873044429772,
+          "target_correlation": 0.823276691397636
+        },
+        "rook_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "knight_mobility": {
+          "mean": -3.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "queen_mobility": {
+          "mean": 12.0,
+          "std": 4.272001872658765,
+          "target_correlation": -0.9591036619795462
+        }
+      },
+      "linear_model": {
+        "r2": 0.9965681080295652,
+        "rmse": 8.666266056424742,
+        "intercept": 986.0078571952614,
+        "coefficients": {
+          "material": 0.0,
+          "piece_square": 0.0,
+          "mobility": 16.19778921903041,
+          "isolated_pawn": 0.0,
+          "doubled_pawn": 0.0,
+          "passed_pawn": 0.0,
+          "king_safety": 0.0,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 0.0,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "space": -13.167890014531755,
+          "bishop_mobility": -10.928805255579077,
+          "rook_mobility": 0.0,
+          "knight_mobility": 0.0,
+          "queen_mobility": 0.23634440708121737
+        },
+        "standardized_coefficients": {
+          "mobility": 153.87899758078888,
+          "bishop_mobility": -27.287839250477823,
+          "space": -20.558361695970266,
+          "queen_mobility": 1.0096637496433862,
+          "material": 0.0,
+          "piece_square": 0.0,
+          "isolated_pawn": 0.0,
+          "doubled_pawn": 0.0,
+          "passed_pawn": 0.0,
+          "king_safety": 0.0,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 0.0,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "rook_mobility": 0.0,
+          "knight_mobility": 0.0
+        }
+      }
+    },
+    "28": {
+      "game_phase": "opening",
+      "target": {
+        "count": 1,
+        "mean": 68.0,
+        "std": 0.0,
+        "mae": 68.0,
+        "positive_ratio": 1.0,
+        "negative_ratio": 0.0,
+        "zero_ratio": 0.0
+      },
+      "features": {
+        "material": {
+          "mean": 800.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "piece_square": {
+          "mean": 40.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "mobility": {
+          "mean": 4.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "isolated_pawn": {
+          "mean": -15.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "doubled_pawn": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "passed_pawn": {
+          "mean": -120.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "king_safety": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "bishop_pair": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "semi_open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "pawn_shield": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "knight_outpost": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "space": {
+          "mean": 8.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "bishop_mobility": {
+          "mean": 1.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_mobility": {
+          "mean": -1.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "knight_mobility": {
+          "mean": 4.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "queen_mobility": {
+          "mean": 10.0,
+          "std": 0.0,
+          "target_correlation": null
+        }
+      },
+      "linear_model": {
+        "r2": 0.0,
+        "rmse": 0.0,
+        "intercept": 68.0,
+        "coefficients": {
+          "material": 0.0,
+          "piece_square": 0.0,
+          "mobility": 0.0,
+          "isolated_pawn": 0.0,
+          "doubled_pawn": 0.0,
+          "passed_pawn": 0.0,
+          "king_safety": 0.0,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 0.0,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "space": 0.0,
+          "bishop_mobility": 0.0,
+          "rook_mobility": 0.0,
+          "knight_mobility": 0.0,
+          "queen_mobility": 0.0
+        },
+        "standardized_coefficients": {
+          "material": 0.0,
+          "piece_square": 0.0,
+          "mobility": 0.0,
+          "isolated_pawn": 0.0,
+          "doubled_pawn": 0.0,
+          "passed_pawn": 0.0,
+          "king_safety": 0.0,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 0.0,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "space": 0.0,
+          "bishop_mobility": 0.0,
+          "rook_mobility": 0.0,
+          "knight_mobility": 0.0,
+          "queen_mobility": 0.0
+        }
+      }
+    },
+    "27": {
+      "game_phase": "opening",
+      "target": {
+        "count": 2,
+        "mean": -60.5,
+        "std": 619.5,
+        "mae": 619.5,
+        "positive_ratio": 0.5,
+        "negative_ratio": 0.5,
+        "zero_ratio": 0.0
+      },
+      "features": {
+        "material": {
+          "mean": -225.0,
+          "std": 555.0,
+          "target_correlation": 1.0
+        },
+        "piece_square": {
+          "mean": -25.0,
+          "std": 25.0,
+          "target_correlation": 1.0
+        },
+        "mobility": {
+          "mean": 5.0,
+          "std": 4.0,
+          "target_correlation": 1.0
+        },
+        "isolated_pawn": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "doubled_pawn": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "passed_pawn": {
+          "mean": -5.0,
+          "std": 5.0,
+          "target_correlation": 1.0
+        },
+        "king_safety": {
+          "mean": -15.0,
+          "std": 15.0,
+          "target_correlation": 1.0
+        },
+        "bishop_pair": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "open_file": {
+          "mean": -10.0,
+          "std": 10.0,
+          "target_correlation": 1.0
+        },
+        "semi_open_file": {
+          "mean": 5.0,
+          "std": 5.0,
+          "target_correlation": -1.0
+        },
+        "pawn_shield": {
+          "mean": -15.0,
+          "std": 15.0,
+          "target_correlation": 1.0
+        },
+        "knight_outpost": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "space": {
+          "mean": 2.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "bishop_mobility": {
+          "mean": 5.0,
+          "std": 1.0,
+          "target_correlation": -1.0
+        },
+        "rook_mobility": {
+          "mean": 1.5,
+          "std": 2.5,
+          "target_correlation": -1.0
+        },
+        "knight_mobility": {
+          "mean": 0.5,
+          "std": 0.5,
+          "target_correlation": -1.0
+        },
+        "queen_mobility": {
+          "mean": -2.0,
+          "std": 4.0,
+          "target_correlation": 1.0
+        }
+      },
+      "linear_model": {
+        "r2": 0.9999999999999836,
+        "rmse": 7.928699375467883e-05,
+        "intercept": 192.06894096939698,
+        "coefficients": {
+          "material": 1.1116546485821026,
+          "piece_square": 0.05004221492440023,
+          "mobility": 0.008011414735285329,
+          "isolated_pawn": 0.0,
+          "doubled_pawn": 0.0,
+          "passed_pawn": 0.009984615491148948,
+          "king_safety": 0.03007221117776132,
+          "bishop_pair": 0.0,
+          "open_file": 0.019969202436101556,
+          "semi_open_file": -0.009984606370591188,
+          "pawn_shield": 0.03007221134321022,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "space": 0.0,
+          "bishop_mobility": -0.0020028533689479175,
+          "rook_mobility": -0.004992305731502562,
+          "knight_mobility": -0.0009963368763685903,
+          "queen_mobility": 0.007970686812904393
+        },
+        "standardized_coefficients": {
+          "material": 616.9683299630669,
+          "piece_square": 1.2510553731100058,
+          "pawn_shield": 0.4510831701481533,
+          "king_safety": 0.4510831676664198,
+          "open_file": 0.19969202436101557,
+          "passed_pawn": 0.049923077455744744,
+          "semi_open_file": -0.04992303185295594,
+          "mobility": 0.032045658941141315,
+          "queen_mobility": 0.03188274725161757,
+          "rook_mobility": -0.012480764328756406,
+          "bishop_mobility": -0.0020028533689479175,
+          "knight_mobility": -0.0004981684381842952,
+          "isolated_pawn": 0.0,
+          "doubled_pawn": 0.0,
+          "bishop_pair": 0.0,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "space": 0.0
+        }
+      }
+    },
+    "26": {
+      "game_phase": "opening",
+      "target": {
+        "count": 2,
+        "mean": 319.0,
+        "std": 232.0,
+        "mae": 319.0,
+        "positive_ratio": 1.0,
+        "negative_ratio": 0.0,
+        "zero_ratio": 0.0
+      },
+      "features": {
+        "material": {
+          "mean": 780.0,
+          "std": 130.0,
+          "target_correlation": -1.0
+        },
+        "piece_square": {
+          "mean": 37.5,
+          "std": 27.5,
+          "target_correlation": -1.0
+        },
+        "mobility": {
+          "mean": 8.5,
+          "std": 2.5,
+          "target_correlation": 1.0
+        },
+        "isolated_pawn": {
+          "mean": -7.5,
+          "std": 7.5,
+          "target_correlation": 1.0
+        },
+        "doubled_pawn": {
+          "mean": -10.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "passed_pawn": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "king_safety": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "bishop_pair": {
+          "mean": 15.0,
+          "std": 15.0,
+          "target_correlation": -1.0
+        },
+        "open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "semi_open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "pawn_shield": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "knight_outpost": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "connected_rooks": {
+          "mean": 10.0,
+          "std": 10.0,
+          "target_correlation": -1.0
+        },
+        "rook_seventh": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "space": {
+          "mean": 9.0,
+          "std": 1.0,
+          "target_correlation": -1.0
+        },
+        "bishop_mobility": {
+          "mean": 7.5,
+          "std": 1.5,
+          "target_correlation": -1.0
+        },
+        "rook_mobility": {
+          "mean": 3.0,
+          "std": 4.0,
+          "target_correlation": -1.0
+        },
+        "knight_mobility": {
+          "mean": 3.0,
+          "std": 5.0,
+          "target_correlation": 1.0
+        },
+        "queen_mobility": {
+          "mean": 5.0,
+          "std": 2.0,
+          "target_correlation": -1.0
+        }
+      },
+      "linear_model": {
+        "r2": 0.9999999999997237,
+        "rmse": 0.0001219510449458754,
+        "intercept": 1637.4950815545826,
+        "coefficients": {
+          "material": -1.6670639494551398,
+          "piece_square": -0.3525303181565117,
+          "mobility": 0.03205489080869897,
+          "isolated_pawn": 0.09616372908926177,
+          "doubled_pawn": 0.0,
+          "passed_pawn": 0.0,
+          "king_safety": 0.0,
+          "bishop_pair": -0.19232733985964456,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 0.0,
+          "knight_outpost": 0.0,
+          "connected_rooks": -0.12822031778289383,
+          "rook_seventh": 0.0,
+          "space": -0.012821897074455378,
+          "bishop_mobility": -0.019233151618625592,
+          "rook_mobility": -0.05128758095468109,
+          "knight_mobility": 0.06410161822952706,
+          "queen_mobility": -0.02564715554004019
+        },
+        "standardized_coefficients": {
+          "material": -216.71831342916818,
+          "piece_square": -9.694583749304071,
+          "bishop_pair": -2.8849100978946685,
+          "connected_rooks": -1.2822031778289382,
+          "isolated_pawn": 0.7212279681694632,
+          "knight_mobility": 0.32050809114763534,
+          "rook_mobility": -0.20515032381872436,
+          "mobility": 0.08013722702174743,
+          "queen_mobility": -0.05129431108008038,
+          "bishop_mobility": -0.028849727427938388,
+          "space": -0.012821897074455378,
+          "doubled_pawn": 0.0,
+          "passed_pawn": 0.0,
+          "king_safety": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 0.0,
+          "knight_outpost": 0.0,
+          "rook_seventh": 0.0
+        }
+      }
+    },
+    "25": {
+      "game_phase": "opening",
+      "target": {
+        "count": 16,
+        "mean": 537.0625,
+        "std": 270.4326322649506,
+        "mae": 551.4375,
+        "positive_ratio": 0.9375,
+        "negative_ratio": 0.0625,
+        "zero_ratio": 0.0
+      },
+      "features": {
+        "material": {
+          "mean": 258.75,
+          "std": 615.0800252812637,
+          "target_correlation": -0.04293928215393995
+        },
+        "piece_square": {
+          "mean": -10.3125,
+          "std": 11.245658884654114,
+          "target_correlation": 0.24805873815865065
+        },
+        "mobility": {
+          "mean": 2.6875,
+          "std": 20.382954735513692,
+          "target_correlation": 0.3187274407592974
+        },
+        "isolated_pawn": {
+          "mean": 4.6875,
+          "std": 13.746448404951732,
+          "target_correlation": 0.7880037145540648
+        },
+        "doubled_pawn": {
+          "mean": -1.25,
+          "std": 3.307189138830738,
+          "target_correlation": -0.361898543493603
+        },
+        "passed_pawn": {
+          "mean": 0.625,
+          "std": 2.4206145913796355,
+          "target_correlation": 0.18611898145773653
+        },
+        "king_safety": {
+          "mean": 13.125,
+          "std": 14.882351124738323,
+          "target_correlation": -0.5410862204313802
+        },
+        "bishop_pair": {
+          "mean": 0.0,
+          "std": 10.606601717798213,
+          "target_correlation": -0.17518652960890796
+        },
+        "open_file": {
+          "mean": -1.25,
+          "std": 4.841229182759271,
+          "target_correlation": -0.18611898145773653
+        },
+        "semi_open_file": {
+          "mean": -0.625,
+          "std": 9.662265521087692,
+          "target_correlation": 0.18538674489427673
+        },
+        "pawn_shield": {
+          "mean": 6.875,
+          "std": 7.680128579652817,
+          "target_correlation": -0.2529804850854337
+        },
+        "knight_outpost": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "connected_rooks": {
+          "mean": 7.5,
+          "std": 9.682458365518542,
+          "target_correlation": 0.16260795911264253
+        },
+        "rook_seventh": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "space": {
+          "mean": 4.25,
+          "std": 6.077622890571609,
+          "target_correlation": 0.54681259395263
+        },
+        "bishop_mobility": {
+          "mean": 1.375,
+          "std": 5.475799028452378,
+          "target_correlation": 0.4296826939269071
+        },
+        "rook_mobility": {
+          "mean": -1.0625,
+          "std": 1.5194057226429023,
+          "target_correlation": 0.41525966926484875
+        },
+        "knight_mobility": {
+          "mean": 0.875,
+          "std": 7.096433963618629,
+          "target_correlation": 0.7257646826430492
+        },
+        "queen_mobility": {
+          "mean": 8.625,
+          "std": 10.403575106664055,
+          "target_correlation": -0.41695953626792864
+        }
+      },
+      "linear_model": {
+        "r2": 0.9920275831402918,
+        "rmse": 24.146494748668697,
+        "intercept": 265.88563075080685,
+        "coefficients": {
+          "material": 0.3074764807263634,
+          "piece_square": -12.437917163930294,
+          "mobility": -0.027842210146039704,
+          "isolated_pawn": 15.950883067530425,
+          "doubled_pawn": -10.330513950131703,
+          "passed_pawn": 9.369349166394004,
+          "king_safety": -3.615821690288943,
+          "bishop_pair": 21.188916102994675,
+          "open_file": -18.738513175946757,
+          "semi_open_file": 3.318594951500409,
+          "pawn_shield": 29.16806759936099,
+          "knight_outpost": 0.0,
+          "connected_rooks": 4.310452876431727,
+          "rook_seventh": 0.0,
+          "space": 26.523987043037994,
+          "bishop_mobility": -104.08540714054654,
+          "rook_mobility": 56.1626488076238,
+          "knight_mobility": 36.97391982437434,
+          "queen_mobility": -20.771212969236192
+        },
+        "standardized_coefficients": {
+          "bishop_mobility": -569.9507712962749,
+          "knight_mobility": 262.3829804098022,
+          "bishop_pair": 224.74239393630555,
+          "pawn_shield": 224.0145095830977,
+          "isolated_pawn": 219.2679911012252,
+          "queen_mobility": -216.09487418196323,
+          "material": 189.1226415385656,
+          "space": 161.20279080199248,
+          "piece_square": -139.8725736611446,
+          "open_file": -90.71743682891255,
+          "rook_mobility": 85.33384999708719,
+          "king_safety": -53.81192799932487,
+          "connected_rooks": 41.73578051257984,
+          "doubled_pawn": -34.164963534414994,
+          "semi_open_file": 32.06514557833808,
+          "passed_pawn": 22.67958330390395,
+          "mobility": -0.5675065091433874,
+          "knight_outpost": 0.0,
+          "rook_seventh": 0.0
+        }
+      }
+    },
+    "24": {
+      "game_phase": "opening",
+      "target": {
+        "count": 527707,
+        "mean": 22.323230504806645,
+        "std": 85.44176199267964,
+        "mae": 52.538251340232364,
+        "positive_ratio": 0.6525192957455558,
+        "negative_ratio": 0.27660046199879856,
+        "zero_ratio": 0.07088024225564565
+      },
+      "features": {
+        "material": {
+          "mean": -6.59780901144006,
+          "std": 51.335641662389165,
+          "target_correlation": 0.10731856805734404
+        },
+        "piece_square": {
+          "mean": 5.72741123388547,
+          "std": 38.86458594662359,
+          "target_correlation": 0.08796472343971136
+        },
+        "mobility": {
+          "mean": 2.726164329826968,
+          "std": 9.087877279893315,
+          "target_correlation": 0.1872260615235107
+        },
+        "isolated_pawn": {
+          "mean": -0.3748386888936474,
+          "std": 5.501557683047521,
+          "target_correlation": 0.0003098767598971663
+        },
+        "doubled_pawn": {
+          "mean": 0.3448504567875734,
+          "std": 3.6264750005682673,
+          "target_correlation": -0.12473427226857618
+        },
+        "passed_pawn": {
+          "mean": -0.1424369962877127,
+          "std": 8.77553985674325,
+          "target_correlation": 0.023678126395267233
+        },
+        "king_safety": {
+          "mean": 0.9427959075775004,
+          "std": 12.855089739441324,
+          "target_correlation": 0.048380614965947026
+        },
+        "bishop_pair": {
+          "mean": -0.0006253470202214486,
+          "std": 0.14889930588961858,
+          "target_correlation": 0.004908938003748869
+        },
+        "open_file": {
+          "mean": 0.08936777416255612,
+          "std": 2.4466811885510076,
+          "target_correlation": 0.044456240989976074
+        },
+        "semi_open_file": {
+          "mean": 0.12785504077073073,
+          "std": 2.2550295518855794,
+          "target_correlation": 0.04109123170316269
+        },
+        "pawn_shield": {
+          "mean": 1.107337973534556,
+          "std": 11.423316570698214,
+          "target_correlation": 0.05880099170364576
+        },
+        "knight_outpost": {
+          "mean": -0.001515992776294421,
+          "std": 1.6232045918385045,
+          "target_correlation": 0.017949245374442112
+        },
+        "connected_rooks": {
+          "mean": 0.2165974679130654,
+          "std": 2.978662289723673,
+          "target_correlation": 0.02004842338742343
+        },
+        "rook_seventh": {
+          "mean": -0.00022739891644416315,
+          "std": 0.17412582753750583,
+          "target_correlation": 0.0016098268739521665
+        },
+        "space": {
+          "mean": 2.8091990441665544,
+          "std": 6.821038103377003,
+          "target_correlation": 0.17731883260784548
+        },
+        "bishop_mobility": {
+          "mean": 1.5892569171907895,
+          "std": 3.8709443558723717,
+          "target_correlation": 0.09746604278118846
+        },
+        "rook_mobility": {
+          "mean": 0.3369369744953165,
+          "std": 1.5405667545649289,
+          "target_correlation": 0.1154443270767026
+        },
+        "knight_mobility": {
+          "mean": 0.4948901568484026,
+          "std": 3.7609520338401277,
+          "target_correlation": 0.09043590566454941
+        },
+        "queen_mobility": {
+          "mean": 0.5252858120131058,
+          "std": 3.762335472354602,
+          "target_correlation": 0.0504248941786063
+        }
+      },
+      "linear_model": {
+        "r2": 0.08739318124359055,
+        "rmse": 81.62290557942656,
+        "intercept": 15.281171639235971,
+        "coefficients": {
+          "material": 0.21921627236944616,
+          "piece_square": -0.08379271309961368,
+          "mobility": 2.057036200860207,
+          "isolated_pawn": -0.1100639307205899,
+          "doubled_pawn": -1.353434859985177,
+          "passed_pawn": -0.06915910834816864,
+          "king_safety": 0.11963904746786488,
+          "bishop_pair": -4.883520917331823,
+          "open_file": 0.8314854100343986,
+          "semi_open_file": 1.196936034987941,
+          "pawn_shield": 0.7732108722357922,
+          "knight_outpost": 0.06937338736677473,
+          "connected_rooks": -0.8371529028549912,
+          "rook_seventh": -1.2629340202455006,
+          "space": 0.36487820028503815,
+          "bishop_mobility": -0.15535124067736772,
+          "rook_mobility": 3.875771016847098,
+          "knight_mobility": 2.413231914557262,
+          "queen_mobility": -0.9907436028666735
+        },
+        "standardized_coefficients": {
+          "mobility": 18.69409255371554,
+          "material": 11.25360800492259,
+          "knight_mobility": 9.076049477182039,
+          "pawn_shield": 8.832632569455145,
+          "rook_mobility": 5.970883976860947,
+          "doubled_pawn": -4.9081976846338575,
+          "queen_mobility": -3.727509801073686,
+          "piece_square": -3.2565690999607084,
+          "semi_open_file": 2.699126130614559,
+          "connected_rooks": -2.4935957824668677,
+          "space": 2.488848107235871,
+          "open_file": 2.034379711285784,
+          "king_safety": 1.5379706915406834,
+          "bishop_pair": -0.7271528748881418,
+          "passed_pawn": -0.6069085117661788,
+          "isolated_pawn": -0.6055230636822714,
+          "bishop_mobility": -0.601356008277827,
+          "rook_seventh": -0.21990943140051694,
+          "knight_outpost": 0.11260720092514004
+        }
+      }
+    },
+    "23": {
+      "game_phase": "opening",
+      "target": {
+        "count": 30466,
+        "mean": 23.062200485787436,
+        "std": 284.93465819555684,
+        "mae": 212.59019891026063,
+        "positive_ratio": 0.5330860631523666,
+        "negative_ratio": 0.42473577102343596,
+        "zero_ratio": 0.042178165824197464
+      },
+      "features": {
+        "material": {
+          "mean": -42.84152826101228,
+          "std": 293.2559379261487,
+          "target_correlation": 0.4810256968797573
+        },
+        "piece_square": {
+          "mean": 2.1417317665594435,
+          "std": 37.82415945846406,
+          "target_correlation": 0.06675270490209477
+        },
+        "mobility": {
+          "mean": 3.294820455589838,
+          "std": 15.551438422455158,
+          "target_correlation": 0.4530098193058942
+        },
+        "isolated_pawn": {
+          "mean": 0.3554782380358432,
+          "std": 10.253947736830746,
+          "target_correlation": 0.0206291578804008
+        },
+        "doubled_pawn": {
+          "mean": 0.3498982472264163,
+          "std": 3.786765698535946,
+          "target_correlation": 0.002476465573624869
+        },
+        "passed_pawn": {
+          "mean": 0.48529508304339264,
+          "std": 14.081136525008274,
+          "target_correlation": 0.008311070504604647
+        },
+        "king_safety": {
+          "mean": 2.6951355609531937,
+          "std": 14.686154565609403,
+          "target_correlation": 0.03193733828042552
+        },
+        "bishop_pair": {
+          "mean": -2.8782905534037946,
+          "std": 15.85037070044615,
+          "target_correlation": 0.21100695778963424
+        },
+        "open_file": {
+          "mean": 0.3426770826495109,
+          "std": 5.186796441426331,
+          "target_correlation": 0.06547936807365541
+        },
+        "semi_open_file": {
+          "mean": 0.34628766493796365,
+          "std": 3.360477232798536,
+          "target_correlation": 0.0352538227015277
+        },
+        "pawn_shield": {
+          "mean": 2.920304601851244,
+          "std": 13.27770794897599,
+          "target_correlation": 0.04746772824026714
+        },
+        "knight_outpost": {
+          "mean": 0.20744436420928247,
+          "std": 2.501814162338052,
+          "target_correlation": 0.0429927081315291
+        },
+        "connected_rooks": {
+          "mean": 0.5927919648132344,
+          "std": 4.546289839013512,
+          "target_correlation": 0.04989106012460787
+        },
+        "rook_seventh": {
+          "mean": 0.015755268167793605,
+          "std": 1.01185186783024,
+          "target_correlation": 0.04287828656695424
+        },
+        "space": {
+          "mean": 3.32593711022123,
+          "std": 9.490114895122469,
+          "target_correlation": 0.39600546522300567
+        },
+        "bishop_mobility": {
+          "mean": 1.1213483883673603,
+          "std": 5.173026580075598,
+          "target_correlation": 0.22038631879783818
+        },
+        "rook_mobility": {
+          "mean": 0.5026915249786648,
+          "std": 2.2277461689643303,
+          "target_correlation": 0.10072917177341867
+        },
+        "knight_mobility": {
+          "mean": -0.1380227138449419,
+          "std": 6.601485976457398,
+          "target_correlation": 0.3699947827440749
+        },
+        "queen_mobility": {
+          "mean": 1.078316812184074,
+          "std": 4.347230820949444,
+          "target_correlation": 0.09834448788695958
+        }
+      },
+      "linear_model": {
+        "r2": 0.34585628200451307,
+        "rmse": 230.45273445214585,
+        "intercept": 8.007425515157003,
+        "coefficients": {
+          "material": 0.5320392691353762,
+          "piece_square": 0.7598147832714099,
+          "mobility": 4.618470409932273,
+          "isolated_pawn": 0.18794547488566912,
+          "doubled_pawn": 2.3356889608939797,
+          "passed_pawn": 0.014439338322138466,
+          "king_safety": -0.17701214502625157,
+          "bishop_pair": -1.576232363274389,
+          "open_file": 2.382502878446287,
+          "semi_open_file": 0.3195324719388251,
+          "pawn_shield": 2.2678691780210305,
+          "knight_outpost": 2.892882766812989,
+          "connected_rooks": 0.01784297297018664,
+          "rook_seventh": 5.670549593313625,
+          "space": 0.8097603733927219,
+          "bishop_mobility": -0.3210165143190682,
+          "rook_mobility": 10.403952508811626,
+          "knight_mobility": -5.4513659609481016,
+          "queen_mobility": -0.47543034307675036
+        },
+        "standardized_coefficients": {
+          "material": 156.02367488383743,
+          "mobility": 71.82385818599298,
+          "knight_mobility": -35.9871159437361,
+          "pawn_shield": 30.11210461224748,
+          "piece_square": 28.73935552135612,
+          "bishop_pair": -24.98386726793937,
+          "rook_mobility": 23.177365343591934,
+          "open_file": 12.357557451613193,
+          "doubled_pawn": 8.844706839562388,
+          "space": 7.684718981014202,
+          "knight_outpost": 7.237455075996423,
+          "rook_seventh": 5.737756197618399,
+          "king_safety": -2.5996277218455983,
+          "queen_mobility": -2.0668054406378173,
+          "isolated_pawn": 1.9271830768514866,
+          "bishop_mobility": -1.6606269612157587,
+          "semi_open_file": 1.0737815970902589,
+          "passed_pawn": 0.20332229424481565,
+          "connected_rooks": 0.08111932671215227
+        }
+      }
+    },
+    "22": {
+      "game_phase": "opening",
+      "target": {
+        "count": 152390,
+        "mean": 27.76663166874467,
+        "std": 137.75602551349087,
+        "mae": 79.78703983200998,
+        "positive_ratio": 0.6173108471684494,
+        "negative_ratio": 0.30288076645449175,
+        "zero_ratio": 0.07980838637705887
+      },
+      "features": {
+        "material": {
+          "mean": -5.7856158540586655,
+          "std": 81.66392890221078,
+          "target_correlation": 0.05291800676312916
+        },
+        "piece_square": {
+          "mean": 2.673272524443861,
+          "std": 33.13720116302285,
+          "target_correlation": 0.0647725557350136
+        },
+        "mobility": {
+          "mean": 3.1514535074479952,
+          "std": 10.623543608641098,
+          "target_correlation": 0.2819217101253182
+        },
+        "isolated_pawn": {
+          "mean": 0.41400354353960234,
+          "std": 13.608604286031953,
+          "target_correlation": -0.002548307247274453
+        },
+        "doubled_pawn": {
+          "mean": 0.8513025789093772,
+          "std": 6.071116756260047,
+          "target_correlation": -0.023669393264235568
+        },
+        "passed_pawn": {
+          "mean": 0.2322658967123827,
+          "std": 17.27734035057987,
+          "target_correlation": 0.05060411345311708
+        },
+        "king_safety": {
+          "mean": 2.1995537764945206,
+          "std": 16.09482685433247,
+          "target_correlation": 0.09649972229138097
+        },
+        "bishop_pair": {
+          "mean": -1.8501213990419318,
+          "std": 20.3642557459337,
+          "target_correlation": 0.0660515014192876
+        },
+        "open_file": {
+          "mean": 0.5281186429555745,
+          "std": 6.346253447080974,
+          "target_correlation": 0.10396968391114235
+        },
+        "semi_open_file": {
+          "mean": 0.2647155325152569,
+          "std": 4.407786343984738,
+          "target_correlation": 0.035242042460605444
+        },
+        "pawn_shield": {
+          "mean": 2.3707592361703522,
+          "std": 14.667630791150383,
+          "target_correlation": 0.1068118452355253
+        },
+        "knight_outpost": {
+          "mean": 0.1472537568081895,
+          "std": 3.5803706389579264,
+          "target_correlation": -0.002973642216160258
+        },
+        "connected_rooks": {
+          "mean": 0.829319509154144,
+          "std": 6.969033621974304,
+          "target_correlation": 0.05690022588011199
+        },
+        "rook_seventh": {
+          "mean": -0.003149812979854321,
+          "std": 1.2037043031455772,
+          "target_correlation": 0.029207723691036743
+        },
+        "space": {
+          "mean": 3.198871317015552,
+          "std": 8.481424179448283,
+          "target_correlation": 0.2072573183910816
+        },
+        "bishop_mobility": {
+          "mean": 0.9991600498720389,
+          "std": 5.941304594561909,
+          "target_correlation": 0.13320348699369172
+        },
+        "rook_mobility": {
+          "mean": 0.5865870463941204,
+          "std": 2.7296124389168526,
+          "target_correlation": 0.17105110781116825
+        },
+        "knight_mobility": {
+          "mean": 0.6179145613229214,
+          "std": 5.562039774887348,
+          "target_correlation": -0.0063853798812565565
+        },
+        "queen_mobility": {
+          "mean": 0.8437167793162281,
+          "std": 4.544650526441179,
+          "target_correlation": 0.10386329391620544
+        }
+      },
+      "linear_model": {
+        "r2": 0.13130894855250094,
+        "rmse": 128.39357101605577,
+        "intercept": 12.773990511085973,
+        "coefficients": {
+          "material": 0.20327335808270736,
+          "piece_square": 0.17991664783371683,
+          "mobility": 4.470232639546276,
+          "isolated_pawn": -0.036800963742420784,
+          "doubled_pawn": 0.6708557434774973,
+          "passed_pawn": 0.32403020344194006,
+          "king_safety": 0.2659938988749388,
+          "bishop_pair": 0.7681058888353288,
+          "open_file": 1.2178268922874715,
+          "semi_open_file": 0.8472204774456167,
+          "pawn_shield": 1.1785835284468809,
+          "knight_outpost": -0.27188128659139293,
+          "connected_rooks": -0.34952914666898377,
+          "rook_seventh": 1.164272494146416,
+          "space": -0.4106797675884159,
+          "bishop_mobility": 0.13639677337462858,
+          "rook_mobility": 1.719688678582968,
+          "knight_mobility": 0.831395174181415,
+          "queen_mobility": -2.2141804282570514
+        },
+        "standardized_coefficients": {
+          "mobility": 47.48971138699066,
+          "pawn_shield": 17.287028051790134,
+          "material": 16.600101062179846,
+          "bishop_pair": 15.641904760200358,
+          "queen_mobility": -10.062676248914165,
+          "open_file": 7.7286381131272766,
+          "piece_square": 5.961934151842614,
+          "passed_pawn": 5.598380108734035,
+          "rook_mobility": 4.694083608124554,
+          "knight_mobility": 4.624253027446424,
+          "king_safety": 4.281125746700961,
+          "doubled_pawn": 4.072843545259526,
+          "semi_open_file": 3.7343668508290193,
+          "space": -3.483149310834592,
+          "connected_rooks": -2.4358803749961355,
+          "rook_seventh": 1.4014398112380748,
+          "knight_outpost": -0.9734357757939286,
+          "bishop_mobility": 0.8103747763341002,
+          "isolated_pawn": -0.500809752915214
+        }
+      }
+    },
+    "21": {
+      "game_phase": "opening",
+      "target": {
+        "count": 14014,
+        "mean": 33.68096189524761,
+        "std": 325.66909427856353,
+        "mae": 247.43349507635222,
+        "positive_ratio": 0.5226202369059512,
+        "negative_ratio": 0.4139431996574854,
+        "zero_ratio": 0.06343656343656344
+      },
+      "features": {
+        "material": {
+          "mean": -53.004138718424436,
+          "std": 295.63087012604484,
+          "target_correlation": 0.2549761835676497
+        },
+        "piece_square": {
+          "mean": 2.029755958327387,
+          "std": 31.692807335475674,
+          "target_correlation": 0.08613824463466128
+        },
+        "mobility": {
+          "mean": 3.1626944484087343,
+          "std": 15.443436101272075,
+          "target_correlation": 0.4068921064436113
+        },
+        "isolated_pawn": {
+          "mean": 0.829527615241901,
+          "std": 18.309518217640914,
+          "target_correlation": 0.04789619215985334
+        },
+        "doubled_pawn": {
+          "mean": 0.5829884401312972,
+          "std": 5.940436140209047,
+          "target_correlation": -0.025352636593500257
+        },
+        "passed_pawn": {
+          "mean": -1.2701584130155559,
+          "std": 28.031602560908777,
+          "target_correlation": 0.04519848539564722
+        },
+        "king_safety": {
+          "mean": 3.198230341087484,
+          "std": 18.675370609382238,
+          "target_correlation": 0.0931190643252605
+        },
+        "bishop_pair": {
+          "mean": -3.159697445411731,
+          "std": 22.16305127480007,
+          "target_correlation": 0.1641363733550229
+        },
+        "open_file": {
+          "mean": 1.2987012987012987,
+          "std": 10.40757687310569,
+          "target_correlation": 0.09708932663124979
+        },
+        "semi_open_file": {
+          "mean": -0.13771942343370916,
+          "std": 5.868511915683746,
+          "target_correlation": 0.045673125918910165
+        },
+        "pawn_shield": {
+          "mean": 3.9267874982160698,
+          "std": 16.09299559451764,
+          "target_correlation": 0.10201806678414634
+        },
+        "knight_outpost": {
+          "mean": 0.37105751391465674,
+          "std": 5.110946209093858,
+          "target_correlation": 0.0029820392031155787
+        },
+        "connected_rooks": {
+          "mean": 1.8224632510346797,
+          "std": 9.555014063143267,
+          "target_correlation": 0.07975411927104169
+        },
+        "rook_seventh": {
+          "mean": 0.03853289567575282,
+          "std": 2.430409955727553,
+          "target_correlation": 0.014185833123955625
+        },
+        "space": {
+          "mean": 2.373483659197945,
+          "std": 9.968357195558005,
+          "target_correlation": 0.37321761278009824
+        },
+        "bishop_mobility": {
+          "mean": -0.0423861852433281,
+          "std": 7.061923210196616,
+          "target_correlation": 0.23246792710441844
+        },
+        "rook_mobility": {
+          "mean": 0.8254602540316825,
+          "std": 4.068251347893717,
+          "target_correlation": 0.2037202943935963
+        },
+        "knight_mobility": {
+          "mean": -0.05915513058370201,
+          "std": 6.792443481853239,
+          "target_correlation": 0.08900949878749513
+        },
+        "queen_mobility": {
+          "mean": 0.8253888968174683,
+          "std": 4.461222538553541,
+          "target_correlation": 0.10885755986575772
+        }
+      },
+      "linear_model": {
+        "r2": 0.2701196770951963,
+        "rmse": 278.22898671979476,
+        "intercept": 8.539777305735782,
+        "coefficients": {
+          "material": 0.21859858190185924,
+          "piece_square": 0.07160143744786474,
+          "mobility": 5.61061127603557,
+          "isolated_pawn": 0.9854815207014825,
+          "doubled_pawn": 0.9236263485857925,
+          "passed_pawn": 0.5737819905303821,
+          "king_safety": 0.262491686845005,
+          "bishop_pair": 0.9256321433946132,
+          "open_file": 1.8257051898486556,
+          "semi_open_file": 2.446867546534648,
+          "pawn_shield": 2.5027491737226653,
+          "knight_outpost": -1.1046011310002073,
+          "connected_rooks": -0.858804402187527,
+          "rook_seventh": -5.79644233485927,
+          "space": 3.678732276043514,
+          "bishop_mobility": 3.731237449584815,
+          "rook_mobility": 6.358702335106103,
+          "knight_mobility": 2.8482893945384604,
+          "queen_mobility": -3.660336956143438
+        },
+        "standardized_coefficients": {
+          "mobility": 86.6471167305319,
+          "material": 64.62448897596613,
+          "pawn_shield": 40.27673142690151,
+          "space": 36.67091735442984,
+          "bishop_mobility": 26.349712347977828,
+          "rook_mobility": 25.868799345650327,
+          "bishop_pair": 20.5148326556579,
+          "knight_mobility": 19.346844732364474,
+          "open_file": 19.0011671109779,
+          "isolated_pawn": 18.043691856432265,
+          "queen_mobility": -16.329577727447568,
+          "passed_pawn": 16.084028715154794,
+          "semi_open_file": 14.359471352938435,
+          "rook_seventh": -14.087731158442633,
+          "connected_rooks": -8.205888140391165,
+          "knight_outpost": -5.645556963046298,
+          "doubled_pawn": 5.486743341188361,
+          "king_safety": 4.9021295337123725,
+          "piece_square": 2.26925056197829
+        }
+      }
+    },
+    "20": {
+      "game_phase": "opening",
+      "target": {
+        "count": 46219,
+        "mean": 28.83255803890175,
+        "std": 221.49726330241901,
+        "mae": 132.47945650057335,
+        "positive_ratio": 0.5638590190181527,
+        "negative_ratio": 0.34520435318808285,
+        "zero_ratio": 0.09093662779376446
+      },
+      "features": {
+        "material": {
+          "mean": -11.26809320842078,
+          "std": 180.62349356611563,
+          "target_correlation": 0.2158173978054802
+        },
+        "piece_square": {
+          "mean": 2.2091564075380257,
+          "std": 25.60068678770157,
+          "target_correlation": 0.06879128807537614
+        },
+        "mobility": {
+          "mean": 2.627166316882667,
+          "std": 11.65678888843416,
+          "target_correlation": 0.33991104317527937
+        },
+        "isolated_pawn": {
+          "mean": 1.0193859668101863,
+          "std": 18.6623444582036,
+          "target_correlation": 0.02081949819333236
+        },
+        "doubled_pawn": {
+          "mean": 0.4290443324174041,
+          "std": 6.1159102851766995,
+          "target_correlation": -0.005850092679360528
+        },
+        "passed_pawn": {
+          "mean": -0.16367727557930722,
+          "std": 23.071821286592844,
+          "target_correlation": 0.07095283506862438
+        },
+        "king_safety": {
+          "mean": 1.6674960514074297,
+          "std": 18.285159149972824,
+          "target_correlation": 0.12204247671339956
+        },
+        "bishop_pair": {
+          "mean": -1.6577597957549925,
+          "std": 16.68986910583175,
+          "target_correlation": 0.0699549983498945
+        },
+        "open_file": {
+          "mean": 0.5175360782362232,
+          "std": 10.643238860366472,
+          "target_correlation": 0.13725143084533112
+        },
+        "semi_open_file": {
+          "mean": 0.3550487894588805,
+          "std": 6.375516874508609,
+          "target_correlation": 0.017797649881335045
+        },
+        "pawn_shield": {
+          "mean": 2.4314675782686774,
+          "std": 15.785642779410493,
+          "target_correlation": 0.11380173967435557
+        },
+        "knight_outpost": {
+          "mean": 0.19732144788939612,
+          "std": 4.16819104378568,
+          "target_correlation": 0.045561868374484574
+        },
+        "connected_rooks": {
+          "mean": 1.151041779354811,
+          "std": 11.460707359469227,
+          "target_correlation": 0.06366025901681827
+        },
+        "rook_seventh": {
+          "mean": 0.16703087474848005,
+          "std": 2.6942804493293346,
+          "target_correlation": 0.04487403669727792
+        },
+        "space": {
+          "mean": 2.408706376165646,
+          "std": 9.455497054941643,
+          "target_correlation": 0.27907459315193267
+        },
+        "bishop_mobility": {
+          "mean": 0.21757285964646575,
+          "std": 5.8593171206837855,
+          "target_correlation": 0.13370288318622006
+        },
+        "rook_mobility": {
+          "mean": 0.7277959280815249,
+          "std": 4.152766606717462,
+          "target_correlation": 0.19396931628706113
+        },
+        "knight_mobility": {
+          "mean": 0.6093597871005431,
+          "std": 5.41202661136744,
+          "target_correlation": -0.0004441687892138187
+        },
+        "queen_mobility": {
+          "mean": 0.7358229299638677,
+          "std": 4.818105574457233,
+          "target_correlation": 0.17104125508034204
+        }
+      },
+      "linear_model": {
+        "r2": 0.20184972091429892,
+        "rmse": 197.8840086842533,
+        "intercept": 10.638955932076605,
+        "coefficients": {
+          "material": 0.2810853009391069,
+          "piece_square": 0.5279724627719563,
+          "mobility": 4.689185557582145,
+          "isolated_pawn": 0.8673896640353558,
+          "doubled_pawn": -0.07341407499777844,
+          "passed_pawn": 0.5602624192058364,
+          "king_safety": 1.677500901769047,
+          "bishop_pair": 0.9759730816250017,
+          "open_file": 1.5639067288911705,
+          "semi_open_file": 0.5608458426252477,
+          "pawn_shield": 0.19479311653296538,
+          "knight_outpost": 1.177116641442417,
+          "connected_rooks": -0.19269616972588607,
+          "rook_seventh": 0.4874538298532259,
+          "space": 0.5068585632364084,
+          "bishop_mobility": 4.0205030936237955,
+          "rook_mobility": 2.461484727765782,
+          "knight_mobility": 2.5377793912851585,
+          "queen_mobility": -1.457662409826978
+        },
+        "standardized_coefficients": {
+          "mobility": 54.66084610342949,
+          "material": 50.77060904570445,
+          "king_safety": 30.673370963069953,
+          "bishop_mobility": 23.557402610232028,
+          "open_file": 16.645032870923117,
+          "bishop_pair": 16.288862983136525,
+          "isolated_pawn": 16.187524689713303,
+          "knight_mobility": 13.734529599415142,
+          "piece_square": 13.51645765195628,
+          "passed_pawn": 12.926274409511219,
+          "rook_mobility": 10.221971580410761,
+          "queen_mobility": -7.023171382464126,
+          "knight_outpost": 4.906447042351362,
+          "space": 4.792599651953813,
+          "semi_open_file": 3.5756821336552664,
+          "pawn_shield": 3.0749345534774717,
+          "connected_rooks": -2.208434410518994,
+          "rook_seventh": 1.3133373237242545,
+          "doubled_pawn": -0.44899389635564674
+        }
+      }
+    },
+    "19": {
+      "game_phase": "early_middlegame",
+      "target": {
+        "count": 10104,
+        "mean": 51.05868962787015,
+        "std": 372.5765941484111,
+        "mae": 288.76553840063343,
+        "positive_ratio": 0.5302850356294537,
+        "negative_ratio": 0.385193982581156,
+        "zero_ratio": 0.08452098178939034
+      },
+      "features": {
+        "material": {
+          "mean": -58.285827395091054,
+          "std": 353.61367016097,
+          "target_correlation": 0.20923215840672504
+        },
+        "piece_square": {
+          "mean": 5.9387371338083925,
+          "std": 28.491659331345843,
+          "target_correlation": 0.15634116736850578
+        },
+        "mobility": {
+          "mean": 2.7747426761678544,
+          "std": 14.301883621807509,
+          "target_correlation": 0.40540192432361494
+        },
+        "isolated_pawn": {
+          "mean": 0.6012470308788599,
+          "std": 21.019569229801885,
+          "target_correlation": 0.025956254457462052
+        },
+        "doubled_pawn": {
+          "mean": 0.2998812351543943,
+          "std": 6.318538370814588,
+          "target_correlation": -0.06332899791529874
+        },
+        "passed_pawn": {
+          "mean": 0.7729612034837688,
+          "std": 37.270295651435966,
+          "target_correlation": 0.11683995326856844
+        },
+        "king_safety": {
+          "mean": -0.27315914489311166,
+          "std": 20.44595370816511,
+          "target_correlation": 0.09844241701521934
+        },
+        "bishop_pair": {
+          "mean": -3.417458432304038,
+          "std": 18.908495224110144,
+          "target_correlation": 0.20144459170115211
+        },
+        "open_file": {
+          "mean": 1.92596991290578,
+          "std": 13.127822719861003,
+          "target_correlation": 0.0926084546277367
+        },
+        "semi_open_file": {
+          "mean": 0.07125890736342043,
+          "std": 6.69542017981496,
+          "target_correlation": 0.0650310489413266
+        },
+        "pawn_shield": {
+          "mean": 1.6171813143309581,
+          "std": 16.586630641740047,
+          "target_correlation": 0.12332762335175249
+        },
+        "knight_outpost": {
+          "mean": -0.035629453681710214,
+          "std": 5.056951713149391,
+          "target_correlation": 0.053369910879191185
+        },
+        "connected_rooks": {
+          "mean": 1.7794932699920822,
+          "std": 11.72226055918115,
+          "target_correlation": -0.026791126251691798
+        },
+        "rook_seventh": {
+          "mean": 0.13064133016627077,
+          "std": 4.561399906357541,
+          "target_correlation": 0.14998978083426526
+        },
+        "space": {
+          "mean": 2.2119952494061756,
+          "std": 11.386874772295766,
+          "target_correlation": 0.3879845446873822
+        },
+        "bishop_mobility": {
+          "mean": -0.5968923198733175,
+          "std": 7.06585316294594,
+          "target_correlation": 0.22734030297921848
+        },
+        "rook_mobility": {
+          "mean": 1.3045328582739508,
+          "std": 5.359982218434774,
+          "target_correlation": 0.08018838611392959
+        },
+        "knight_mobility": {
+          "mean": 0.4500197941409343,
+          "std": 6.20237005497863,
+          "target_correlation": 0.1963496996715871
+        },
+        "queen_mobility": {
+          "mean": 0.30136579572446553,
+          "std": 5.980763412213862,
+          "target_correlation": 0.15550322301656544
+        }
+      },
+      "linear_model": {
+        "r2": 0.31273040985092365,
+        "rmse": 308.87242110246274,
+        "intercept": 32.89550039389499,
+        "coefficients": {
+          "material": 0.2774954395998599,
+          "piece_square": 0.545818523019743,
+          "mobility": 5.436954428140596,
+          "isolated_pawn": 1.1485539018966606,
+          "doubled_pawn": -2.0112381792179326,
+          "passed_pawn": 1.1707708202964637,
+          "king_safety": -0.7434016400570683,
+          "bishop_pair": 2.169268367621238,
+          "open_file": 2.4114056580737295,
+          "semi_open_file": 3.328283208255829,
+          "pawn_shield": 4.066333728976555,
+          "knight_outpost": 1.7310989960432148,
+          "connected_rooks": -0.0767880646099392,
+          "rook_seventh": 4.940032717001218,
+          "space": 0.4343240020812601,
+          "bishop_mobility": 6.584319464798548,
+          "rook_mobility": 5.4062617033877505,
+          "knight_mobility": 11.182665549841966,
+          "queen_mobility": 4.006325944980299
+        },
+        "standardized_coefficients": {
+          "material": 98.12618084983824,
+          "mobility": 77.7586894883378,
+          "knight_mobility": 69.35902994118095,
+          "pawn_shield": 67.4467756285836,
+          "bishop_mobility": 46.52383451619334,
+          "passed_pawn": 43.63497461252341,
+          "bishop_pair": 41.01760056897939,
+          "open_file": 31.65650598486168,
+          "rook_mobility": 28.977466598363232,
+          "isolated_pawn": 24.14210825507594,
+          "queen_mobility": 23.960887629141297,
+          "rook_seventh": 22.533464772732543,
+          "semi_open_file": 22.284254556695352,
+          "piece_square": 15.551275414616866,
+          "king_safety": -15.19955551918084,
+          "doubled_pawn": -12.708085608235775,
+          "knight_outpost": 8.754084033671926,
+          "space": 4.945593022301634,
+          "connected_rooks": -0.9001297011929441
+        }
+      }
+    },
+    "18": {
+      "game_phase": "early_middlegame",
+      "target": {
+        "count": 22455,
+        "mean": 42.13707414829659,
+        "std": 296.4395208029979,
+        "mae": 196.6054776219105,
+        "positive_ratio": 0.5415720329547985,
+        "negative_ratio": 0.3587174348697395,
+        "zero_ratio": 0.09971053217546204
+      },
+      "features": {
+        "material": {
+          "mean": -9.549320863950122,
+          "std": 256.90581638320833,
+          "target_correlation": 0.2811779196321224
+        },
+        "piece_square": {
+          "mean": 1.8452460476508572,
+          "std": 22.0811717145914,
+          "target_correlation": 0.1668862713526788
+        },
+        "mobility": {
+          "mean": 2.8981073257626364,
+          "std": 12.620417746291453,
+          "target_correlation": 0.36375220825321986
+        },
+        "isolated_pawn": {
+          "mean": 0.7735470941883767,
+          "std": 18.255666527520013,
+          "target_correlation": 0.030431506974066144
+        },
+        "doubled_pawn": {
+          "mean": 0.27566243598307727,
+          "std": 6.099427241203145,
+          "target_correlation": 0.002367704784310039
+        },
+        "passed_pawn": {
+          "mean": 2.0305054553551547,
+          "std": 30.867545231882474,
+          "target_correlation": 0.09625288868040142
+        },
+        "king_safety": {
+          "mean": 1.1837007348029391,
+          "std": 18.8156773541075,
+          "target_correlation": 0.05644749259253115
+        },
+        "bishop_pair": {
+          "mean": -1.357381429525718,
+          "std": 11.236267531504769,
+          "target_correlation": 0.025472610068452247
+        },
+        "open_file": {
+          "mean": 1.5729236250278333,
+          "std": 13.71212820544975,
+          "target_correlation": 0.11990165398628265
+        },
+        "semi_open_file": {
+          "mean": 0.27566243598307727,
+          "std": 7.408894885580036,
+          "target_correlation": 0.02621274235717178
+        },
+        "pawn_shield": {
+          "mean": 2.1255845023380093,
+          "std": 14.401819962960632,
+          "target_correlation": 0.08078383356128183
+        },
+        "knight_outpost": {
+          "mean": 0.6706746826987308,
+          "std": 5.189354325938025,
+          "target_correlation": 0.11433672594343217
+        },
+        "connected_rooks": {
+          "mean": 0.09084836339345358,
+          "std": 12.407062062200913,
+          "target_correlation": 0.04418427082688852
+        },
+        "rook_seventh": {
+          "mean": 0.048986862614117124,
+          "std": 5.837348992661806,
+          "target_correlation": 0.05505394448274123
+        },
+        "space": {
+          "mean": 2.223469160543309,
+          "std": 10.192995424440396,
+          "target_correlation": 0.31746746733727915
+        },
+        "bishop_mobility": {
+          "mean": -0.15555555555555556,
+          "std": 5.5965827775719,
+          "target_correlation": 0.08453604234684713
+        },
+        "rook_mobility": {
+          "mean": 1.063193052772211,
+          "std": 5.027323822538261,
+          "target_correlation": 0.17827224050497284
+        },
+        "knight_mobility": {
+          "mean": 0.6358049432197729,
+          "std": 5.211353981837187,
+          "target_correlation": 0.06862813526417774
+        },
+        "queen_mobility": {
+          "mean": 0.7260298374526831,
+          "std": 5.713997530860235,
+          "target_correlation": 0.2185187190114168
+        }
+      },
+      "linear_model": {
+        "r2": 0.24438142684462494,
+        "rmse": 257.6839770793578,
+        "intercept": 12.275947009978378,
+        "coefficients": {
+          "material": 0.3393753676083035,
+          "piece_square": 1.78279096293412,
+          "mobility": 4.83898908876165,
+          "isolated_pawn": 0.8425094085725405,
+          "doubled_pawn": 0.6096548259551405,
+          "passed_pawn": 0.9394766556590629,
+          "king_safety": -0.5370785538450676,
+          "bishop_pair": 0.3884483943701322,
+          "open_file": 1.4480410176104197,
+          "semi_open_file": 2.5467778294779966,
+          "pawn_shield": 2.2845721347581405,
+          "knight_outpost": 4.931729331170388,
+          "connected_rooks": 0.08493976021923369,
+          "rook_seventh": 0.8570947571014967,
+          "space": 1.3295917558120314,
+          "bishop_mobility": 5.929765652871772,
+          "rook_mobility": 0.019847080755694954,
+          "knight_mobility": 1.6979122849554231,
+          "queen_mobility": -0.14274223336831832
+        },
+        "standardized_coefficients": {
+          "material": 87.18750587576265,
+          "mobility": 61.07006376991824,
+          "piece_square": 39.366113383770056,
+          "bishop_mobility": 33.18642432789955,
+          "pawn_shield": 32.901996577183375,
+          "passed_pawn": 28.9993381628538,
+          "knight_outpost": 25.592490939064493,
+          "open_file": 19.855724080223993,
+          "semi_open_file": 18.868809235528154,
+          "isolated_pawn": 15.38057080919841,
+          "space": 13.552522683365707,
+          "king_safety": -10.105496782959445,
+          "knight_mobility": 8.84842194701272,
+          "rook_seventh": 5.003161216982137,
+          "bishop_pair": 4.364710081326276,
+          "doubled_pawn": 3.7185452531617464,
+          "connected_rooks": 1.0538528765884967,
+          "queen_mobility": -0.8156287690160463,
+          "rook_mobility": 0.09977770189094591
+        }
+      }
+    },
+    "17": {
+      "game_phase": "early_middlegame",
+      "target": {
+        "count": 6576,
+        "mean": 34.72338807785888,
+        "std": 423.110329882744,
+        "mae": 333.0086678832117,
+        "positive_ratio": 0.49863138686131386,
+        "negative_ratio": 0.4168187347931874,
+        "zero_ratio": 0.08454987834549878
+      },
+      "features": {
+        "material": {
+          "mean": -51.41119221411192,
+          "std": 351.1158143773617,
+          "target_correlation": 0.37341179630835236
+        },
+        "piece_square": {
+          "mean": 2.462743309002433,
+          "std": 25.228249021258595,
+          "target_correlation": 0.1045363796495501
+        },
+        "mobility": {
+          "mean": 1.670772506082725,
+          "std": 14.95739195105362,
+          "target_correlation": 0.34918005084753334
+        },
+        "isolated_pawn": {
+          "mean": 3.9416058394160585,
+          "std": 21.931634460796797,
+          "target_correlation": 0.10188235168871508
+        },
+        "doubled_pawn": {
+          "mean": -0.3543187347931874,
+          "std": 5.595260493131608,
+          "target_correlation": 0.032197592728327736
+        },
+        "passed_pawn": {
+          "mean": 7.15860705596107,
+          "std": 34.694823453344355,
+          "target_correlation": 0.2142308453227591
+        },
+        "king_safety": {
+          "mean": 2.454379562043796,
+          "std": 21.328969175159656,
+          "target_correlation": 0.08710406345836312
+        },
+        "bishop_pair": {
+          "mean": 0.072992700729927,
+          "std": 18.04784195057513,
+          "target_correlation": 0.044410745208494785
+        },
+        "open_file": {
+          "mean": 0.5109489051094891,
+          "std": 14.97302527750798,
+          "target_correlation": 0.14149235982865874
+        },
+        "semi_open_file": {
+          "mean": -1.169403892944039,
+          "std": 7.64665301429687,
+          "target_correlation": -0.045758800586543136
+        },
+        "pawn_shield": {
+          "mean": 2.5517031630170317,
+          "std": 16.45138834154864,
+          "target_correlation": 0.11142530391417046
+        },
+        "knight_outpost": {
+          "mean": -0.11557177615571776,
+          "std": 4.881692882904355,
+          "target_correlation": 0.09187793391413224
+        },
+        "connected_rooks": {
+          "mean": -0.8789537712895377,
+          "std": 11.833956456996399,
+          "target_correlation": 0.02058832389612923
+        },
+        "rook_seventh": {
+          "mean": 0.7177615571776156,
+          "std": 7.017229463584961,
+          "target_correlation": 0.025404197235798887
+        },
+        "space": {
+          "mean": 2.0961070559610704,
+          "std": 11.972921980761232,
+          "target_correlation": 0.31734896325603756
+        },
+        "bishop_mobility": {
+          "mean": -0.4805352798053528,
+          "std": 7.832759095104526,
+          "target_correlation": 0.14196641058772083
+        },
+        "rook_mobility": {
+          "mean": -0.060371046228710465,
+          "std": 7.155011947535843,
+          "target_correlation": 0.04754461453674905
+        },
+        "knight_mobility": {
+          "mean": 0.6878041362530414,
+          "std": 5.4846897873833464,
+          "target_correlation": 0.021560110825257682
+        },
+        "queen_mobility": {
+          "mean": 0.16864355231143552,
+          "std": 6.846065237098554,
+          "target_correlation": 0.3350567336182475
+        }
+      },
+      "linear_model": {
+        "r2": 0.37432650364646763,
+        "rmse": 334.67826405997414,
+        "intercept": 16.100625557108582,
+        "coefficients": {
+          "material": 0.4657556651897758,
+          "piece_square": 1.6016272221363226,
+          "mobility": 5.533570828882009,
+          "isolated_pawn": 2.8011030994277974,
+          "doubled_pawn": -3.289274798393923,
+          "passed_pawn": 2.399284191186184,
+          "king_safety": -0.9979749107913496,
+          "bishop_pair": 0.5944995440988206,
+          "open_file": 4.012054277229132,
+          "semi_open_file": 2.646932739461423,
+          "pawn_shield": 2.1084773788110622,
+          "knight_outpost": 8.248787704608512,
+          "connected_rooks": 0.6921167512278737,
+          "rook_seventh": 1.1173026733059894,
+          "space": 0.6616845905645202,
+          "bishop_mobility": 7.586073791731332,
+          "rook_mobility": -2.3133583452316895,
+          "knight_mobility": -0.3826245149956609,
+          "queen_mobility": 7.169396273931597
+        },
+        "standardized_coefficients": {
+          "material": 163.53417968397792,
+          "passed_pawn": 83.24274142760476,
+          "mobility": 82.76778777650487,
+          "isolated_pawn": 61.4327692636554,
+          "open_file": 60.072590107685805,
+          "bishop_mobility": 59.41988848831767,
+          "queen_mobility": 49.08215460194701,
+          "piece_square": 40.4062503992818,
+          "knight_outpost": 40.268048230176326,
+          "pawn_shield": 34.687380168191346,
+          "king_safety": -21.285776109851405,
+          "semi_open_file": 20.24017621084376,
+          "doubled_pawn": -18.40434933050695,
+          "rook_mobility": -16.552106599064484,
+          "bishop_pair": 10.729433811584483,
+          "connected_rooks": 8.190479497188466,
+          "space": 7.92229797870094,
+          "rook_seventh": 7.840369238865031,
+          "knight_mobility": -2.0985767697992075
+        }
+      }
+    },
+    "16": {
+      "game_phase": "early_middlegame",
+      "target": {
+        "count": 18515,
+        "mean": 34.52660005401026,
+        "std": 299.0151516305544,
+        "mae": 182.64909532811234,
+        "positive_ratio": 0.5460437483121793,
+        "negative_ratio": 0.3556035646772887,
+        "zero_ratio": 0.098352687010532
+      },
+      "features": {
+        "material": {
+          "mean": 14.23062381852552,
+          "std": 276.38223709121763,
+          "target_correlation": 0.35040041348977763
+        },
+        "piece_square": {
+          "mean": 2.176613556575749,
+          "std": 29.691757402773185,
+          "target_correlation": 0.06999112613006826
+        },
+        "mobility": {
+          "mean": 2.627815284904132,
+          "std": 12.16758103989103,
+          "target_correlation": 0.3434094042828084
+        },
+        "isolated_pawn": {
+          "mean": 1.2605995139076425,
+          "std": 15.855524474181172,
+          "target_correlation": 0.07480650156666503
+        },
+        "doubled_pawn": {
+          "mean": 0.029705644072373753,
+          "std": 5.428859688802058,
+          "target_correlation": -0.013775120415004994
+        },
+        "passed_pawn": {
+          "mean": -0.9573318930596814,
+          "std": 27.530020725861785,
+          "target_correlation": 0.11568852775274882
+        },
+        "king_safety": {
+          "mean": 0.7032136105860114,
+          "std": 17.429839541513093,
+          "target_correlation": 0.05611539678435105
+        },
+        "bishop_pair": {
+          "mean": 0.03888738860383473,
+          "std": 10.81894299220354,
+          "target_correlation": -0.011953430663475383
+        },
+        "open_file": {
+          "mean": 1.3826627059141237,
+          "std": 13.703002729667249,
+          "target_correlation": 0.1404301728320709
+        },
+        "semi_open_file": {
+          "mean": -0.2511477180664326,
+          "std": 6.00626265611998,
+          "target_correlation": -0.04617764574405138
+        },
+        "pawn_shield": {
+          "mean": 0.8566027545233594,
+          "std": 13.236693735541184,
+          "target_correlation": 0.07085039517475972
+        },
+        "knight_outpost": {
+          "mean": 0.16851201728328383,
+          "std": 3.405086206195332,
+          "target_correlation": 0.014527096973793683
+        },
+        "connected_rooks": {
+          "mean": 0.5411828247367,
+          "std": 8.211941891856162,
+          "target_correlation": 0.10117180580360961
+        },
+        "rook_seventh": {
+          "mean": 0.13826627059141236,
+          "std": 4.747164188085439,
+          "target_correlation": 0.028552789935269038
+        },
+        "space": {
+          "mean": 2.3417769376181474,
+          "std": 9.757982075192944,
+          "target_correlation": 0.3276330786913479
+        },
+        "bishop_mobility": {
+          "mean": 0.7974615176883608,
+          "std": 4.904843818204538,
+          "target_correlation": 0.06969815358325016
+        },
+        "rook_mobility": {
+          "mean": 0.7028355387523629,
+          "std": 5.067393508685929,
+          "target_correlation": 0.16180444155166762
+        },
+        "knight_mobility": {
+          "mean": 0.256710775047259,
+          "std": 4.404321483284702,
+          "target_correlation": 0.02756582347870106
+        },
+        "queen_mobility": {
+          "mean": 0.4049149338374291,
+          "std": 5.455990188362958,
+          "target_correlation": 0.2651352824727873
+        }
+      },
+      "linear_model": {
+        "r2": 0.2504171725577503,
+        "rmse": 258.8826882097109,
+        "intercept": 4.160213911875317,
+        "coefficients": {
+          "material": 0.3768677790747263,
+          "piece_square": 0.7052056598095447,
+          "mobility": 4.563384589701188,
+          "isolated_pawn": 1.352821000028531,
+          "doubled_pawn": 0.16467019896039192,
+          "passed_pawn": 1.0742518576248516,
+          "king_safety": -0.12126051784339913,
+          "bishop_pair": -1.2643492797905926,
+          "open_file": 1.2485237290690967,
+          "semi_open_file": 0.8527741296523043,
+          "pawn_shield": 1.4475229102902933,
+          "knight_outpost": 0.6938298809470208,
+          "connected_rooks": 1.5981723918622683,
+          "rook_seventh": -0.43167621150134966,
+          "space": 4.731335356850146,
+          "bishop_mobility": 0.9242546297082203,
+          "rook_mobility": -3.7440322072975993,
+          "knight_mobility": -3.12376185823641,
+          "queen_mobility": -2.7868122546085434
+        },
+        "standardized_coefficients": {
+          "material": 104.15955986827163,
+          "mobility": 55.52535181137908,
+          "space": 46.16828560387034,
+          "passed_pawn": 29.57417590520769,
+          "isolated_pawn": 21.44968647513862,
+          "piece_square": 20.938795370127597,
+          "pawn_shield": 19.16041743869187,
+          "rook_mobility": -18.972484503570904,
+          "open_file": 17.108524067488165,
+          "queen_mobility": -15.204820317953866,
+          "knight_mobility": -13.758051460895963,
+          "bishop_pair": -13.678922780288026,
+          "connected_rooks": 13.124098815141723,
+          "semi_open_file": 5.121985409035854,
+          "bishop_mobility": 4.533324606971289,
+          "knight_outpost": 2.36255055705885,
+          "king_safety": -2.113551368731232,
+          "rook_seventh": -2.049237852087603,
+          "doubled_pawn": 0.8939714050830863
+        }
+      }
+    },
+    "15": {
+      "game_phase": "early_middlegame",
+      "target": {
+        "count": 5474,
+        "mean": 38.31110705151626,
+        "std": 401.1700131662044,
+        "mae": 305.02283522104494,
+        "positive_ratio": 0.5447570332480819,
+        "negative_ratio": 0.36810376324442823,
+        "zero_ratio": 0.08713920350748995
+      },
+      "features": {
+        "material": {
+          "mean": -67.94665692363903,
+          "std": 361.3404995280264,
+          "target_correlation": 0.42985551886952617
+        },
+        "piece_square": {
+          "mean": 0.253014249177932,
+          "std": 23.733058204692686,
+          "target_correlation": -0.022098755815043274
+        },
+        "mobility": {
+          "mean": 3.2250639386189257,
+          "std": 13.385440814545916,
+          "target_correlation": 0.3994313763148324
+        },
+        "isolated_pawn": {
+          "mean": 0.07946656923639021,
+          "std": 19.630029042202956,
+          "target_correlation": 0.00186578707580785
+        },
+        "doubled_pawn": {
+          "mean": -1.072341980270369,
+          "std": 6.10176386053119,
+          "target_correlation": -0.014655306159380684
+        },
+        "passed_pawn": {
+          "mean": 5.952685421994885,
+          "std": 49.92414184437612,
+          "target_correlation": 0.13290981260750917
+        },
+        "king_safety": {
+          "mean": 1.9839240043843624,
+          "std": 20.419667966084962,
+          "target_correlation": 0.13850619708127448
+        },
+        "bishop_pair": {
+          "mean": -1.4084764340518816,
+          "std": 16.653975085043783,
+          "target_correlation": 0.10154838781020037
+        },
+        "open_file": {
+          "mean": 2.020460358056266,
+          "std": 14.469385546483432,
+          "target_correlation": 0.16267837968054016
+        },
+        "semi_open_file": {
+          "mean": 1.0047497259773475,
+          "std": 6.688347537723476,
+          "target_correlation": -0.05595800003673057
+        },
+        "pawn_shield": {
+          "mean": 2.3565948118377786,
+          "std": 14.326940412373562,
+          "target_correlation": 0.17806343429115418
+        },
+        "knight_outpost": {
+          "mean": -0.19729630982827914,
+          "std": 4.0228367101404094,
+          "target_correlation": 0.04097001441333233
+        },
+        "connected_rooks": {
+          "mean": -0.9426379247351114,
+          "std": 10.041346641035283,
+          "target_correlation": 0.011909082171128115
+        },
+        "rook_seventh": {
+          "mean": 0.25940811107051515,
+          "std": 6.117107674324841,
+          "target_correlation": 0.10822578107971455
+        },
+        "space": {
+          "mean": 3.33723054439167,
+          "std": 10.880251913353694,
+          "target_correlation": 0.3180159896663229
+        },
+        "bishop_mobility": {
+          "mean": 1.2146510778224333,
+          "std": 7.323576985699378,
+          "target_correlation": 0.14328138118201558
+        },
+        "rook_mobility": {
+          "mean": 0.8134819145049325,
+          "std": 7.309916950980742,
+          "target_correlation": 0.11652556501974357
+        },
+        "knight_mobility": {
+          "mean": -0.2246985750822068,
+          "std": 4.956213475942843,
+          "target_correlation": 0.0854148244447641
+        },
+        "queen_mobility": {
+          "mean": -0.5312385823894775,
+          "std": 7.308149791845623,
+          "target_correlation": 0.15799664837292005
+        }
+      },
+      "linear_model": {
+        "r2": 0.39304299031405443,
+        "rmse": 312.54131020718484,
+        "intercept": 26.081803920360535,
+        "coefficients": {
+          "material": 0.5691539759708556,
+          "piece_square": 0.4151394342670527,
+          "mobility": 7.715969693763918,
+          "isolated_pawn": 0.516019110791314,
+          "doubled_pawn": -1.1353287157205034,
+          "passed_pawn": 0.8144944270144856,
+          "king_safety": -1.6951779604630424,
+          "bishop_pair": 0.5943640557953063,
+          "open_file": 2.649363166471461,
+          "semi_open_file": -1.564815479299843,
+          "pawn_shield": 6.686446941766602,
+          "knight_outpost": 1.6800681059450011,
+          "connected_rooks": 0.4013625245786387,
+          "rook_seventh": 4.193888631888814,
+          "space": 1.4915103393828024,
+          "bishop_mobility": 2.4002834408955622,
+          "rook_mobility": -6.282528214311726,
+          "knight_mobility": -0.5101351665482388,
+          "queen_mobility": -2.244308978581263
+        },
+        "standardized_coefficients": {
+          "material": 205.6583819856713,
+          "mobility": 103.2816556627069,
+          "pawn_shield": 95.79632690518754,
+          "rook_mobility": -45.92475948881205,
+          "passed_pawn": 40.662935305725036,
+          "open_file": 38.33465710832774,
+          "king_safety": -34.614971096080424,
+          "rook_seventh": 25.65446833539077,
+          "bishop_mobility": 17.578660566898055,
+          "queen_mobility": -16.40174619465592,
+          "space": 16.228008223856556,
+          "semi_open_file": -10.466029757966686,
+          "isolated_pawn": 10.129470131165238,
+          "bishop_pair": 9.898524176660603,
+          "piece_square": 9.852528356523155,
+          "doubled_pawn": -6.927507727406657,
+          "knight_outpost": 6.758639652131617,
+          "connected_rooks": 4.030220238015155,
+          "knight_mobility": -2.5283387869987277
+        }
+      }
+    },
+    "14": {
+      "game_phase": "early_middlegame",
+      "target": {
+        "count": 16688,
+        "mean": 28.332933844678813,
+        "std": 288.8480420708631,
+        "mae": 176.0975551294343,
+        "positive_ratio": 0.526905560882071,
+        "negative_ratio": 0.375539309683605,
+        "zero_ratio": 0.09755512943432407
+      },
+      "features": {
+        "material": {
+          "mean": -7.858341323106424,
+          "std": 222.54846622200418,
+          "target_correlation": 0.4237846085021015
+        },
+        "piece_square": {
+          "mean": 2.282178811121764,
+          "std": 26.26487185437978,
+          "target_correlation": 0.04498708191009481
+        },
+        "mobility": {
+          "mean": 2.31825263662512,
+          "std": 11.64703606931125,
+          "target_correlation": 0.31157801733758844
+        },
+        "isolated_pawn": {
+          "mean": -0.7487416107382551,
+          "std": 18.40908426846423,
+          "target_correlation": 0.04923400961470043
+        },
+        "doubled_pawn": {
+          "mean": -0.22950623202301054,
+          "std": 5.552098922097565,
+          "target_correlation": -0.011417165225296701
+        },
+        "passed_pawn": {
+          "mean": 2.4574544582933844,
+          "std": 33.71206702543053,
+          "target_correlation": 0.1356257865759562
+        },
+        "king_safety": {
+          "mean": 1.9001677852348993,
+          "std": 18.627790735875166,
+          "target_correlation": 0.042212837950063795
+        },
+        "bishop_pair": {
+          "mean": -0.4763902205177373,
+          "std": 14.751279048470636,
+          "target_correlation": 0.040269113993076915
+        },
+        "open_file": {
+          "mean": 1.7869127516778522,
+          "std": 12.984415814180187,
+          "target_correlation": 0.08627994173379559
+        },
+        "semi_open_file": {
+          "mean": -0.2486816874400767,
+          "std": 5.597497059754471,
+          "target_correlation": 0.029209234012979406
+        },
+        "pawn_shield": {
+          "mean": 2.280680728667306,
+          "std": 13.48714208592423,
+          "target_correlation": 0.05744812435852842
+        },
+        "knight_outpost": {
+          "mean": 0.11984659635666348,
+          "std": 4.410070752455551,
+          "target_correlation": 0.008385333313116935
+        },
+        "connected_rooks": {
+          "mean": 0.725071907957814,
+          "std": 7.384564787077273,
+          "target_correlation": -0.0022718557928017207
+        },
+        "rook_seventh": {
+          "mean": 0.24808245445829338,
+          "std": 5.0747819609334215,
+          "target_correlation": 0.07195916606873201
+        },
+        "space": {
+          "mean": 2.1795302013422817,
+          "std": 10.167668334354204,
+          "target_correlation": 0.25626215299630495
+        },
+        "bishop_mobility": {
+          "mean": 0.5309803451581975,
+          "std": 6.225767900562552,
+          "target_correlation": 0.10756018142315532
+        },
+        "rook_mobility": {
+          "mean": 0.5448226270373921,
+          "std": 4.853266836451169,
+          "target_correlation": 0.16638336591975206
+        },
+        "knight_mobility": {
+          "mean": 0.5297219558964525,
+          "std": 4.909116845878515,
+          "target_correlation": -0.014240480198270407
+        },
+        "queen_mobility": {
+          "mean": 0.1474712368168744,
+          "std": 4.818307566436736,
+          "target_correlation": 0.1875832551537228
+        }
+      },
+      "linear_model": {
+        "r2": 0.28700550953273574,
+        "rmse": 243.90040138574327,
+        "intercept": 11.986845373421172,
+        "coefficients": {
+          "material": 0.5729596695587221,
+          "piece_square": 0.5609685844657949,
+          "mobility": 5.700380028141338,
+          "isolated_pawn": 0.541990846094221,
+          "doubled_pawn": 1.321016682912474,
+          "passed_pawn": 1.0921790153226771,
+          "king_safety": 0.18230782426936487,
+          "bishop_pair": 0.021903232859781546,
+          "open_file": 0.7420031214301418,
+          "semi_open_file": 3.152259248464444,
+          "pawn_shield": 1.4712209761158435,
+          "knight_outpost": 1.8072279822660182,
+          "connected_rooks": -1.4803817322681576,
+          "rook_seventh": 1.026448503571749,
+          "space": 2.590989497222135,
+          "bishop_mobility": -1.2289087532597769,
+          "rook_mobility": -2.7395066191187505,
+          "knight_mobility": -3.6700271660667942,
+          "queen_mobility": -5.49744578710514
+        },
+        "standardized_coefficients": {
+          "material": 127.51129566735995,
+          "mobility": 66.39253179654365,
+          "passed_pawn": 36.819612168326806,
+          "queen_mobility": -26.48838463208445,
+          "space": 26.344321865549823,
+          "pawn_shield": 19.84256634466652,
+          "knight_mobility": -18.016592185770286,
+          "semi_open_file": 17.644761874863566,
+          "piece_square": 14.733767985326923,
+          "rook_mobility": -13.295556622807496,
+          "connected_rooks": -10.931974811539892,
+          "isolated_pawn": 9.977555158484742,
+          "open_file": 9.634477064068594,
+          "knight_outpost": 7.970003267610627,
+          "bishop_mobility": -7.650900668765065,
+          "doubled_pawn": 7.334415301271249,
+          "rook_seventh": 5.209002349753017,
+          "king_safety": 3.395992000002433,
+          "bishop_pair": 0.32310069997826907
+        }
+      }
+    },
+    "13": {
+      "game_phase": "middlegame",
+      "target": {
+        "count": 5061,
+        "mean": 49.59612724757953,
+        "std": 429.7785574844827,
+        "mae": 334.10748863860897,
+        "positive_ratio": 0.5170914838964632,
+        "negative_ratio": 0.3878680102746493,
+        "zero_ratio": 0.09504050582888757
+      },
+      "features": {
+        "material": {
+          "mean": -0.6757557794902194,
+          "std": 343.56261077030956,
+          "target_correlation": 0.49740986443807533
+        },
+        "piece_square": {
+          "mean": 0.7775143252321676,
+          "std": 23.759129657307625,
+          "target_correlation": 0.0014315227439869666
+        },
+        "mobility": {
+          "mean": 2.9428966607389846,
+          "std": 13.117652653245175,
+          "target_correlation": 0.3275693549214759
+        },
+        "isolated_pawn": {
+          "mean": 0.37048014226437465,
+          "std": 21.20891998304289,
+          "target_correlation": 0.012742691546364938
+        },
+        "doubled_pawn": {
+          "mean": -0.02173483501284331,
+          "std": 6.240544860168703,
+          "target_correlation": 0.049004868865212034
+        },
+        "passed_pawn": {
+          "mean": -4.310412961865244,
+          "std": 45.28171133028424,
+          "target_correlation": 0.047941582777631324
+        },
+        "king_safety": {
+          "mean": 3.3076467101363365,
+          "std": 18.95527652697923,
+          "target_correlation": 0.10109122638005959
+        },
+        "bishop_pair": {
+          "mean": -1.7249555423829284,
+          "std": 14.851175947157703,
+          "target_correlation": 0.072106280967806
+        },
+        "open_file": {
+          "mean": 0.9918988342224857,
+          "std": 15.456056401319684,
+          "target_correlation": 0.07987502473418176
+        },
+        "semi_open_file": {
+          "mean": -0.38925113613910295,
+          "std": 6.856608165185204,
+          "target_correlation": 0.08809612732824279
+        },
+        "pawn_shield": {
+          "mean": 2.9065402094447736,
+          "std": 13.956100149431634,
+          "target_correlation": 0.13798013715136126
+        },
+        "knight_outpost": {
+          "mean": 0.7113218731475993,
+          "std": 5.057254512894696,
+          "target_correlation": 0.09146968298118939
+        },
+        "connected_rooks": {
+          "mean": -0.5097806757557795,
+          "std": 8.328903377240465,
+          "target_correlation": 0.008348184607719711
+        },
+        "rook_seventh": {
+          "mean": 0.7468879668049793,
+          "std": 6.285959795636358,
+          "target_correlation": 0.0008269530363782312
+        },
+        "space": {
+          "mean": 2.9990120529539617,
+          "std": 10.493804638707054,
+          "target_correlation": 0.2197112913074743
+        },
+        "bishop_mobility": {
+          "mean": 0.12329579134558388,
+          "std": 7.245477892900007,
+          "target_correlation": 0.05061490401775829
+        },
+        "rook_mobility": {
+          "mean": 1.1859316340644142,
+          "std": 7.507646610187698,
+          "target_correlation": 0.09483439157821816
+        },
+        "knight_mobility": {
+          "mean": -0.048409405255878286,
+          "std": 5.758375594505471,
+          "target_correlation": 0.09621826714060687
+        },
+        "queen_mobility": {
+          "mean": 0.47619047619047616,
+          "std": 8.791851737567951,
+          "target_correlation": 0.2191742459135162
+        }
+      },
+      "linear_model": {
+        "r2": 0.3642529568234599,
+        "rmse": 342.6785482537354,
+        "intercept": 26.30845859035468,
+        "coefficients": {
+          "material": 0.6493171736827228,
+          "piece_square": 0.38782232332690625,
+          "mobility": 7.934718734709401,
+          "isolated_pawn": -0.4151527010117102,
+          "doubled_pawn": 1.482519284592703,
+          "passed_pawn": 0.7883242239837305,
+          "king_safety": -0.10077622222612342,
+          "bishop_pair": 3.4476426668455824,
+          "open_file": 2.6887598329306055,
+          "semi_open_file": 4.702662448611126,
+          "pawn_shield": 5.612821780115662,
+          "knight_outpost": 6.301745216091897,
+          "connected_rooks": -1.9701038823439014,
+          "rook_seventh": -0.1853147762127995,
+          "space": -3.0826768034659917,
+          "bishop_mobility": -5.742144781420113,
+          "rook_mobility": -1.2868534894814931,
+          "knight_mobility": 0.9148011612555913,
+          "queen_mobility": -2.1781497567066936
+        },
+        "standardized_coefficients": {
+          "material": 223.08110340843479,
+          "mobility": 104.08488426311497,
+          "pawn_shield": 78.33310288420532,
+          "bishop_pair": 51.20154784825175,
+          "bishop_mobility": -41.60458307161058,
+          "open_file": 41.55762362737833,
+          "passed_pawn": 35.69666994510162,
+          "space": -32.349008139846056,
+          "semi_open_file": 32.24431374325689,
+          "knight_outpost": 31.869529433193307,
+          "queen_mobility": -19.149969723184956,
+          "connected_rooks": -16.408804879168674,
+          "rook_mobility": -9.661241238113943,
+          "doubled_pawn": 9.251728101565977,
+          "piece_square": 9.214320863922245,
+          "isolated_pawn": -8.804940416501491,
+          "knight_mobility": 5.267768680799461,
+          "king_safety": -1.9102411596404798,
+          "rook_seventh": -1.1648812328110065
+        }
+      }
+    },
+    "12": {
+      "game_phase": "middlegame",
+      "target": {
+        "count": 15475,
+        "mean": 36.49718901453958,
+        "std": 298.703587725435,
+        "mae": 183.08885298869143,
+        "positive_ratio": 0.5079806138933765,
+        "negative_ratio": 0.37124394184168014,
+        "zero_ratio": 0.12077544426494345
+      },
+      "features": {
+        "material": {
+          "mean": 3.2206785137318255,
+          "std": 190.93445599675584,
+          "target_correlation": 0.45129412255912116
+        },
+        "piece_square": {
+          "mean": -0.30565428109854603,
+          "std": 20.93100328608792,
+          "target_correlation": 0.06713028039220229
+        },
+        "mobility": {
+          "mean": 1.6654604200323102,
+          "std": 11.179687004772783,
+          "target_correlation": 0.3381208705807337
+        },
+        "isolated_pawn": {
+          "mean": 0.7240710823909532,
+          "std": 21.02627294657868,
+          "target_correlation": 0.061957868218913865
+        },
+        "doubled_pawn": {
+          "mean": 0.22681744749596122,
+          "std": 6.407305355846235,
+          "target_correlation": 0.008134579513374585
+        },
+        "passed_pawn": {
+          "mean": 2.1760904684975766,
+          "std": 31.783999544454694,
+          "target_correlation": 0.12194905289440686
+        },
+        "king_safety": {
+          "mean": 2.2507269789983844,
+          "std": 20.061145914439166,
+          "target_correlation": 0.06276345100614729
+        },
+        "bishop_pair": {
+          "mean": -1.064297253634895,
+          "std": 15.504798411432782,
+          "target_correlation": 0.10419801679044005
+        },
+        "open_file": {
+          "mean": 0.6746365105008078,
+          "std": 14.947958824202058,
+          "target_correlation": 0.16576338948822603
+        },
+        "semi_open_file": {
+          "mean": -0.02778675282714055,
+          "std": 6.6253932206102455,
+          "target_correlation": -0.018333309415666535
+        },
+        "pawn_shield": {
+          "mean": 2.332794830371567,
+          "std": 14.523083084169789,
+          "target_correlation": 0.08154497532931386
+        },
+        "knight_outpost": {
+          "mean": 0.10597738287560582,
+          "std": 3.936705995269139,
+          "target_correlation": -0.011876312501293602
+        },
+        "connected_rooks": {
+          "mean": -0.14862681744749595,
+          "std": 10.770804066867125,
+          "target_correlation": 0.04289648867748723
+        },
+        "rook_seventh": {
+          "mean": 0.8607431340872375,
+          "std": 6.332391797534095,
+          "target_correlation": 0.1767524779326013
+        },
+        "space": {
+          "mean": 1.8137641357027463,
+          "std": 10.162044965605038,
+          "target_correlation": 0.3186394335239318
+        },
+        "bishop_mobility": {
+          "mean": 0.2608723747980614,
+          "std": 5.884674426000851,
+          "target_correlation": 0.1053965530109066
+        },
+        "rook_mobility": {
+          "mean": 0.6277221324717286,
+          "std": 5.84010039972326,
+          "target_correlation": 0.17937770828804822
+        },
+        "knight_mobility": {
+          "mean": 0.23722132471728594,
+          "std": 4.8218549344804735,
+          "target_correlation": -0.0005361087528967244
+        },
+        "queen_mobility": {
+          "mean": 0.057447495961227786,
+          "std": 4.7815067090608805,
+          "target_correlation": 0.1281763190935323
+        }
+      },
+      "linear_model": {
+        "r2": 0.34835624873421256,
+        "rmse": 241.1268409924299,
+        "intercept": 13.0143611041585,
+        "coefficients": {
+          "material": 0.7128232700526921,
+          "piece_square": 0.4417958852212679,
+          "mobility": 5.706265755354545,
+          "isolated_pawn": 1.0029845146635565,
+          "doubled_pawn": 1.7693565253005674,
+          "passed_pawn": 0.6610607493420502,
+          "king_safety": -0.022965991944769955,
+          "bishop_pair": 2.128236047771016,
+          "open_file": 1.1430297277733905,
+          "semi_open_file": 2.2439327869241548,
+          "pawn_shield": 1.454790062838423,
+          "knight_outpost": -0.7468814366213063,
+          "connected_rooks": 0.9721162871939628,
+          "rook_seventh": 6.030883116176369,
+          "space": 3.8252991051500023,
+          "bishop_mobility": -1.3505645239895154,
+          "rook_mobility": -6.365868701687962,
+          "knight_mobility": 0.9312020649713395,
+          "queen_mobility": -5.421736998469486
+        },
+        "standardized_coefficients": {
+          "material": 136.10252328933933,
+          "mobility": 63.79426511091716,
+          "space": 38.87286151342303,
+          "rook_seventh": 38.1899147767621,
+          "rook_mobility": -37.17731234931366,
+          "bishop_pair": 32.997870892634026,
+          "queen_mobility": -25.924071832945447,
+          "pawn_shield": 21.128036952627006,
+          "isolated_pawn": 21.089026166507686,
+          "passed_pawn": 21.0111545559446,
+          "open_file": 17.08596130559553,
+          "semi_open_file": 14.86693707399235,
+          "doubled_pawn": 11.33680754095981,
+          "connected_rooks": 10.470474059576505,
+          "piece_square": 9.24723112534648,
+          "bishop_mobility": -7.947632514985115,
+          "knight_mobility": 4.49012127198046,
+          "knight_outpost": -2.940252629302324,
+          "king_safety": -0.46072411547386455
+        }
+      }
+    },
+    "11": {
+      "game_phase": "middlegame",
+      "target": {
+        "count": 3907,
+        "mean": 32.33913488610187,
+        "std": 432.7972183488039,
+        "mae": 331.46275915024313,
+        "positive_ratio": 0.49091374456104425,
+        "negative_ratio": 0.38904530330176607,
+        "zero_ratio": 0.12004095213718965
+      },
+      "features": {
+        "material": {
+          "mean": 15.047350908625544,
+          "std": 334.5661272972838,
+          "target_correlation": 0.6015161776058185
+        },
+        "piece_square": {
+          "mean": -2.6196570258510365,
+          "std": 23.49385670504087,
+          "target_correlation": 0.09084189134066628
+        },
+        "mobility": {
+          "mean": 0.6933708727924238,
+          "std": 13.335434017554553,
+          "target_correlation": 0.398755866237924
+        },
+        "isolated_pawn": {
+          "mean": -2.3918607627335553,
+          "std": 26.189017118889893,
+          "target_correlation": 0.08789624150013668
+        },
+        "doubled_pawn": {
+          "mean": -1.018684412592782,
+          "std": 5.989189904296006,
+          "target_correlation": 0.019115533283807443
+        },
+        "passed_pawn": {
+          "mean": 0.9457384182237011,
+          "std": 40.9095792832122,
+          "target_correlation": -0.0014921173818065662
+        },
+        "king_safety": {
+          "mean": 3.5551574097773226,
+          "std": 19.054425192618343,
+          "target_correlation": 0.09285139347915271
+        },
+        "bishop_pair": {
+          "mean": -4.8451497312516,
+          "std": 14.754898069559951,
+          "target_correlation": 0.08983539820523831
+        },
+        "open_file": {
+          "mean": 0.3173790632198618,
+          "std": 15.18764509705048,
+          "target_correlation": 0.12906470818780838
+        },
+        "semi_open_file": {
+          "mean": 0.20987970309700538,
+          "std": 5.760066996601624,
+          "target_correlation": 0.0721168019554565
+        },
+        "pawn_shield": {
+          "mean": 3.7471205528538523,
+          "std": 12.95522160582195,
+          "target_correlation": 0.12630711588170204
+        },
+        "knight_outpost": {
+          "mean": -0.39928333759918094,
+          "std": 4.982105629350707,
+          "target_correlation": 0.08768647600104551
+        },
+        "connected_rooks": {
+          "mean": 0.491425646275915,
+          "std": 10.68736283089897,
+          "target_correlation": -0.04313220033181596
+        },
+        "rook_seventh": {
+          "mean": 0.040952137189659586,
+          "std": 6.802517030245124,
+          "target_correlation": 0.09529862570315176
+        },
+        "space": {
+          "mean": 0.41873560276426924,
+          "std": 11.091574388223254,
+          "target_correlation": 0.3510340997169609
+        },
+        "bishop_mobility": {
+          "mean": -1.6153058612746354,
+          "std": 7.105746379681824,
+          "target_correlation": 0.09212543563780418
+        },
+        "rook_mobility": {
+          "mean": -0.006654722293319683,
+          "std": 8.52476221161515,
+          "target_correlation": 0.14337296126560214
+        },
+        "knight_mobility": {
+          "mean": 0.09393396467878168,
+          "std": 5.52779991084649,
+          "target_correlation": 0.14010255523852208
+        },
+        "queen_mobility": {
+          "mean": 1.8981315587407217,
+          "std": 8.745900445324876,
+          "target_correlation": 0.197720543399253
+        }
+      },
+      "linear_model": {
+        "r2": 0.4507741682892137,
+        "rmse": 320.7450320681415,
+        "intercept": 17.824433386394062,
+        "coefficients": {
+          "material": 0.725599196894276,
+          "piece_square": 0.8630372417708655,
+          "mobility": 5.963917088280636,
+          "isolated_pawn": 0.6900795622241545,
+          "doubled_pawn": 1.170903745165051,
+          "passed_pawn": 0.09105077511499647,
+          "king_safety": 0.7538320441614619,
+          "bishop_pair": 1.018639781350023,
+          "open_file": 2.9630687964551674,
+          "semi_open_file": 5.596553088188871,
+          "pawn_shield": 1.522035111684432,
+          "knight_outpost": 0.821271194120495,
+          "connected_rooks": -1.896445023440601,
+          "rook_seventh": 3.0343875008211754,
+          "space": -0.8920205771003382,
+          "bishop_mobility": 1.7337941874426526,
+          "rook_mobility": -3.9776778457716198,
+          "knight_mobility": 2.284561201162456,
+          "queen_mobility": 1.5726710286616292
+        },
+        "standardized_coefficients": {
+          "material": 242.76091327493722,
+          "mobility": 79.53142281693249,
+          "open_file": 45.002037278705586,
+          "rook_mobility": -33.90875778961266,
+          "semi_open_file": 32.236520738005616,
+          "rook_seventh": 20.641472650698983,
+          "piece_square": 20.276073289278425,
+          "connected_rooks": -20.267996054362403,
+          "pawn_shield": 19.71830216371378,
+          "isolated_pawn": 18.072505468484426,
+          "bishop_pair": 15.029926143418425,
+          "king_safety": 14.363836293273142,
+          "queen_mobility": 13.754424249921275,
+          "knight_mobility": 12.628597204109175,
+          "bishop_mobility": 12.319901770534017,
+          "space": -9.893912586734238,
+          "doubled_pawn": 7.012764889444907,
+          "knight_outpost": 4.091659839451296,
+          "passed_pawn": 3.724848903364873
+        }
+      }
+    },
+    "10": {
+      "game_phase": "middlegame",
+      "target": {
+        "count": 12067,
+        "mean": 7.367116930471534,
+        "std": 311.24261064486456,
+        "mae": 193.12331151073175,
+        "positive_ratio": 0.475511726195409,
+        "negative_ratio": 0.37250352200215464,
+        "zero_ratio": 0.1519847518024364
+      },
+      "features": {
+        "material": {
+          "mean": -7.10698599486202,
+          "std": 199.45523405948785,
+          "target_correlation": 0.41740231243091885
+        },
+        "piece_square": {
+          "mean": 0.09944476671915141,
+          "std": 18.275559565287605,
+          "target_correlation": 0.0317884004294111
+        },
+        "mobility": {
+          "mean": 2.0360487279356922,
+          "std": 10.996293998921974,
+          "target_correlation": 0.4004987637071609
+        },
+        "isolated_pawn": {
+          "mean": 0.370431756028839,
+          "std": 22.20885249623481,
+          "target_correlation": 0.06872431401348056
+        },
+        "doubled_pawn": {
+          "mean": 0.13922267340681196,
+          "std": 6.569339383157769,
+          "target_correlation": -0.02624810871555468
+        },
+        "passed_pawn": {
+          "mean": 0.5817518853070357,
+          "std": 39.200191555188425,
+          "target_correlation": 0.13827905585829078
+        },
+        "king_safety": {
+          "mean": 1.688074915057595,
+          "std": 19.397389386364296,
+          "target_correlation": 0.06311920135933353
+        },
+        "bishop_pair": {
+          "mean": 0.32319549183724205,
+          "std": 6.93372440680223,
+          "target_correlation": 0.06613606897109041
+        },
+        "open_file": {
+          "mean": 1.592773680285075,
+          "std": 16.374326818448086,
+          "target_correlation": 0.15329581642417608
+        },
+        "semi_open_file": {
+          "mean": 0.17817187370514626,
+          "std": 7.1454883447798325,
+          "target_correlation": -0.017182740924390108
+        },
+        "pawn_shield": {
+          "mean": 1.4286898151984753,
+          "std": 12.967596679870013,
+          "target_correlation": 0.09825323472242574
+        },
+        "knight_outpost": {
+          "mean": 0.13093560951354935,
+          "std": 5.099434918793055,
+          "target_correlation": 0.08597410898615256
+        },
+        "connected_rooks": {
+          "mean": -0.48562194414518933,
+          "std": 10.984346107178146,
+          "target_correlation": 0.014394783734582218
+        },
+        "rook_seventh": {
+          "mean": 0.051379796138228226,
+          "std": 7.739267273912369,
+          "target_correlation": 0.13589054967129888
+        },
+        "space": {
+          "mean": 2.033976961962377,
+          "std": 10.085004048501458,
+          "target_correlation": 0.34979713558461306
+        },
+        "bishop_mobility": {
+          "mean": -0.44526394298500044,
+          "std": 5.546406501465724,
+          "target_correlation": 0.038519928520295975
+        },
+        "rook_mobility": {
+          "mean": 0.8365791000248612,
+          "std": 6.203395790411703,
+          "target_correlation": 0.10840138133871179
+        },
+        "knight_mobility": {
+          "mean": 0.6684345736305627,
+          "std": 4.886313460069548,
+          "target_correlation": 0.050824967996859795
+        },
+        "queen_mobility": {
+          "mean": 0.1973149912985829,
+          "std": 5.229094751698804,
+          "target_correlation": 0.17642629399521467
+        }
+      },
+      "linear_model": {
+        "r2": 0.34351318931792724,
+        "rmse": 252.18081970083023,
+        "intercept": -10.835171773722175,
+        "coefficients": {
+          "material": 0.6069366706874476,
+          "piece_square": -0.32179250553979655,
+          "mobility": 8.843488799123186,
+          "isolated_pawn": 0.8917097266680694,
+          "doubled_pawn": -0.2631649770891221,
+          "passed_pawn": 1.163271197123243,
+          "king_safety": -0.3064349761157956,
+          "bishop_pair": 2.64327114932635,
+          "open_file": 0.5316573143187108,
+          "semi_open_file": 2.3765784935928562,
+          "pawn_shield": 1.373700078948938,
+          "knight_outpost": 2.9303950315105944,
+          "connected_rooks": 1.9026950937596974,
+          "rook_seventh": 2.69230886240241,
+          "space": 4.72951031493707,
+          "bishop_mobility": -5.193432746958825,
+          "rook_mobility": -10.037283664586809,
+          "knight_mobility": -2.670893590707264,
+          "queen_mobility": -6.822361565676355
+        },
+        "standardized_coefficients": {
+          "material": 121.05669571125117,
+          "mobility": 97.24560281133199,
+          "rook_mobility": -62.26524323206596,
+          "space": 47.69713067356975,
+          "passed_pawn": 45.60045375786448,
+          "queen_mobility": -35.67477505726986,
+          "bishop_mobility": -28.804889152657424,
+          "connected_rooks": 20.899861446286288,
+          "rook_seventh": 20.83649787005521,
+          "isolated_pawn": 19.803849789029012,
+          "bishop_pair": 18.327713681880294,
+          "pawn_shield": 17.813588582915422,
+          "semi_open_file": 16.981813926422166,
+          "knight_outpost": 14.943358749542801,
+          "knight_mobility": -13.050823302686391,
+          "open_file": 8.705530620072949,
+          "king_safety": -5.944038553319331,
+          "piece_square": -5.880938102655693,
+          "doubled_pawn": -1.7288200482593818
+        }
+      }
+    },
+    "9": {
+      "game_phase": "middlegame",
+      "target": {
+        "count": 3728,
+        "mean": 50.67891630901288,
+        "std": 431.8076855774088,
+        "mae": 327.3913626609442,
+        "positive_ratio": 0.4761266094420601,
+        "negative_ratio": 0.3945815450643777,
+        "zero_ratio": 0.12929184549356224
+      },
+      "features": {
+        "material": {
+          "mean": -14.283798283261802,
+          "std": 329.25926739681745,
+          "target_correlation": 0.5119183838288619
+        },
+        "piece_square": {
+          "mean": -1.0287017167381973,
+          "std": 17.738487841120165,
+          "target_correlation": 0.06904571733237741
+        },
+        "mobility": {
+          "mean": 2.176502145922747,
+          "std": 12.257736691374136,
+          "target_correlation": 0.43873578840805644
+        },
+        "isolated_pawn": {
+          "mean": 2.3618562231759657,
+          "std": 22.43899010231847,
+          "target_correlation": 0.10788347737380403
+        },
+        "doubled_pawn": {
+          "mean": 0.6866952789699571,
+          "std": 5.607945296827482,
+          "target_correlation": -0.028216730450264193
+        },
+        "passed_pawn": {
+          "mean": 1.664431330472103,
+          "std": 54.45261948891451,
+          "target_correlation": 0.045598715841487183
+        },
+        "king_safety": {
+          "mean": 2.615343347639485,
+          "std": 19.767970055576367,
+          "target_correlation": 0.09472611698612844
+        },
+        "bishop_pair": {
+          "mean": -0.434549356223176,
+          "std": 11.681301201419881,
+          "target_correlation": 0.05711720438240337
+        },
+        "open_file": {
+          "mean": 0.9334763948497854,
+          "std": 16.173279622624126,
+          "target_correlation": 0.13287587193597655
+        },
+        "semi_open_file": {
+          "mean": -0.6732832618025751,
+          "std": 5.804626203084139,
+          "target_correlation": -0.07683039297123978
+        },
+        "pawn_shield": {
+          "mean": 2.2666309012875536,
+          "std": 12.746990818042834,
+          "target_correlation": 0.1422556573989678
+        },
+        "knight_outpost": {
+          "mean": -0.08047210300429185,
+          "std": 4.526266283858885,
+          "target_correlation": -0.05513318845599931
+        },
+        "connected_rooks": {
+          "mean": -0.5847639484978541,
+          "std": 9.649507072739768,
+          "target_correlation": -0.009141486645733115
+        },
+        "rook_seventh": {
+          "mean": 1.3572961373390557,
+          "std": 9.333072647828352,
+          "target_correlation": 0.024910814631161543
+        },
+        "space": {
+          "mean": 2.7891630901287554,
+          "std": 11.518438779522493,
+          "target_correlation": 0.3920297256409328
+        },
+        "bishop_mobility": {
+          "mean": -0.1542381974248927,
+          "std": 7.137038302312081,
+          "target_correlation": 0.13593880529780622
+        },
+        "rook_mobility": {
+          "mean": -0.7647532188841202,
+          "std": 8.242676040473615,
+          "target_correlation": 0.09987601585006503
+        },
+        "knight_mobility": {
+          "mean": 0.2947961373390558,
+          "std": 5.1479979400790405,
+          "target_correlation": 0.009722881276097666
+        },
+        "queen_mobility": {
+          "mean": 1.2784334763948497,
+          "std": 8.37587651635627,
+          "target_correlation": 0.25823689740082534
+        }
+      },
+      "linear_model": {
+        "r2": 0.38839445375269294,
+        "rmse": 337.6961236269764,
+        "intercept": 24.806170831043147,
+        "coefficients": {
+          "material": 0.5764432768707763,
+          "piece_square": 0.546985514004259,
+          "mobility": 6.3544621399100265,
+          "isolated_pawn": 2.3766108370184074,
+          "doubled_pawn": -2.492081389439153,
+          "passed_pawn": 1.0915437271306445,
+          "king_safety": -0.6802282028164682,
+          "bishop_pair": 0.6104929831139346,
+          "open_file": 1.733632967044096,
+          "semi_open_file": -0.184084297430746,
+          "pawn_shield": 0.6866738628067318,
+          "knight_outpost": -11.466652509761381,
+          "connected_rooks": 2.118054682433507,
+          "rook_seventh": -1.6677762672666954,
+          "space": 3.8870965795300156,
+          "bishop_mobility": 0.29429425877857657,
+          "rook_mobility": -2.8558125753350154,
+          "knight_mobility": 2.1704847634806135,
+          "queen_mobility": 2.209688516692584
+        },
+        "standardized_coefficients": {
+          "material": 189.79929103829264,
+          "mobility": 77.89132372632294,
+          "passed_pawn": 59.43741522895651,
+          "isolated_pawn": 53.328747048918856,
+          "knight_outpost": -51.90112264365881,
+          "space": 44.77328398140777,
+          "open_file": 28.03853073900368,
+          "rook_mobility": -23.53953789079718,
+          "connected_rooks": 20.438183638591706,
+          "queen_mobility": 18.508078155427533,
+          "rook_seventh": -15.565477062724062,
+          "doubled_pawn": -13.975456107216594,
+          "king_safety": -13.446730744234472,
+          "knight_mobility": 11.173651091371141,
+          "piece_square": 9.70269588943341,
+          "pawn_shield": 8.753025424187415,
+          "bishop_pair": 7.131352417107212,
+          "bishop_mobility": 2.1003893970532443,
+          "semi_open_file": -1.0685405364428424
+        }
+      }
+    },
+    "8": {
+      "game_phase": "late_middlegame",
+      "target": {
+        "count": 9500,
+        "mean": 0.4826315789473684,
+        "std": 315.8287607539734,
+        "mae": 180.33231578947368,
+        "positive_ratio": 0.3602105263157895,
+        "negative_ratio": 0.34778947368421054,
+        "zero_ratio": 0.292
+      },
+      "features": {
+        "material": {
+          "mean": 0.7368421052631579,
+          "std": 222.59343209331297,
+          "target_correlation": 0.49391248917718317
+        },
+        "piece_square": {
+          "mean": -2.2026315789473685,
+          "std": 16.951121478845632,
+          "target_correlation": 0.028540363412847825
+        },
+        "mobility": {
+          "mean": 0.4883157894736842,
+          "std": 10.564885747022796,
+          "target_correlation": 0.3013026748385661
+        },
+        "isolated_pawn": {
+          "mean": 2.548421052631579,
+          "std": 21.074186570593618,
+          "target_correlation": -0.04189817644554398
+        },
+        "doubled_pawn": {
+          "mean": 0.608421052631579,
+          "std": 5.454918845609746,
+          "target_correlation": -0.0692047396119406
+        },
+        "passed_pawn": {
+          "mean": 1.9978947368421052,
+          "std": 44.84256666429288,
+          "target_correlation": 0.2710932953689351
+        },
+        "king_safety": {
+          "mean": 1.5821052631578947,
+          "std": 18.535658260412937,
+          "target_correlation": 0.04123818585996581
+        },
+        "bishop_pair": {
+          "mean": -0.6789473684210526,
+          "std": 9.782480524271758,
+          "target_correlation": 0.10156872209803433
+        },
+        "open_file": {
+          "mean": -1.0463157894736843,
+          "std": 15.419739983651958,
+          "target_correlation": 0.07455612710576749
+        },
+        "semi_open_file": {
+          "mean": -0.003157894736842105,
+          "std": 5.784734040769521,
+          "target_correlation": -0.02793128796303035
+        },
+        "pawn_shield": {
+          "mean": 1.0305263157894737,
+          "std": 12.045576376799389,
+          "target_correlation": 0.0642392460522755
+        },
+        "knight_outpost": {
+          "mean": 0.2,
+          "std": 3.2186953878862163,
+          "target_correlation": 0.08982677618906457
+        },
+        "connected_rooks": {
+          "mean": -0.6105263157894737,
+          "std": 7.992489549362946,
+          "target_correlation": 0.07272337017323731
+        },
+        "rook_seventh": {
+          "mean": -0.17684210526315788,
+          "std": 8.742533086270988,
+          "target_correlation": 0.06245051374830941
+        },
+        "space": {
+          "mean": 0.2903157894736842,
+          "std": 10.915384165443943,
+          "target_correlation": 0.2487887808486694
+        },
+        "bishop_mobility": {
+          "mean": 0.2863157894736842,
+          "std": 4.687892816412481,
+          "target_correlation": 0.10170385374129629
+        },
+        "rook_mobility": {
+          "mean": -0.6426315789473684,
+          "std": 8.123168517210681,
+          "target_correlation": 0.0676235897346515
+        },
+        "knight_mobility": {
+          "mean": 0.1482105263157895,
+          "std": 3.978168311368111,
+          "target_correlation": 0.01399242618420954
+        },
+        "queen_mobility": {
+          "mean": 0.5681052631578948,
+          "std": 7.27011862565013,
+          "target_correlation": 0.1486463090244855
+        }
+      },
+      "linear_model": {
+        "r2": 0.37445539943371203,
+        "rmse": 249.79331763743744,
+        "intercept": -8.764008165412891,
+        "coefficients": {
+          "material": 0.6826457023601095,
+          "piece_square": 1.166512636310393,
+          "mobility": 6.578885047167436,
+          "isolated_pawn": 0.9313026956463859,
+          "doubled_pawn": 0.6457106134957645,
+          "passed_pawn": 1.7988619930306773,
+          "king_safety": -0.4922366525579173,
+          "bishop_pair": 0.504546041247852,
+          "open_file": 1.19903290859109,
+          "semi_open_file": 3.2749458875883737,
+          "pawn_shield": 1.5671041271387363,
+          "knight_outpost": 6.654728274892642,
+          "connected_rooks": 2.5770949949180033,
+          "rook_seventh": 1.5455793917698548,
+          "space": 0.12776537816280917,
+          "bishop_mobility": 3.903038810776216,
+          "rook_mobility": -6.695523072302887,
+          "knight_mobility": -2.404470424390137,
+          "queen_mobility": -3.650048232881457
+        },
+        "standardized_coefficients": {
+          "material": 151.95244979208695,
+          "passed_pawn": 80.66558884234091,
+          "mobility": 69.50516886612064,
+          "rook_mobility": -54.38886222718855,
+          "queen_mobility": -26.536283642392824,
+          "knight_outpost": 21.419543206032944,
+          "connected_rooks": 20.597404814597695,
+          "piece_square": 19.773697404705946,
+          "isolated_pawn": 19.626446761748703,
+          "semi_open_file": 18.944690957610618,
+          "pawn_shield": 18.87667245384719,
+          "open_file": 18.488775682316533,
+          "bishop_mobility": 18.297027603216936,
+          "rook_seventh": 13.512278970006546,
+          "knight_mobility": -9.565388047930677,
+          "king_safety": -9.123930375063173,
+          "bishop_pair": 4.935711822105527,
+          "doubled_pawn": 3.5222989943682768,
+          "space": 1.3946081856902846
+        }
+      }
+    },
+    "7": {
+      "game_phase": "late_middlegame",
+      "target": {
+        "count": 3406,
+        "mean": 84.37081620669407,
+        "std": 437.60021741493733,
+        "mae": 338.25983558426304,
+        "positive_ratio": 0.5593071051086318,
+        "negative_ratio": 0.3217850851438638,
+        "zero_ratio": 0.11890780974750441
+      },
+      "features": {
+        "material": {
+          "mean": -7.169700528479154,
+          "std": 265.8380183501249,
+          "target_correlation": 0.5508988765561758
+        },
+        "piece_square": {
+          "mean": 2.5322959483264826,
+          "std": 20.161808365630954,
+          "target_correlation": 0.17444110015258094
+        },
+        "mobility": {
+          "mean": 2.120375807398708,
+          "std": 10.524509965661705,
+          "target_correlation": 0.4370979823493435
+        },
+        "isolated_pawn": {
+          "mean": -3.549618320610687,
+          "std": 19.910878315870452,
+          "target_correlation": -0.11837152458693907
+        },
+        "doubled_pawn": {
+          "mean": -1.1802701115678216,
+          "std": 6.107649347291537,
+          "target_correlation": -0.15348364241423426
+        },
+        "passed_pawn": {
+          "mean": -2.416324133881386,
+          "std": 53.2004586434755,
+          "target_correlation": 0.10885700075525424
+        },
+        "king_safety": {
+          "mean": 3.294186729301233,
+          "std": 19.781834351653973,
+          "target_correlation": 0.02250019947756647
+        },
+        "bishop_pair": {
+          "mean": -3.197298884321785,
+          "std": 13.06833540424097,
+          "target_correlation": 0.003278492159795396
+        },
+        "open_file": {
+          "mean": 2.2665883734586023,
+          "std": 15.464067586039826,
+          "target_correlation": 0.10628453019025207
+        },
+        "semi_open_file": {
+          "mean": -0.7751027598355843,
+          "std": 5.503261423285498,
+          "target_correlation": -0.017158465883387115
+        },
+        "pawn_shield": {
+          "mean": 2.5396359365825014,
+          "std": 12.525161395469077,
+          "target_correlation": 0.11983140772225885
+        },
+        "knight_outpost": {
+          "mean": 0.17615971814445097,
+          "std": 3.3879299489718986,
+          "target_correlation": -0.039540293401662624
+        },
+        "connected_rooks": {
+          "mean": -0.5695830886670581,
+          "std": 5.957744354575495,
+          "target_correlation": 0.12979539197288273
+        },
+        "rook_seventh": {
+          "mean": 0.9512624779800353,
+          "std": 8.15509361327409,
+          "target_correlation": 0.13017133232735137
+        },
+        "space": {
+          "mean": 1.4961832061068703,
+          "std": 10.431436666551141,
+          "target_correlation": 0.2859056210228707
+        },
+        "bishop_mobility": {
+          "mean": 0.32031708749266,
+          "std": 7.64903852695427,
+          "target_correlation": -0.011455639676889196
+        },
+        "rook_mobility": {
+          "mean": 1.1473869641808574,
+          "std": 10.023782813193723,
+          "target_correlation": 0.09667972755498928
+        },
+        "knight_mobility": {
+          "mean": 0.8464474456840869,
+          "std": 4.075285781710396,
+          "target_correlation": 0.04474160746375425
+        },
+        "queen_mobility": {
+          "mean": -1.588667058132707,
+          "std": 10.784641470472558,
+          "target_correlation": 0.17793241678400426
+        }
+      },
+      "linear_model": {
+        "r2": 0.4554803319015994,
+        "rmse": 322.9120967851602,
+        "intercept": 48.31488233931432,
+        "coefficients": {
+          "material": 0.8034425562965241,
+          "piece_square": 4.4136164843895145,
+          "mobility": 12.306572547093731,
+          "isolated_pawn": 0.3355898041400563,
+          "doubled_pawn": -2.6493220507125326,
+          "passed_pawn": 0.9534037842530996,
+          "king_safety": -2.002554236585377,
+          "bishop_pair": -1.4372773162944188,
+          "open_file": 2.6163009198611924,
+          "semi_open_file": 3.8202994097102807,
+          "pawn_shield": 2.8571761112533407,
+          "knight_outpost": -2.7708300005612765,
+          "connected_rooks": 7.88990809910225,
+          "rook_seventh": 5.053296516706887,
+          "space": 0.8221437553436008,
+          "bishop_mobility": -8.334615502997003,
+          "rook_mobility": -10.149086924361784,
+          "knight_mobility": 1.546555369693009,
+          "queen_mobility": -5.438559072125201
+        },
+        "standardized_coefficients": {
+          "material": 213.58557702402663,
+          "mobility": 129.52064541502673,
+          "rook_mobility": -101.7322430820268,
+          "piece_square": 88.9864897576512,
+          "bishop_mobility": -63.75179508977442,
+          "queen_mobility": -58.65290970885619,
+          "passed_pawn": 50.72151859469006,
+          "connected_rooks": 47.0060554355459,
+          "rook_seventh": 41.210106149376536,
+          "open_file": 40.458654250151646,
+          "king_safety": -39.61419618833481,
+          "pawn_shield": 35.7865919287268,
+          "semi_open_file": 21.02410636685895,
+          "bishop_pair": -18.782822038242802,
+          "doubled_pawn": -16.181130093799478,
+          "knight_outpost": -9.387377942411371,
+          "space": 8.576140514667289,
+          "isolated_pawn": 6.681887754279459,
+          "knight_mobility": 6.302655108737785
+        }
+      }
+    },
+    "6": {
+      "game_phase": "late_middlegame",
+      "target": {
+        "count": 15261,
+        "mean": 166.91933687176464,
+        "std": 418.94970739861054,
+        "mae": 297.9273966319376,
+        "positive_ratio": 0.6018609527553895,
+        "negative_ratio": 0.24421728589214337,
+        "zero_ratio": 0.15392176135246707
+      },
+      "features": {
+        "material": {
+          "mean": 75.2886442566018,
+          "std": 229.53536849260098,
+          "target_correlation": 0.6221440733171605
+        },
+        "piece_square": {
+          "mean": 0.277832383199004,
+          "std": 16.153569721166864,
+          "target_correlation": 0.1708609818311567
+        },
+        "mobility": {
+          "mean": 2.2676102483454557,
+          "std": 9.343053387351286,
+          "target_correlation": 0.44857941600758
+        },
+        "isolated_pawn": {
+          "mean": -0.7420876744643208,
+          "std": 20.401771543110826,
+          "target_correlation": 0.07597816198662076
+        },
+        "doubled_pawn": {
+          "mean": 0.14940043247493612,
+          "std": 4.702396522948333,
+          "target_correlation": -0.005376517546689307
+        },
+        "passed_pawn": {
+          "mean": 12.151890439682852,
+          "std": 47.68968308084884,
+          "target_correlation": 0.14159598693696762
+        },
+        "king_safety": {
+          "mean": 0.45409868291724004,
+          "std": 13.999993204261747,
+          "target_correlation": 0.026065387210818813
+        },
+        "bishop_pair": {
+          "mean": 0.08059760172989974,
+          "std": 4.336607400659238,
+          "target_correlation": -0.021999923144826086
+        },
+        "open_file": {
+          "mean": -2.317017233470939,
+          "std": 15.519466102265529,
+          "target_correlation": -0.15689647195263853
+        },
+        "semi_open_file": {
+          "mean": -1.134263809711028,
+          "std": 5.118770814879158,
+          "target_correlation": -0.058512451470243004
+        },
+        "pawn_shield": {
+          "mean": 0.6467466090033418,
+          "std": 8.362866000866731,
+          "target_correlation": 0.04258686043805523
+        },
+        "knight_outpost": {
+          "mean": -0.11008452919205819,
+          "std": 4.269714337012245,
+          "target_correlation": 0.1155187561384213
+        },
+        "connected_rooks": {
+          "mean": 0.03538431295459013,
+          "std": 1.382794963168241,
+          "target_correlation": 0.08491588526857223
+        },
+        "rook_seventh": {
+          "mean": 1.3367407116178494,
+          "std": 9.45930447181807,
+          "target_correlation": 0.09954583645923196
+        },
+        "space": {
+          "mean": 5.4608479129808005,
+          "std": 13.274547337411216,
+          "target_correlation": 0.5743589105260545
+        },
+        "bishop_mobility": {
+          "mean": 0.39066902562086364,
+          "std": 4.795475113623151,
+          "target_correlation": 0.03377764126902041
+        },
+        "rook_mobility": {
+          "mean": -1.730227376973986,
+          "std": 6.52476768048136,
+          "target_correlation": -0.3303030252501839
+        },
+        "knight_mobility": {
+          "mean": -0.16447152873337265,
+          "std": 3.9268020521852147,
+          "target_correlation": 0.032064674999361664
+        },
+        "queen_mobility": {
+          "mean": 3.3496494331957276,
+          "std": 9.174606305806977,
+          "target_correlation": 0.5679245717766277
+        }
+      },
+      "linear_model": {
+        "r2": 0.5438679087582232,
+        "rmse": 282.9483759381166,
+        "intercept": 24.674518954375515,
+        "coefficients": {
+          "material": 0.6309375020562562,
+          "piece_square": 2.8503124303065954,
+          "mobility": 8.496785771234967,
+          "isolated_pawn": 0.5934881851593118,
+          "doubled_pawn": 1.8354730277242735,
+          "passed_pawn": 1.3349177599494124,
+          "king_safety": 0.11067869420859318,
+          "bishop_pair": -5.729134920278917,
+          "open_file": -0.47682908668538637,
+          "semi_open_file": 2.3680983792099277,
+          "pawn_shield": -0.3843942407951506,
+          "knight_outpost": 0.016782496783713304,
+          "connected_rooks": 13.170771404081242,
+          "rook_seventh": -0.7580251224440604,
+          "space": 7.844450347856701,
+          "bishop_mobility": -6.728418445314725,
+          "rook_mobility": -9.524838602209751,
+          "knight_mobility": -10.3685998586841,
+          "queen_mobility": 0.9026870264963115
+        },
+        "standardized_coefficients": {
+          "material": 144.82247203028396,
+          "space": 104.13152747859566,
+          "mobility": 79.38592308153507,
+          "passed_pawn": 63.661804910984124,
+          "rook_mobility": -62.14735907349944,
+          "piece_square": 46.04272057006616,
+          "knight_mobility": -40.71543920336805,
+          "bishop_mobility": -32.265963208549735,
+          "bishop_pair": -24.845008894656825,
+          "connected_rooks": 18.212476358603844,
+          "semi_open_file": 12.121752870262416,
+          "isolated_pawn": 12.108210367155737,
+          "doubled_pawn": 8.631121983536072,
+          "queen_mobility": 8.281798085463208,
+          "open_file": -7.400132847388085,
+          "rook_seventh": -7.170390430485541,
+          "pawn_shield": -3.2146375272747445,
+          "king_safety": 1.5495009667768684,
+          "knight_outpost": 0.07165646712828258
+        }
+      }
+    },
+    "5": {
+      "game_phase": "late_middlegame",
+      "target": {
+        "count": 5686,
+        "mean": 129.2135068589518,
+        "std": 488.5637080254999,
+        "mae": 370.9293000351741,
+        "positive_ratio": 0.4778403095321843,
+        "negative_ratio": 0.27488568413647557,
+        "zero_ratio": 0.24727400633134014
+      },
+      "features": {
+        "material": {
+          "mean": 84.6535349982413,
+          "std": 363.50031302622415,
+          "target_correlation": 0.47423350946388665
+        },
+        "piece_square": {
+          "mean": 3.7205416813225467,
+          "std": 17.757288787656197,
+          "target_correlation": 0.1689051496780755
+        },
+        "mobility": {
+          "mean": 3.0392191347168485,
+          "std": 10.196678731142855,
+          "target_correlation": 0.37637613818584315
+        },
+        "isolated_pawn": {
+          "mean": 2.118360886387619,
+          "std": 15.60205384760965,
+          "target_correlation": 0.0758572890963042
+        },
+        "doubled_pawn": {
+          "mean": -0.02638058389025677,
+          "std": 3.9982418514003393,
+          "target_correlation": 0.06772318576304852
+        },
+        "passed_pawn": {
+          "mean": -2.755012310939149,
+          "std": 66.11747788209614,
+          "target_correlation": -0.06983963039199635
+        },
+        "king_safety": {
+          "mean": -2.1632078790010554,
+          "std": 14.781754678785603,
+          "target_correlation": -0.009607451986213425
+        },
+        "bishop_pair": {
+          "mean": -0.07386563489271895,
+          "std": 4.839473355906602,
+          "target_correlation": -0.01335326504549743
+        },
+        "open_file": {
+          "mean": 1.5054519873373198,
+          "std": 11.741689654341323,
+          "target_correlation": 0.08486553192824922
+        },
+        "semi_open_file": {
+          "mean": 0.0914526908195568,
+          "std": 4.288087791173853,
+          "target_correlation": 0.07140741974584776
+        },
+        "pawn_shield": {
+          "mean": -0.15476609215617307,
+          "std": 7.063151716980496,
+          "target_correlation": 0.10422568654854449
+        },
+        "knight_outpost": {
+          "mean": -0.2602884277172001,
+          "std": 3.6850787418483577,
+          "target_correlation": 0.10328522133265565
+        },
+        "connected_rooks": {
+          "mean": -0.09848751319029195,
+          "std": 1.4000180261523174,
+          "target_correlation": 0.11454749525197486
+        },
+        "rook_seventh": {
+          "mean": 2.018994020400985,
+          "std": 9.673003548608301,
+          "target_correlation": 0.055419218455038034
+        },
+        "space": {
+          "mean": 5.824832922968695,
+          "std": 11.894671507414843,
+          "target_correlation": 0.2878715569340011
+        },
+        "bishop_mobility": {
+          "mean": -0.12381287372493845,
+          "std": 7.257667064802124,
+          "target_correlation": 0.059716838698386274
+        },
+        "rook_mobility": {
+          "mean": 1.4744987689060851,
+          "std": 5.522534055950829,
+          "target_correlation": 0.22915894752853003
+        },
+        "knight_mobility": {
+          "mean": -0.19978895532887794,
+          "std": 4.580253994333835,
+          "target_correlation": 0.1779732817382084
+        },
+        "queen_mobility": {
+          "mean": 2.0624340485402746,
+          "std": 7.967185999198605,
+          "target_correlation": 0.16446564559376284
+        }
+      },
+      "linear_model": {
+        "r2": 0.3543965017750149,
+        "rmse": 392.55827865540044,
+        "intercept": 38.120240235826344,
+        "coefficients": {
+          "material": 0.8681586161175501,
+          "piece_square": 2.742188199309921,
+          "mobility": 8.307671225169287,
+          "isolated_pawn": 0.7463838609694496,
+          "doubled_pawn": 14.5132512818256,
+          "passed_pawn": 0.28601288752107856,
+          "king_safety": -2.4314630649188453,
+          "bishop_pair": 4.79548868492302,
+          "open_file": -1.902825078153671,
+          "semi_open_file": 3.161165374493528,
+          "pawn_shield": 6.745229051937992,
+          "knight_outpost": 3.130271899665689,
+          "connected_rooks": -22.0615774200205,
+          "rook_seventh": -0.05457843496514215,
+          "space": -0.002004290265945609,
+          "bishop_mobility": -17.247612497731282,
+          "rook_mobility": 6.222607810918094,
+          "knight_mobility": -1.9225761882328354,
+          "queen_mobility": -15.747419319016663
+        },
+        "standardized_coefficients": {
+          "material": 315.575928715143,
+          "queen_mobility": -125.4626187219792,
+          "bishop_mobility": -125.17742917125383,
+          "mobility": 84.71065448701117,
+          "doubled_pawn": 58.02748867488473,
+          "piece_square": 48.693827765249196,
+          "pawn_shield": 47.64257615962255,
+          "king_safety": -35.941290536158526,
+          "rook_mobility": 34.36456355262081,
+          "connected_rooks": -30.88660607338364,
+          "bishop_pair": 23.207639719236546,
+          "open_file": -22.34238153417818,
+          "passed_pawn": 18.910450764669363,
+          "semi_open_file": 13.555354648247217,
+          "isolated_pawn": 11.645121189832148,
+          "knight_outpost": 11.535298433663305,
+          "knight_mobility": -8.805887265564563,
+          "rook_seventh": -0.5279373950953073,
+          "space": -0.023840374318932153
+        }
+      }
+    },
+    "4": {
+      "game_phase": "endgame",
+      "target": {
+        "count": 31034,
+        "mean": 162.71395888380485,
+        "std": 405.5690699942008,
+        "mae": 264.6570535541664,
+        "positive_ratio": 0.4272733131404266,
+        "negative_ratio": 0.16411033060514274,
+        "zero_ratio": 0.4086163562544306
+      },
+      "features": {
+        "material": {
+          "mean": 62.660952503705616,
+          "std": 195.09213592814746,
+          "target_correlation": 0.33456840017355466
+        },
+        "piece_square": {
+          "mean": 0.11696848617645163,
+          "std": 6.842781456775626,
+          "target_correlation": 0.043856499190645916
+        },
+        "mobility": {
+          "mean": 0.34694206354321067,
+          "std": 7.5145697985744615,
+          "target_correlation": 0.054641571120571664
+        },
+        "isolated_pawn": {
+          "mean": -3.786492234323645,
+          "std": 16.61588078561906,
+          "target_correlation": -0.2833240863693225
+        },
+        "doubled_pawn": {
+          "mean": 0.02126699748662757,
+          "std": 6.076741627322562,
+          "target_correlation": -0.05457147477155731
+        },
+        "passed_pawn": {
+          "mean": 24.009151253463944,
+          "std": 72.72175739676278,
+          "target_correlation": 0.42619468823177364
+        },
+        "king_safety": {
+          "mean": -0.08506798994651028,
+          "std": 9.490424890909448,
+          "target_correlation": -0.020022718007249307
+        },
+        "bishop_pair": {
+          "mean": 0.5191080750145002,
+          "std": 5.411283257770535,
+          "target_correlation": 0.005294740711297526
+        },
+        "open_file": {
+          "mean": 0.15660243603789392,
+          "std": 11.465473234975027,
+          "target_correlation": 0.08097900482434071
+        },
+        "semi_open_file": {
+          "mean": -0.988915383128182,
+          "std": 5.5865306616708565,
+          "target_correlation": -0.2647140190607521
+        },
+        "pawn_shield": {
+          "mean": 0.2100921569891087,
+          "std": 3.9024905134780288,
+          "target_correlation": -0.007175820619844497
+        },
+        "knight_outpost": {
+          "mean": 0.017400270670877103,
+          "std": 1.0341622936487658,
+          "target_correlation": -0.01632596910639821
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.47109621705226523,
+          "std": 10.662033167126332,
+          "target_correlation": -0.01942621110331961
+        },
+        "space": {
+          "mean": 2.9710639943288006,
+          "std": 11.132958858340974,
+          "target_correlation": 0.2702371652162245
+        },
+        "bishop_mobility": {
+          "mean": 0.16556035316104917,
+          "std": 2.5863034155964555,
+          "target_correlation": -0.033231734233868146
+        },
+        "rook_mobility": {
+          "mean": -0.01894696139717729,
+          "std": 3.635547942399702,
+          "target_correlation": 0.10810302065429457
+        },
+        "knight_mobility": {
+          "mean": -0.06953663723657924,
+          "std": 2.0965600916388705,
+          "target_correlation": 0.0176351772227471
+        },
+        "queen_mobility": {
+          "mean": 0.49584326867306827,
+          "std": 3.8587466889640964,
+          "target_correlation": -0.017902593000033558
+        }
+      },
+      "linear_model": {
+        "r2": 0.36209038438162117,
+        "rmse": 323.9249505859274,
+        "intercept": 53.57825502950307,
+        "coefficients": {
+          "material": 1.134992826549187,
+          "piece_square": 3.198587875555719,
+          "mobility": 1.1841429823436354,
+          "isolated_pawn": -1.7122727361718186,
+          "doubled_pawn": 14.720278285837187,
+          "passed_pawn": 1.5278728942177993,
+          "king_safety": 1.6683932435726754,
+          "bishop_pair": 0.9945696246758304,
+          "open_file": -1.8400917272305854,
+          "semi_open_file": -2.320633072797685,
+          "pawn_shield": -3.465716989595305,
+          "knight_outpost": -2.059967356668482,
+          "connected_rooks": 0.0,
+          "rook_seventh": -4.014511061291111,
+          "space": 4.466845068571315,
+          "bishop_mobility": -12.925688478251764,
+          "rook_mobility": 4.29726402814776,
+          "knight_mobility": -8.007598367852804,
+          "queen_mobility": -35.45699499459128
+        },
+        "standardized_coefficients": {
+          "material": 221.4281747946063,
+          "queen_mobility": -136.81956203599563,
+          "passed_pawn": 111.10960194639661,
+          "doubled_pawn": 89.45132782531924,
+          "space": 49.729202374987715,
+          "rook_seventh": -42.80285008528135,
+          "bishop_mobility": -33.42975226023829,
+          "isolated_pawn": -28.450919656696694,
+          "piece_square": 21.887237802720016,
+          "open_file": -21.097522448461245,
+          "knight_mobility": -16.788411167912745,
+          "king_safety": 15.833760766627268,
+          "rook_mobility": 15.622909395480844,
+          "pawn_shield": -13.52492767429531,
+          "semi_open_file": -12.964287815671725,
+          "mobility": 8.898325092313375,
+          "bishop_pair": 5.381897958695446,
+          "knight_outpost": -2.130340566413863,
+          "connected_rooks": 0.0
+        }
+      }
+    },
+    "3": {
+      "game_phase": "endgame",
+      "target": {
+        "count": 4177,
+        "mean": 80.23342111563323,
+        "std": 428.38285681952436,
+        "mae": 266.11994254249464,
+        "positive_ratio": 0.40363897534115395,
+        "negative_ratio": 0.2959061527412018,
+        "zero_ratio": 0.30045487191764425
+      },
+      "features": {
+        "material": {
+          "mean": 49.08546803926263,
+          "std": 258.50572727453203,
+          "target_correlation": 0.5186972624930023
+        },
+        "piece_square": {
+          "mean": 1.0031122815417763,
+          "std": 18.085245962063688,
+          "target_correlation": -0.06432040466981394
+        },
+        "mobility": {
+          "mean": 2.1060569786928416,
+          "std": 8.078114217892592,
+          "target_correlation": 0.30876293844539693
+        },
+        "isolated_pawn": {
+          "mean": 3.1924826430452478,
+          "std": 17.64168163188566,
+          "target_correlation": -0.12757033412925006
+        },
+        "doubled_pawn": {
+          "mean": 0.7924347617907589,
+          "std": 4.176987038267313,
+          "target_correlation": -0.0648789488255566
+        },
+        "passed_pawn": {
+          "mean": -22.555661958343308,
+          "std": 81.03043184795924,
+          "target_correlation": 0.22911360934396277
+        },
+        "king_safety": {
+          "mean": 1.2497007421594446,
+          "std": 11.967922193487965,
+          "target_correlation": 0.12622548415051899
+        },
+        "bishop_pair": {
+          "mean": 0.15082595163993295,
+          "std": 5.061389464475196,
+          "target_correlation": 0.06576986923087141
+        },
+        "open_file": {
+          "mean": 3.586305961216184,
+          "std": 13.834733145314168,
+          "target_correlation": 0.2376660697132202
+        },
+        "semi_open_file": {
+          "mean": 0.5554225520708642,
+          "std": 3.4359079112127837,
+          "target_correlation": -0.01975932955106849
+        },
+        "pawn_shield": {
+          "mean": 0.7708881972707685,
+          "std": 5.222319551677164,
+          "target_correlation": 0.10439291042132227
+        },
+        "knight_outpost": {
+          "mean": -0.09097438352884846,
+          "std": 4.185243458207311,
+          "target_correlation": -0.009161748456958213
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.919320086186258,
+          "std": 6.49984458422779,
+          "target_correlation": 0.11833885341470185
+        },
+        "space": {
+          "mean": 1.5800813981326312,
+          "std": 11.266925530520755,
+          "target_correlation": 0.13264548076284757
+        },
+        "bishop_mobility": {
+          "mean": -0.15752932726837443,
+          "std": 6.41204176182131,
+          "target_correlation": -0.15439157412071847
+        },
+        "rook_mobility": {
+          "mean": 3.1144361982283937,
+          "std": 10.073197506031061,
+          "target_correlation": 0.2827688108804802
+        },
+        "knight_mobility": {
+          "mean": -0.7792674168063203,
+          "std": 4.861955628644131,
+          "target_correlation": -0.015896315072290616
+        },
+        "queen_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        }
+      },
+      "linear_model": {
+        "r2": 0.3974013098639731,
+        "rmse": 332.5417473066627,
+        "intercept": 59.86941494820758,
+        "coefficients": {
+          "material": 1.0975322839183559,
+          "piece_square": 0.9612053857655529,
+          "mobility": 8.015753450045546,
+          "isolated_pawn": 0.04160937149382637,
+          "doubled_pawn": -3.9415568432312913,
+          "passed_pawn": 1.0584475226082575,
+          "king_safety": 0.49474213446688126,
+          "bishop_pair": 1.9202092984318657,
+          "open_file": -3.345859750585075,
+          "semi_open_file": -3.1573150724568406,
+          "pawn_shield": 0.3764268044586895,
+          "knight_outpost": -2.861764251060149,
+          "connected_rooks": 0.0,
+          "rook_seventh": 3.370615474660612,
+          "space": -3.908412197824261,
+          "bishop_mobility": -24.25821836895868,
+          "rook_mobility": -10.561613070957971,
+          "knight_mobility": -25.605307155252405,
+          "queen_mobility": 0.0
+        },
+        "standardized_coefficients": {
+          "material": 283.71838126159275,
+          "bishop_mobility": -155.5447092491439,
+          "knight_mobility": -124.49186724664126,
+          "rook_mobility": -106.38921444603889,
+          "passed_pawn": 85.7664598453497,
+          "mobility": 64.75217191193452,
+          "open_file": -46.28907679099193,
+          "space": -44.035789175464906,
+          "rook_seventh": 21.90847673848716,
+          "piece_square": 17.383635821630335,
+          "doubled_pawn": -16.463831844770933,
+          "knight_outpost": -11.977180110681035,
+          "semi_open_file": -10.848243835645823,
+          "bishop_pair": 9.718927112670354,
+          "king_safety": 5.921035371139795,
+          "pawn_shield": 1.9658210606999709,
+          "isolated_pawn": 0.7340592847969435,
+          "connected_rooks": 0.0,
+          "queen_mobility": 0.0
+        }
+      }
+    },
+    "2": {
+      "game_phase": "endgame",
+      "target": {
+        "count": 22004,
+        "mean": 359.76708780221776,
+        "std": 473.6399084974931,
+        "mae": 427.94205598982,
+        "positive_ratio": 0.5911652426831485,
+        "negative_ratio": 0.1479730958007635,
+        "zero_ratio": 0.260861661516088
+      },
+      "features": {
+        "material": {
+          "mean": 215.77349572804945,
+          "std": 307.5333853251731,
+          "target_correlation": 0.4915638256567289
+        },
+        "piece_square": {
+          "mean": 0.648745682603163,
+          "std": 16.74948028368987,
+          "target_correlation": 0.11229411203669108
+        },
+        "mobility": {
+          "mean": 5.242319578258498,
+          "std": 9.005562804488788,
+          "target_correlation": 0.4081101449592446
+        },
+        "isolated_pawn": {
+          "mean": 5.7105526267951285,
+          "std": 17.999456542221182,
+          "target_correlation": 0.1558131894589848
+        },
+        "doubled_pawn": {
+          "mean": 0.3644791856026177,
+          "std": 3.1147600958956625,
+          "target_correlation": -0.10233928143137135
+        },
+        "passed_pawn": {
+          "mean": 2.2143701145246317,
+          "std": 51.65009411558845,
+          "target_correlation": 0.18724160929581038
+        },
+        "king_safety": {
+          "mean": 0.3503908380294492,
+          "std": 8.180161218928397,
+          "target_correlation": 0.035044880375250595
+        },
+        "bishop_pair": {
+          "mean": 0.06816942374113798,
+          "std": 2.9715501420165,
+          "target_correlation": 0.11040600794705677
+        },
+        "open_file": {
+          "mean": 0.48900199963642976,
+          "std": 5.896837548873128,
+          "target_correlation": -0.011010257554683206
+        },
+        "semi_open_file": {
+          "mean": 0.15951645155426286,
+          "std": 1.7258487113716012,
+          "target_correlation": -0.03678610954309249
+        },
+        "pawn_shield": {
+          "mean": 0.17814942737684059,
+          "std": 3.189905614543848,
+          "target_correlation": 0.039145398078128654
+        },
+        "knight_outpost": {
+          "mean": 0.43901108889292856,
+          "std": 4.200046489565412,
+          "target_correlation": -0.017206360981643208
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.15997091437920377,
+          "std": 2.2983766231544007,
+          "target_correlation": -0.008727706539715925
+        },
+        "space": {
+          "mean": 4.972277767678604,
+          "std": 11.149630716220342,
+          "target_correlation": 0.31006602260737326
+        },
+        "bishop_mobility": {
+          "mean": 1.7191874204690056,
+          "std": 5.839432814801155,
+          "target_correlation": 0.36079406909731015
+        },
+        "rook_mobility": {
+          "mean": 0.478776586075259,
+          "std": 4.321092040634691,
+          "target_correlation": -0.020687614014672895
+        },
+        "knight_mobility": {
+          "mean": 2.3415742592255953,
+          "std": 4.852967801823195,
+          "target_correlation": 0.20289822818816663
+        },
+        "queen_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        }
+      },
+      "linear_model": {
+        "r2": 0.4370356320874464,
+        "rmse": 355.37652990725553,
+        "intercept": 133.76077256428155,
+        "coefficients": {
+          "material": 1.2261252672819904,
+          "piece_square": 4.571648478355198,
+          "mobility": 8.656448041957313,
+          "isolated_pawn": 5.835388524829575,
+          "doubled_pawn": -4.6271828094516145,
+          "passed_pawn": 2.454644057431925,
+          "king_safety": 2.348813186941237,
+          "bishop_pair": 1.9435798706459857,
+          "open_file": -0.8730414904020298,
+          "semi_open_file": 3.350513577721201,
+          "pawn_shield": -4.207424493320356,
+          "knight_outpost": 2.942855114098369,
+          "connected_rooks": 0.0,
+          "rook_seventh": 2.014335872482384,
+          "space": 0.8455200720677706,
+          "bishop_mobility": -13.566784226198113,
+          "rook_mobility": -33.83297004878722,
+          "knight_mobility": -38.686173166517854,
+          "queen_mobility": 0.0
+        },
+        "standardized_coefficients": {
+          "material": 377.0744542799632,
+          "knight_mobility": -187.74275275286763,
+          "rook_mobility": -146.19537758884636,
+          "passed_pawn": 126.78259658662883,
+          "isolated_pawn": 105.0338221596461,
+          "bishop_mobility": -79.22232500178795,
+          "mobility": 77.95618650564057,
+          "piece_square": 76.57273605217118,
+          "king_safety": 19.213670542324323,
+          "doubled_pawn": -14.412564371294271,
+          "pawn_shield": -13.421287014011908,
+          "knight_outpost": 12.360128291268476,
+          "space": 9.427236566707652,
+          "semi_open_file": 5.782479540543188,
+          "bishop_pair": 5.775445040638489,
+          "open_file": -5.148183842326848,
+          "rook_seventh": 4.629702480494836,
+          "connected_rooks": 0.0,
+          "queen_mobility": 0.0
+        }
+      }
+    },
+    "1": {
+      "game_phase": "endgame",
+      "target": {
+        "count": 4560,
+        "mean": 48.77609649122807,
+        "std": 411.19883524161503,
+        "mae": 209.13837719298246,
+        "positive_ratio": 0.23289473684210527,
+        "negative_ratio": 0.18969298245614036,
+        "zero_ratio": 0.5774122807017544
+      },
+      "features": {
+        "material": {
+          "mean": 67.83114035087719,
+          "std": 244.83912099709357,
+          "target_correlation": 0.18595668632319493
+        },
+        "piece_square": {
+          "mean": 0.5285087719298246,
+          "std": 15.689393933060803,
+          "target_correlation": -0.024209647694467783
+        },
+        "mobility": {
+          "mean": 1.7679824561403508,
+          "std": 6.809219199361655,
+          "target_correlation": 0.15361568258901115
+        },
+        "isolated_pawn": {
+          "mean": 3.375,
+          "std": 18.471817972536606,
+          "target_correlation": -0.12603975397801023
+        },
+        "doubled_pawn": {
+          "mean": -0.36403508771929827,
+          "std": 3.3832566889507887,
+          "target_correlation": -0.058942557862474446
+        },
+        "passed_pawn": {
+          "mean": -35.541666666666664,
+          "std": 100.66774000604156,
+          "target_correlation": 0.18048628901096048
+        },
+        "king_safety": {
+          "mean": 0.3881578947368421,
+          "std": 8.753607784121193,
+          "target_correlation": 0.05421518728474193
+        },
+        "bishop_pair": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "semi_open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "pawn_shield": {
+          "mean": 0.07236842105263158,
+          "std": 3.108989456915751,
+          "target_correlation": 0.08802613958279815
+        },
+        "knight_outpost": {
+          "mean": -0.06140350877192982,
+          "std": 1.3878235372387961,
+          "target_correlation": -0.03075889464155666
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "space": {
+          "mean": -0.5692982456140351,
+          "std": 10.51500704668101,
+          "target_correlation": 0.1803222528433227
+        },
+        "bishop_mobility": {
+          "mean": 0.4787280701754386,
+          "std": 5.128992595906255,
+          "target_correlation": 0.21099707960087394
+        },
+        "rook_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "knight_mobility": {
+          "mean": 2.2333333333333334,
+          "std": 4.583909054750347,
+          "target_correlation": -0.07042469426149912
+        },
+        "queen_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        }
+      },
+      "linear_model": {
+        "r2": 0.11714871938381186,
+        "rmse": 386.3631084328511,
+        "intercept": 47.68317262441818,
+        "coefficients": {
+          "material": 0.08545658461710938,
+          "piece_square": -1.9328673373745875,
+          "mobility": -12.609362328869821,
+          "isolated_pawn": 0.5800959578698621,
+          "doubled_pawn": 2.6673491331135457,
+          "passed_pawn": 1.6586739280769789,
+          "king_safety": 0.9524552341869432,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 10.411949596742998,
+          "knight_outpost": -14.364153116318368,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "space": -0.0740892903504882,
+          "bishop_mobility": 30.814966642987926,
+          "rook_mobility": 0.0,
+          "knight_mobility": 26.765739624169854,
+          "queen_mobility": 0.0
+        },
+        "standardized_coefficients": {
+          "passed_pawn": 166.974955746453,
+          "bishop_mobility": 158.04973575498332,
+          "knight_mobility": 122.69171622032233,
+          "mobility": -85.85991206144797,
+          "pawn_shield": 32.37064152221218,
+          "piece_square": -30.32551707641624,
+          "material": 20.92311506106681,
+          "knight_outpost": -19.934909787328635,
+          "isolated_pawn": 10.715426940376357,
+          "doubled_pawn": 9.024326796373492,
+          "king_safety": 8.3374195520058,
+          "space": -0.7790494101189788,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "rook_mobility": 0.0,
+          "queen_mobility": 0.0
+        }
+      }
+    },
+    "0": {
+      "game_phase": "endgame",
+      "target": {
+        "count": 13497,
+        "mean": 52.49136845224865,
+        "std": 333.1819674008237,
+        "mae": 130.31725568644885,
+        "positive_ratio": 0.13314069793287397,
+        "negative_ratio": 0.060828332221975256,
+        "zero_ratio": 0.8060309698451508
+      },
+      "features": {
+        "material": {
+          "mean": 23.642290879454695,
+          "std": 81.73388900762846,
+          "target_correlation": 0.18885210021968465
+        },
+        "piece_square": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "mobility": {
+          "mean": 0.32362747277172704,
+          "std": 2.3917691712952722,
+          "target_correlation": 0.1163962051553815
+        },
+        "isolated_pawn": {
+          "mean": -0.3489664369859969,
+          "std": 16.376950789387504,
+          "target_correlation": 0.11148222413262542
+        },
+        "doubled_pawn": {
+          "mean": 0.35637549084981845,
+          "std": 2.9989234428184273,
+          "target_correlation": -0.03097972406416684
+        },
+        "passed_pawn": {
+          "mean": 8.03363710454175,
+          "std": 43.876500223856624,
+          "target_correlation": 0.09330688914837511
+        },
+        "king_safety": {
+          "mean": 0.335630140031118,
+          "std": 7.264005082266764,
+          "target_correlation": -0.013018335845303814
+        },
+        "bishop_pair": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "semi_open_file": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "pawn_shield": {
+          "mean": 0.12299029413943839,
+          "std": 1.734291602928038,
+          "target_correlation": 0.04319820817856702
+        },
+        "knight_outpost": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "connected_rooks": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_seventh": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "space": {
+          "mean": 1.731644069052382,
+          "std": 9.527100961161738,
+          "target_correlation": 0.05706308661579878
+        },
+        "bishop_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "rook_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "knight_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        },
+        "queen_mobility": {
+          "mean": 0.0,
+          "std": 0.0,
+          "target_correlation": null
+        }
+      },
+      "linear_model": {
+        "r2": 0.08897831067546101,
+        "rmse": 318.01371236968635,
+        "intercept": 27.609977609011555,
+        "coefficients": {
+          "material": 1.1534864394791742,
+          "piece_square": 0.0,
+          "mobility": 6.444257987397591,
+          "isolated_pawn": 5.264032146199579,
+          "doubled_pawn": -6.206068204094552,
+          "passed_pawn": -0.10809744099166435,
+          "king_safety": -0.13526548689412568,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "pawn_shield": 3.7628174560981935,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "space": 0.01413448399547715,
+          "bishop_mobility": 0.0,
+          "rook_mobility": 0.0,
+          "knight_mobility": 0.0,
+          "queen_mobility": 0.0
+        },
+        "standardized_coefficients": {
+          "material": 94.27893261619536,
+          "isolated_pawn": 86.20879541206439,
+          "doubled_pawn": -18.61152342498921,
+          "mobility": 15.413177586130875,
+          "pawn_shield": 6.525822717462138,
+          "passed_pawn": -4.742937393869089,
+          "king_safety": -0.9825691842542174,
+          "space": 0.13466065605883556,
+          "piece_square": 0.0,
+          "bishop_pair": 0.0,
+          "open_file": 0.0,
+          "semi_open_file": 0.0,
+          "knight_outpost": 0.0,
+          "connected_rooks": 0.0,
+          "rook_seventh": 0.0,
+          "bishop_mobility": 0.0,
+          "rook_mobility": 0.0,
+          "knight_mobility": 0.0,
+          "queen_mobility": 0.0
+        }
+      }
+    }
+  }
+}

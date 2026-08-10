@@ -184,6 +184,38 @@ Trainerだけが
 - LossEvaluator
 
 を協調させる。
+---
+
+## TrainingBatch
+
+`TrainingBatch` は Training Dataset のバッチ単位のデータを表す。
+
+新形式 Dataset では、
+
+- `feature_matrix`
+- `target_cps`
+- `source_depths`
+
+を保持する。
+
+Feature Matrix の shape は、
+
+```text
+(batch_size, feature_count)
+```
+でなければならない。
+
+target_cps と source_depths の要素数は
+Feature Matrix の batch size と一致しなければならない。
+
+旧形式 Dataset では feature_values が存在しないため、
+TrainingPosition による互換展開を許可する。
+
+旧形式と新形式のデータを同一 Parquet Dataset 内で混在させてはならない。
+
+
+今回の `invariants.md` については、**ここまでで止めます**。  
+次の `docs/codebase.md` / `docs/status.md` にはまだ手を入れません。
 
 ---
 
@@ -211,7 +243,8 @@ Trainer は元データセットから Feature を再計算してはならない
 
 ## Feature Vector Consistency
 
-Parquet に保存された Feature Vector は、Dataset Build 時点の Feature Registry に対応する。
+Parquet に保存された Feature Vector は、
+Dataset Build 時点の Feature Registry に対応する。
 
 Feature の
 
@@ -223,6 +256,33 @@ Feature の
 を行った場合、既存の Training Dataset をそのまま使用してはならない。
 
 必要に応じて Training Dataset を再生成する。
+
+---
+
+## Feature Registry Metadata
+
+Training Dataset には現在の Feature Registry を識別するため、
+以下の metadata を保存する。
+
+- `feature_names`
+- `feature_count`
+- `feature_schema_hash`
+
+Training Dataset を読み込む際には、
+Parquet metadata と現在の `FEATURES` Registry を比較する。
+
+以下のいずれかが一致しない場合、
+Training Dataset を現在の Evaluation と組み合わせて使用してはならない。
+
+- Feature 数
+- Feature 名
+- Feature 順序
+- Feature Schema Hash
+
+Feature Schema Hash は Feature 名の Registry 順序から生成される。
+
+したがって Feature Registry の順序は、
+Feature Vector と Weight Vector の意味を決定する不変条件の一部である。
 
 ---
 
@@ -240,21 +300,47 @@ Feature Registry の順序と Weight の順序は一致しなければならな�
 
 Training Dataset は、Training 実行中に毎Epoch Parquetから再読み込みしてはならない。
 
-ParquetDataset は、可能な場合に Feature Vector と Target をNumPy配列としてメモリにキャッシュし、複数Epochで再利用する。
+`ParquetDataset` は、初回アクセス時に Parquet Dataset をメモリへ読み込み、
+以後の Epoch ではキャッシュされた NumPy 配列を再利用する。
 
-Dataset Cache は学習結果を保持するものではない。
+基本的なデータフローは以下とする。
 
-Cache に保持するのは以下のみとする。
+```text
+Parquet
+   ↓
+ParquetDataset
+   ↓
+Feature Matrix
+Target Values
+Source Depths
+   ↓
+In-Memory Cache
+   ↓
+Mini-batch Training
+```
 
-- Feature Matrix
-- Target Values
-- 必要な Dataset Metadata
+Cache に保持するデータは Dataset に属する値のみとする。
+
+新形式 Dataset では以下を保持する。
+
+Feature Matrix
+Target Values
+Source Depths
+
+旧形式 Dataset では、Feature Vector を持たないため、
+必要に応じて TrainingPosition を保持する。
 
 Weight は Dataset Cache に含めない。
 
-Cache は Training Dataset と Weight を独立した成果物として扱う設計を壊してはならない。
+Dataset Cache は Training の数学的結果を変更してはならない。
 
-Dataset の内容または Feature Registry が変更された場合、既存 Cache をそのまま再利用してはならない。
+同一 Dataset、同一 Feature Registry、同一初期 Weight、
+同一 Training Configuration を使用した場合、
+Parquet を直接利用する場合と In-Memory Cache を利用する場合で、
+学習結果が変わってはならない。
+
+Dataset の内容または Feature Registry が変更された場合、
+古い Cache を新しい Dataset の代わりに使用してはならない。
 
 ---
 
@@ -270,23 +356,39 @@ Feature Matrix の shape は以下を満たさなければならない。
 
 ---
 
-# EvaluationSnapshot
+## EvaluationSnapshot / Dataset Boundary
 
-EvaluationSnapshot は Evaluation 結果を学習用 Feature Vector に変換するためのデータ構造である。
+`EvaluationSnapshot` は Dataset Build 時の Evaluation 結果を保持する。
 
-保持するもの
+Dataset Build では、
 
-- total
-- raw_features
-- feature_vector
+```text
+Board
+  ↓
+Evaluator
+  ↓
+EvaluationSnapshot
+  ↓
+Feature Vector
+  ↓
+Parquet
+```
 
-Dataset Build 時に Evaluator が EvaluationSnapshot を生成する。
+の順に Feature Vector を生成する。
 
-生成された feature_vector は Training Dataset に保存される。
+Training 時には保存済みの Feature Vector を利用し、
+同じ局面について Feature を再計算してはならない。
 
-Training 時には保存済みの Feature Vector を利用し、Feature の再計算を行わない。
+したがって、
 
-EvaluationSnapshot 自体は探索処理では利用しない。
+Dataset Build
+    = Feature calculation
+
+Training
+    = Stored Feature Vector consumption
+
+として責務を分離する。
+
 ---
 
 # Scripts

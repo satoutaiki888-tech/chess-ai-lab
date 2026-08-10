@@ -21,13 +21,14 @@
 
 # Directory Structure
 
-```text
+```
 src/
 └── chess_ai_lab/
     ├── board.py
     │
     ├── evaluation/
     │   ├── evaluator.py
+    │   ├── result.py
     │   ├── weight_manager.py
     │   └── features/
     │
@@ -74,7 +75,7 @@ src/
 tests/
 
 scripts/
-````
+```
 
 ---
 
@@ -122,14 +123,26 @@ scripts/
 
 ## Responsibilities
 
-* Feature Registry の管理
-* Feature の実行
+* Feature Registry の実行
+* Feature raw score の取得
 * Weight の取得
-* Feature Vector の生成
+* Weight 適用後の `EvaluationResult` 生成
 * 最終評価値の計算
 * `EvaluationSnapshot` の生成
+* 学習用 Feature Vector の生成
 
-`Evaluator` は Feature と Weight を統合する唯一の主要コンポーネントである。
+`Evaluator` は Feature と Weight を統合する主要コンポーネントである。
+
+`evaluate_detail()` は Feature ごとの
+weighted score と total を `EvaluationResult` として返す。
+
+`snapshot()` は Dataset Build や学習用途のために、
+
+* total
+* raw_features
+* feature_vector
+
+を `EvaluationSnapshot` として返す。
 
 ## Must Not
 
@@ -137,6 +150,31 @@ scripts/
 * Self Play
 * Evolution
 * Training loop
+* Weight の永続化
+
+---
+
+## result.py
+
+## Responsibilities
+
+Feature ごとの評価結果と最終評価値を保持する。
+
+主な責務:
+
+* Feature ごとの weighted score の保持
+* Feature 名と評価値の対応管理
+* 全 Feature の評価値の合計管理
+
+`Evaluator.evaluate_detail()` が生成する評価結果のデータ構造として利用する。
+
+## Must Not
+
+* Feature calculation
+* Weight management
+* Search
+* Training
+* Evolution
 
 ---
 
@@ -170,47 +208,87 @@ scripts/
 
 個別の評価 Feature を実装する。
 
-## Rule
+Feature は raw score を返し、
+Weight や最終評価値を管理しない。
 
-```text
+Feature の実行順序と Feature Vector の順序は
+`FEATURES` Registry を正とする。
+
+## Feature File Design
+
+現在の実装では、
+
+1 Registry entry = 1 independent feature calculation
+
+であり、必ずしも
+
 1 Feature = 1 File
-```
 
-Feature は raw score を返す。
+ではない。
 
-Feature の実行順序は `evaluator.py` の `FEATURES` Registry を正とする。
+複数の関連 Feature を1ファイルにまとめる場合がある。
 
-Feature Vector のインデックスも、この Registry の順序に従う。
+現在の構成では、例えば以下のように複数の Registry entry が
+同一モジュールに実装されている。
 
-## Current Features
+pawn_structure.py
+├── evaluate_isolated_pawn
+├── evaluate_doubled_pawn
+└── evaluate_passed_pawn
 
-1. material
-2. piece_square
-3. mobility
-4. isolated_pawn
-5. doubled_pawn
-6. passed_pawn
-7. king_safety
-8. bishop_pair
-9. open_file
-10. semi_open_file
-11. pawn_shield
-12. knight_outpost
-13. connected_rooks
-14. rook_seventh
-15. space
-16. bishop_mobility
-17. rook_mobility
-18. knight_mobility
-19. queen_mobility
+rook_file.py
+├── evaluate_open_file
+└── evaluate_semi_open_file
+Current Feature Registry
 
-## Must Not
+FEATURES に登録されている Feature は以下の19個である。
 
-* WeightManager を直接利用しない
-* Search を行わない
-* Weight を変更しない
-* Board state を変更しない
-* 他 Feature に依存しない
+material
+piece_square
+mobility
+isolated_pawn
+doubled_pawn
+passed_pawn
+king_safety
+bishop_pair
+open_file
+semi_open_file
+pawn_shield
+knight_outpost
+connected_rooks
+rook_seventh
+space
+bishop_mobility
+rook_mobility
+knight_mobility
+queen_mobility
+
+Feature Vector のインデックスは、この Registry の順序に従う。
+
+Current Feature Modules
+features/
+├── material.py
+├── piece_square.py
+├── mobility.py
+├── pawn_structure.py
+├── king_safety.py
+├── bishop_pair.py
+├── rook_file.py
+├── pawn_shield.py
+├── knight_outpost.py
+├── connected_rooks.py
+├── rook_seventh.py
+├── space.py
+├── bishop_mobility.py
+├── rook_mobility.py
+├── knight_mobility.py
+└── queen_mobility.py
+Must Not
+WeightManager を直接利用しない
+Search を行わない
+Weight を変更しない
+Board state を変更しない
+他 Feature の計算結果に依存しない
 
 ---
 

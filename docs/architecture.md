@@ -229,11 +229,22 @@ Board
       └── EvaluationSnapshot
 ```
 
-FeatureはWeightを知らない。
+Evaluator が Feature と Weight を統合する唯一の主要コンポーネントである。
 
-WeightManagerはFeatureを知らない。
+Evaluator は以下を担当する。
 
-Evaluatorのみ両者を利用する。
+Feature Registry に登録された Feature の実行
+WeightManager からの Weight 取得
+raw feature × weight による評価値計算
+EvaluationResult の生成
+Training 用 EvaluationSnapshot の生成
+
+Feature は Weight を知らない。
+
+WeightManager は Feature の計算を行わない。
+
+EvaluationSnapshot は Training 用の評価結果データ構造であり、
+現在は tuning/evaluation_snapshot.py に配置されている。
 
 ---
 
@@ -285,24 +296,35 @@ Feature の追加・削除・並び替えを行った場合、Weight と Trainin
 
 # Training Data Architecture
 
-Training DatasetはParquet形式で保存する。
+Training Dataset は Parquet 形式で保存する。
 
 現在のデータ形式は以下とする。
 
+```text
 train.parquet
 valid.parquet
+```
 
 columns:
-- fen
-- target_cp
-- source_depth
-- feature_values
 
-target_cp はStockfish由来の評価値を学習対象として使用する。
+fen
+target_cp
+source_depth
+feature_values
+
+target_cp は Stockfish 由来の評価値を学習対象として使用する。
 
 source_depth は元評価の深さを保持する。
 
-feature_values はDataset生成時点で計算されたFeature Vectorを保持する。
+feature_values は Dataset Build 時点で計算された Feature Vector を保持する。
+
+Training 中に Board から Feature を再計算してはならない。
+
+Parquet metadata には Feature Registry との互換性検証に必要な以下の情報を保存する。
+
+feature_names
+feature_count
+feature_schema_hash
 
 ---
 
@@ -328,18 +350,33 @@ SearchがFeatureを直接呼ぶことは禁止。
 
 # WeightManager
 
+`WeightManager` は Evaluation Weight の保持・変換・永続化を担当する。
+
 Responsibilities
 
-- Weight保持
-- Weight取得
-- Weight更新
-- JSON保存
-- JSON読込
+- Weight 保持
+- Weight 取得
+- Weight 更新
+- JSON 保存
+- JSON 読込
 - Copy
 - Mutation
-- NumPy変換
+- Dictionary 変換
+- FEATURES 順序での NumPy Array 変換
+- NumPy Gradient の適用
+- Feature name 管理
 
-のみ責務とする。
+Training では `WeightVector` が WeightManager と NumPy Weight Array の間を仲介する。
+
+WeightManager 自体は以下を担当しない。
+
+- Feature の計算
+- Search
+- Self Play
+- Training Loop
+- Loss 計算
+- Gradient の計算
+- Optimizer の状態管理
 
 # Tuning Flow
 
@@ -376,35 +413,38 @@ Parquet Dataset
 
 Dataset Build の責務は、元データから学習可能な Parquet Dataset を生成することである。
 
+Dataset Build では Streaming Dataset を利用し、条件を満たした局面だけを前処理する。
+
+標準的な Dataset Build では以下を行う。
+
+Mate 局面の除外
+Minimum Depth filtering
+Centipawn clamp
+Evaluator による Feature Vector 生成
+Train / Validation split
+Parquet streaming write
+Feature Registry metadata の保存
+Dataset manifest の保存
+
 Parquet Dataset には以下を保存する。
 
-* fen
-* target_cp
-* source_depth
-* feature_values
+fen
+target_cp
+source_depth
+feature_values
 
-さらに Parquet metadata に Feature Registry の情報を保存する。
+Parquet metadata には以下を保存する。
 
-* feature_names
-* feature_count
-* feature_schema_hash
+feature_names
+feature_count
+feature_schema_hash
 
-Dataset Build は Streaming Dataset を利用し、
-必要な局面だけを前処理して Parquet に保存する。
+Dataset Build の条件は実験ごとに設定できる。
 
-現在の Dataset Build の標準条件は以下である。
+現在の主要な実験 Dataset は 500,000 positions であり、
+Dataset Build の max_samples は固定値ではなく実験設定として扱う。
 
-* minimum depth: 20
-* cp limit: ±1000
-* train ratio: 0.9
-* seed: 42
-* buffer size: 5000
-* maximum samples: 500000
-
-これらは実験ごとに変更可能であり、
-実験結果とともに記録する。
-
-Feature の構成を変更した場合、
+Feature Registry の構成を変更した場合、
 対応する Training Dataset を再生成する。
 
 ---
@@ -417,40 +457,51 @@ Training は Dataset Build 済みの Parquet Dataset を利用する。
 ParquetDataset
       │
       ▼
-NumPy Feature Matrix
+NumPy Feature Matrix + Target
       │
       ▼
-In-Memory Training Data
+      Trainer
       │
       ├──────────────┐
       ▼              ▼
 Mini-batch SGD    Loss Evaluation
       │              │
       ▼              ▼
-WeightManager    Validation
+WeightVector     Validation
+      │              │
+      ▼              ▼
+SGDOptimizer    LR Scheduler
       │              │
       └──────┬───────┘
              ▼
-      LR Scheduler
+       WeightManager
              │
              ▼
        Best Weight
 ```
 
-Training 時には Feature を再計算しない。
+Training 開始時に Dataset をメモリへ読み込む。
 
-Parquet に保存された Feature Vector をそのまま NumPy 配列として利用する。
+Training では Parquet に保存された Feature Vector を NumPy の Feature Matrix として利用する。
 
-Training 開始時に Dataset を読み込み、
-Training 用 Feature Matrix と Target 配列をメモリ上に保持する。
+Training 中に Feature を再計算しない。
 
-これにより、各 epoch で Parquet を再読み込みする必要をなくす。
+Trainer は Mini-batch 単位で以下を実行する。
+
+Feature Matrix と Weight Vector の行列積による評価値計算
+Texel Gradient の計算
+Batch Gradient の平均
+Optimizer による Weight Vector 更新
+
+Epoch の処理後、WeightVector の内容を WeightManager に同期する。
+
+Training Loop、Loss Evaluation、Scheduler、Optimizer の協調は Trainer が担当する。
 
 ---
 
 ## Training Data Cache
 
-Training Dataset の読み込みは Training 開始時に一度だけ行う。
+Training Dataset の Parquet 読み込みは Training 実行中に繰り返さない。
 
 ```text
 Parquet
@@ -471,13 +522,21 @@ Memory
    └── Epoch N
 ```
 
-Training Dataset は読み取り専用データとして扱う。
+ParquetDataset は初回アクセス時に Parquet Dataset を読み込み、
+Feature Matrix、Target、Source Depth を NumPy 配列としてキャッシュする。
+
+Training の Trainer はこの Dataset から必要な配列を取得し、
+各 epoch でメモリ上の NumPy 配列を再利用する。
+
+これにより、epoch ごとの Parquet I/O を発生させない。
+
+Dataset は読み取り専用として扱う。
 
 Training 中に Dataset の Feature Vector や Target を変更してはならない。
 
-Training の各 epoch は、メモリ上の NumPy 配列を Mini-batch に分割して処理する。
+Dataset Cache と Weight は独立して扱う。
 
-Dataset のロード時間と Training epoch の処理時間は分離して考える。
+Dataset Cache は Weight を保持しない。
 
 ---
 

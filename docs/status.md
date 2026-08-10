@@ -71,8 +71,6 @@ Benchmark
 - Benchmark runner
 - Benchmark result
 
-# Texel Tuning
-
 Texel Tuning
 
 - Parquet Dataset
@@ -162,7 +160,7 @@ This removes repeated Parquet I/O from the main training loop.
 
 ## Training Configuration
 
-Experiment
+### Last Recorded Experiment
 
 - Fresh training
 - Dataset: `data/training_500k`
@@ -174,6 +172,35 @@ Experiment
 - Validation interval: 5
 - Train loss interval: 10
 - Patience: 10
+
+### Current Code Configuration
+
+The current `PRODUCTION_CONFIG` is:
+
+- Learning rate: 5.0
+- Epochs: 100
+- Batch size: 4096
+- Training samples: unlimited (`None`)
+- Validation samples: 10,000
+- Validation interval: 5
+- Train loss interval: 10
+- Patience: 10
+
+The current production configuration is defined in
+`src/chess_ai_lab/tuning/config.py`.
+
+The training entry point uses `PRODUCTION_CONFIG`
+directly.
+
+Therefore, the last recorded LR=1.0 experiment and the
+current default training configuration must be treated
+as separate states.
+
+Initial weights for a fresh run are the built-in
+evaluation weights.
+
+Training can also resume from
+`weights/best_weight.json` when `--fresh` is not specified.
 
 Initial weights
 
@@ -234,7 +261,9 @@ substantially cheaper.
 
 # Current Training
 
-## Current Experimental Configuration
+## Last Recorded Experimental Configuration
+
+The latest recorded training experiment used:
 
 - Dataset: `data/training_500k`
 - Epochs: 100
@@ -247,6 +276,29 @@ substantially cheaper.
 - Training samples: 449,662
 - Validation samples: 10,000
 
+This configuration corresponds to the recorded LR=1.0
+training result below.
+
+## Current Code Configuration
+
+The current default `PRODUCTION_CONFIG` is:
+
+- Epochs: 100
+- Batch size: 4096
+- Learning rate: 5.0
+- Validation interval: 5
+- Train loss interval: 10
+- Patience: 10
+- Maximum training samples: unlimited
+- Maximum validation samples: 10,000
+
+The current configuration has not yet been associated
+with a recorded training result in this document.
+
+Therefore, the LR=5.0 configuration must not be described
+as a measured training result until an experiment has
+actually been run and recorded.
+
 ---
 
 ## Learning Rate Experiments
@@ -254,13 +306,15 @@ substantially cheaper.
 The learning rate is currently being treated as
 an experimental variable.
 
-Previous experiments
+### Recorded Experiments
+
+Previous experiments:
 
 - LR = 0.1
 - LR = 0.3
 - LR = 1.0
 
-Observed best validation losses
+Observed best validation losses:
 
 - LR = 0.1: approximately 0.025093
 - LR = 0.3: approximately 0.024733
@@ -268,6 +322,18 @@ Observed best validation losses
 
 These results suggest that the previous learning rate
 may have been too conservative.
+
+### Current Code Setting
+
+The current `PRODUCTION_CONFIG` uses:
+
+- LR = 5.0
+
+This is a configuration change, not yet a measured
+experimental result.
+
+No conclusion should be drawn about LR=5.0 until a
+controlled training run has been completed.
 
 Further experiments are required before selecting
 a production learning rate.
@@ -278,6 +344,9 @@ of stronger chess play.
 ---
 
 ## Current Best Experimental Result
+
+The best recorded result in the current experiment log
+is still the LR=1.0 experiment.
 
 Configuration
 
@@ -294,6 +363,14 @@ Result
 - Best epoch: 100
 - Final train loss: 0.024462
 - Final validation loss: 0.024605
+
+This is the best recorded experimental result,
+not necessarily the result of the current default
+training configuration.
+
+The current default configuration uses LR=5.0 and
+batch size=4096, but its training result has not yet
+been recorded here.
 
 ---
 
@@ -393,8 +470,9 @@ The following questions are currently under investigation.
 1. Does increasing the Training Dataset from 100,000
    to 500,000 positions improve learned evaluation quality?
 
-2. Is the current learning rate of 1.0 better than
-   lower learning rates such as 0.1 and 0.3?
+2. Is the current learning rate of 5.0 appropriate,
+   compared with the previously tested values 0.1, 0.3,
+   and 1.0?
 
 3. Does increasing the number of epochs continue to
    reduce validation loss meaningfully?
@@ -422,6 +500,10 @@ The following questions are currently under investigation.
 
 11. What dataset size provides a useful trade-off
     between training quality and experiment speed?
+
+12. Does the current in-memory training path preserve
+    the mathematical behavior of the previous training
+    implementation?
 
 ---
 
@@ -491,103 +573,136 @@ invariants.md
 
 # Next Task
 
-1. Complete Training Infrastructure Validation
+## 1. Validate the Current Training Configuration
 
-Verify that the new in-memory dataset path produces
-the same training behavior as the previous implementation.
+Run the current `PRODUCTION_CONFIG` and record its actual
+training behavior.
 
-Check:
+Current configuration:
 
-- Dataset sample count
-- Feature vector dimension
-- Target values
-- Training loss
-- Validation loss
-- Weight updates
-- Best weight checkpoint
-- Final weight output
-
-The cache must not change the mathematical result
-of training.
-
----
-
-2. Controlled Learning Rate Experiment
-
-Run fresh training from the same built-in weights
-using identical dataset and training conditions.
-
-Compare:
-
-LR = 0.1
-LR = 0.3
-LR = 1.0
+- Learning rate: 5.0
+- Epochs: 100
+- Batch size: 4096
+- Training samples: unlimited
+- Validation samples: 10,000
+- Validation interval: 5
+- Train loss interval: 10
+- Patience: 10
 
 Record:
 
-Learning rate
-Epoch
-Best validation loss
-Best epoch
-Final validation loss
-Final training loss
-Training time
-Final weights
+- Training time
+- Best validation loss
+- Best epoch
+- Final training loss
+- Final validation loss
+- Final learning rate
+- Best weight path
+- Final weight path
 
-Only one experimental variable should be changed
-between runs.
+Do not interpret the result as a strength improvement
+until it is compared under identical benchmark conditions.
 
 ---
 
-3. Epoch / Convergence Experiment
+## 2. Controlled Learning Rate Experiment
 
-After selecting a reasonable learning-rate range,
+Compare learning rates under identical conditions.
+
+Candidate learning rates:
+
+- LR = 0.1
+- LR = 0.3
+- LR = 1.0
+- LR = 5.0
+
+For each run:
+
+- Start from the same built-in weights
+- Use the same dataset
+- Use the same validation set
+- Use the same epoch count
+- Use the same batch size
+- Use the same scheduler configuration
+
+Record:
+
+- Learning rate
+- Epoch
+- Best validation loss
+- Best epoch
+- Final validation loss
+- Final training loss
+- Training time
+- Final weights
+
+Only the intended experimental variable should change.
+
+---
+
+## 3. Epoch / Convergence Experiment
+
+After identifying a reasonable learning-rate range,
 test whether additional epochs continue to improve
 validation loss.
 
 Example:
 
-100 epochs
-200 epochs
-500 epochs
-
-Do not assume that more epochs produce stronger play.
+- 100 epochs
+- 200 epochs
+- 500 epochs
 
 Record the complete validation-loss trend.
 
-4. Independent Playing Strength Evaluation
+Do not assume that lower validation loss or more epochs
+produce stronger chess play.
+
+---
+
+## 4. Independent Playing Strength Evaluation
 
 For each promising trained weight:
 
-Run WAC benchmark.
-Run self-play against the built-in weight.
-Use identical search depth and benchmark conditions.
-Record accuracy, nodes, NPS, elapsed time,
-and match results.
+- Run WAC benchmark
+- Run self-play against the built-in weight
+- Use identical search depth
+- Use identical benchmark conditions
 
-Training loss and playing strength must be tracked
-as separate measurements.
+Record:
 
-5. Experiment Record
+- Accuracy
+- Nodes
+- NPS
+- Elapsed time
+- Match results
+
+Training loss and playing strength must remain separate
+measurements.
+
+---
+
+## 5. Experiment Record
 
 Every significant experiment should record:
 
-Dataset identifier
-Dataset size
-Feature Registry
-Feature schema hash
-Learning rate
-Epochs
-Batch size
-Validation size
-Scheduler configuration
-Initial weight source
-Best validation loss
-Best epoch
-Final validation loss
-Final weight path
-WAC result
-Self-play result
+- Dataset identifier
+- Dataset size
+- Feature Registry
+- Feature schema hash
+- Learning rate
+- Epochs
+- Batch size
+- Validation size
+- Scheduler configuration
+- Initial weight source
+- Best validation loss
+- Best epoch
+- Final validation loss
+- Final training loss
+- Training time
+- Final weight path
+- WAC result
+- Self-play result
 
 The goal is to make experiments reproducible
 and directly comparable.
