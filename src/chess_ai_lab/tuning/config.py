@@ -47,7 +47,7 @@ DEV_CONFIG = TrainingConfig(
 
 PRODUCTION_CONFIG = TrainingConfig(
     learning_rate=1,
-    epochs=5,
+    epochs=100,
     batch_size=4096,
     max_train_samples=None,
     max_valid_samples=10_000,

@@ -2,853 +2,1356 @@
 
 ## Purpose
 
-この文書は chess-ai-lab のコードベース全体を説明する。
+この文書は `chess-ai-lab` のコードベース全体を説明する。
 
-目的は
+目的は以下の3つである。
 
 - 各ファイルの責務を明確にする
-- AIが適切なファイルを探せるようにする
-- 責務の重複を防ぐ
+- AIが変更対象のファイルを正しく判断できるようにする
+- 責務の重複・不要な依存・無関係な変更を防ぐ
 
-である。
+この文書は「どのコードがどの責務を持つか」を定義する。
+
+設計上の不変条件は `docs/invariants.md`、
+現在のアーキテクチャは `docs/architecture.md`、
+現在の進捗と次の作業は `docs/status.md`
+を正とする。
 
 ---
 
 # Directory Structure
 
+```text
 src/
-
-    chess_ai_lab/
-
-        board.py
-
-        evaluation/
-
-        engine/
-
-        evolution/
-
-        benchmark/
-        
-        tuning/
+└── chess_ai_lab/
+    ├── board.py
+    │
+    ├── evaluation/
+    │   ├── evaluator.py
+    │   ├── weight_manager.py
+    │   └── features/
+    │
+    ├── engine/
+    │   ├── player.py
+    │   ├── search.py
+    │   ├── greedy.py
+    │   ├── minimax.py
+    │   ├── alphabeta.py
+    │   ├── iterative.py
+    │   ├── move_ordering.py
+    │   └── transposition.py
+    │
+    ├── evolution/
+    │   ├── match.py
+    │   ├── selection.py
+    │   ├── evolution.py
+    │   ├── runner.py
+    │   ├── strategy.py
+    │   ├── simple_strategy.py
+    │   └── config.py
+    │
+    ├── benchmark/
+    │   ├── epd.py
+    │   ├── evaluator.py
+    │   ├── runner.py
+    │   └── result.py
+    │
+    └── tuning/
+        ├── dataset.py
+        ├── trainer.py
+        ├── loss.py
+        ├── loss_evaluator.py
+        ├── gradient.py
+        ├── optimizer.py
+        ├── lr_scheduler.py
+        ├── position.py
+        ├── evaluation_snapshot.py
+        ├── feature_vector.py
+        ├── weight_vector.py
+        ├── config.py
+        └── benchmark.py
 
 tests/
 
 scripts/
+````
 
 ---
 
 # Source Tree
 
-## board.py
+# board.py
 
-Layer
+## Responsibilities
 
-Board
+* `python-chess` を利用した盤面管理
+* Board state の保持
+* 合法手生成
+* 手の適用
+* Undo
+* FEN取得
+* 終局判定
 
-Responsibilities
+## Must Not
 
-- python-chess wrapper
-- Board state
-- Move generation
-- Undo
-- FEN
-- Game over
-
-Must Not
-
-- Evaluation
-- Search
-- Weight
+* Evaluation
+* Search
+* Weight management
+* Training
+* Evolution
 
 ---
 
 # evaluation/
 
-責務
+## Responsibilities
 
-評価関数。
+評価関数全体を管理する。
 
-Evaluator と Feature を管理する。
+主な責務は以下である。
+
+* Feature Registry
+* Feature execution
+* Weight application
+* EvaluationSnapshot
+* Weight management
 
 ---
 
 ## evaluator.py
 
-Responsibilities
+## Responsibilities
 
-- Execute Features
-- Get Weights
-- Compute Final Score
+* Feature Registry の管理
+* Feature の実行
+* Weight の取得
+* Feature Vector の生成
+* 最終評価値の計算
+* `EvaluationSnapshot` の生成
 
-Must Not
+`Evaluator` は Feature と Weight を統合する唯一の主要コンポーネントである。
 
-- Search
-- Self Play
-- Evolution
+## Must Not
+
+* Search
+* Self Play
+* Evolution
+* Training loop
 
 ---
 
 ## weight_manager.py
 
-Responsibilities
+## Responsibilities
 
-- Weight storage
-- load_json
-- save_json
-- copy
-- mutate
-- to_dict
-- from_dict
-- to_array
-- from_array
-- feature_names
+* Weight の保持
+* Weight の取得
+* Weight の更新
+* JSON load
+* JSON save
+* Copy
+* Mutation
+* Dictionary conversion
+* NumPy array conversion
+* Feature name 管理
 
-Must Not
+## Must Not
 
-- Evaluate
-- Search
-- Self Play
+* Board evaluation
+* Search
+* Self Play
+* Training loop
 
 ---
 
-## features/
+# evaluation/features/
 
-Responsibilities
+## Responsibilities
 
-個別Feature。
+個別の評価 Feature を実装する。
 
-Rule
+## Rule
 
+```text
 1 Feature = 1 File
+```
 
-Current Features
+Feature は raw score を返す。
 
-- material
-- piece_square
-- mobility
-- isolated_pawn
-- doubled_pawn
-- passed_pawn
-- king_safety
-- bishop_pair
-- open_file
-- semi_open_file
-- pawn_shield
-- knight_outpost
-- connected_rooks
-- rook_seventh
-- space
-- bishop_mobility
-- rook_mobility
-- knight_mobility
-- queen_mobility
+Feature の実行順序は `evaluator.py` の `FEATURES` Registry を正とする。
 
-Feature Registry の実行順序は `evaluation/evaluator.py` 側の `FEATURES` を正とする。
+Feature Vector のインデックスも、この Registry の順序に従う。
 
-Feature Vector はこの順序に従って生成される。
+## Current Features
+
+1. material
+2. piece_square
+3. mobility
+4. isolated_pawn
+5. doubled_pawn
+6. passed_pawn
+7. king_safety
+8. bishop_pair
+9. open_file
+10. semi_open_file
+11. pawn_shield
+12. knight_outpost
+13. connected_rooks
+14. rook_seventh
+15. space
+16. bishop_mobility
+17. rook_mobility
+18. knight_mobility
+19. queen_mobility
+
+## Must Not
+
+* WeightManager を直接利用しない
+* Search を行わない
+* Weight を変更しない
+* Board state を変更しない
+* 他 Feature に依存しない
 
 ---
 
 # engine/
 
-責務
+## Responsibilities
 
-探索アルゴリズム。
+Chess search を担当する。
+
+* Move search
+* Node counting
+* Move ordering
+* Alpha-Beta
+* Iterative Deepening
+* Transposition Table
+
+Search は `Evaluator` を通して局面を評価する。
+
+Feature を直接利用しない。
 
 ---
 
 ## player.py
 
-Interface
+## Responsibilities
 
+Search player のインターフェースを定義する。
+
+主なインターフェース:
+
+```text
 choose_move(board)
+```
+
+## Must Not
+
+* Feature の直接実行
+* Weight の直接管理
 
 ---
 
 ## search.py
 
-Base class。
+## Responsibilities
 
-Responsibilities
+Search の基底クラスを提供する。
 
-- Hold Evaluator
-- Node Counter
+* Evaluator の保持
+* Node Counter
+* Search 共通処理
+
+## Must Not
+
+* Feature の直接実行
+* Weight の変更
 
 ---
 
 ## greedy.py
 
-Greedy Search
+## Responsibilities
+
+Greedy search を実装する。
 
 ---
 
 ## minimax.py
 
-Minimax
+## Responsibilities
+
+Minimax search を実装する。
 
 ---
 
 ## alphabeta.py
 
-Alpha Beta Search
+## Responsibilities
+
+Alpha-Beta search を実装する。
 
 ---
 
 ## iterative.py
 
-Iterative Deepening
+## Responsibilities
+
+Iterative Deepening を実装する。
 
 ---
 
 ## move_ordering.py
 
-Move Ordering
+## Responsibilities
+
+Search の Move Ordering を実装する。
 
 ---
 
 ## transposition.py
 
-Transposition Table
+## Responsibilities
+
+Transposition Table を管理する。
 
 ---
 
 # evolution/
 
-責務
+## Responsibilities
 
-Weight Evolution。
+Evaluation Weight の進化を担当する。
+
+主な構成:
+
+```text
+Parent
+  ↓
+Mutation
+  ↓
+Match
+  ↓
+Selection
+  ↓
+EvolutionResult
+```
 
 ---
 
 ## match.py
 
-Responsibilities
+## Responsibilities
 
-- Self Play
-- MatchResult
-- play_game()
-- play_match()
+* Self Play
+* MatchResult
+* `play_game()`
+* `play_match()`
+
+## Must Not
+
+* Mutation
+* Selection
+* Weight Save
+* Generation management
 
 ---
 
 ## selection.py
 
-Responsibilities
+## Responsibilities
 
-- MatchResult を評価する
-- Parent / Child の採用判定
+* MatchResult の評価
+* Parent / Child の採用判定
 
-Must Not
+## Must Not
 
-- Self Play
-- Mutation
-- Weight Save
+* Self Play
+* Mutation
+* Weight Save
+* Generation management
 
 ---
 
 ## evolution.py
 
-Responsibilities
+## Responsibilities
 
-- mutate()
-- play_match()
-- selection()
-- evolve_once()
-- evolve()
+* Mutation
+* Match
+* Selection
+* `evolve_once()`
+* `evolve()`
 
-Must Not
+## Must Not
 
-- JSON Save
-- CLI
-- Benchmark
+* JSON Save
+* CLI
+* Benchmark
+* Generation logging
 
 ---
 
 ## runner.py
 
-Responsibilities
+## Responsibilities
 
-- Evolution実行
-- Evolution Strategy 呼び出し
-- Generation管理
-- Weight保存
-- Evolutionログ
+* Evolution 実行
+* Strategy 呼び出し
+* Generation 管理
+* Weight 保存
+* Evolution ログ
 
-Must Not
+## Must Not
 
-- Mutation
-- Match
-- Selection
-- Evaluation
-- Search
+* Mutation の実装
+* Match の実装
+* Selection の実装
+* Evaluation の実装
+* Search の実装
 
 ---
 
 ## strategy.py
 
-Responsibilities
+## Responsibilities
 
-Evolution Strategy のインターフェース。
+Evolution Strategy のインターフェースを定義する。
 
-Rule
+## Rule
 
+```text
 1 Strategy = 1 Evolution Algorithm
+```
 
-Examples
+Examples:
 
-- SimpleEvolutionStrategy
-- TournamentStrategy
-- GeneticStrategy
+* SimpleEvolutionStrategy
+* TournamentStrategy
+* GeneticStrategy
+
+Strategy は1世代の進化処理を担当する。
+
+## Must Not
+
+* Weight 保存
+* Generation 管理
+* Evolution ログ
 
 ---
 
 ## simple_strategy.py
 
-Responsibilities
+## Responsibilities
 
-現在採用している進化アルゴリズム。
+現在採用している Evolution Strategy を実装する。
 
-Flow
+Flow:
 
+```text
 Parent
-
-↓
-
+  ↓
 Mutate
-
-↓
-
+  ↓
 Match
-
-↓
-
+  ↓
 Selection
-
-↓
-
+  ↓
 EvolutionResult
+```
 
-Must Not
+## Must Not
 
-- Weight保存
-- Generation管理
-- Evolutionログ
+* Weight 保存
+* Generation 管理
+* Evolution ログ
 
 ---
 
 ## config.py
 
-Responsibilities
+## Responsibilities
 
-Evolution実験の設定。
+Evolution 実験の設定を保持する。
 
-Examples
+主な設定:
 
-- generations
-- games
-- depth
-- mutation_amount
-- random_seed
+* generations
+* games
+* depth
+* mutation_amount
+* random_seed
 
-Must Not
+## Must Not
 
-- Mutation
-- Match
-- Search
-- Save
+* Mutation
+* Match
+* Search
+* Save
 
 ---
 
 # benchmark/
 
-Responsibilities
+## Responsibilities
 
-・EPD Benchmarks
-・BenchmarkResult
-・Performance Measurement
+Engine の性能・探索精度を測定する。
+
+主な責務:
+
+* EPD loading
+* Position evaluation
+* Best move comparison
+* Accuracy
+* Nodes
+* NPS
+* Elapsed time
+* BenchmarkResult
+
+Benchmark は Weight を変更しない。
 
 ---
 
 ## epd.py
 
-Responsibilities
+## Responsibilities
 
-・EPD読み込み
-・EPD解析
-・EPDPosition生成
+* EPD 読み込み
+* EPD 解析
+* EPDPosition 生成
 
-Must Not
+## Must Not
 
-・Search
-・Weight
+* Search implementation
+* Weight mutation
 
 ---
 
 ## evaluator.py
-Responsibilities
 
-・1局面評価
-・Best Move判定
+## Responsibilities
 
-Must Not
+* 1局面の探索
+* Best Move 判定
+* Position-level benchmark result の生成
 
-・EPD読込
-・集計
+## Must Not
 
+* EPD file loading
+* Result aggregation
+* Mutation
+* Selection
 
 ---
 
 ## runner.py
-Responsibilities
 
-・Benchmark全体実行
-・BenchmarkResult生成
+## Responsibilities
 
-Must Not
+* Benchmark 全体の実行
+* 複数局面の処理
+* `BenchmarkResult` の生成
 
-・Mutation
-・Selection
+## Must Not
+
+* Mutation
+* Selection
+* Evolution
 
 ---
 
 ## result.py
-Responsibilities
 
-Benchmark結果保持
+## Responsibilities
 
-positions
+Benchmark 結果を保持する。
 
-solved
+主な値:
 
-accuracy
-
-nodes
-
-elapsed
-
-nps
+* positions
+* solved
+* accuracy
+* nodes
+* elapsed
+* nps
 
 ---
 
 # tuning/
 
-責務
+## Responsibilities
 
-Evaluation Weight を学習する。
+Evaluation Weight をデータから学習する。
 
-Texel Tuning を中心とした学習アルゴリズムを管理する。
+現在は Texel Tuning を中心とする。
+
+主な処理:
+
+```text
+Parquet Dataset
+      ↓
+NumPy Feature Matrix
+      ↓
+Mini-batch SGD
+      ↓
+Gradient
+      ↓
+Optimizer
+      ↓
+Updated Weight
+```
+
+Training は Dataset Build と分離されている。
 
 ---
 
 ## dataset.py
-Responsibilities
 
-- Streaming Parquet Dataset
-- TrainingBatch の生成
-- Feature Vector の NumPy 化
-- Target / Source Depth の NumPy 化
-- Feature Registry metadata validation
-- Feature Vector dimension validation
-- TrainingPosition への互換展開
+## Responsibilities
+
+Parquet Training Dataset を読み込む。
+
+主な責務:
+
+* Parquet 読み込み
+* `TrainingBatch` 生成
+* Feature Matrix の NumPy 化
+* Target の NumPy 化
+* Source Depth の NumPy 化
+* Feature Registry metadata validation
+* Feature Vector dimension validation
+* `TrainingPosition` への互換展開
+* Dataset の in-memory cache
 
 Dataset Build 済みの Feature Vector を利用する。
 
-Must Not
+Training 中に Feature を再計算しない。
 
-- Feature の再計算
-- Weight Update
-- Loss 計算
-- Optimization
-- Search
+## Must Not
+
+* Feature の再計算
+* Weight Update
+* Loss Calculation
+* Optimization
+* Search
 
 ---
 
 ## trainer.py
 
-Responsibilities
+## Responsibilities
 
-- Training Loop
-- Validation
-- Best Weight Save
-- Resume Training
-- Scheduler Integration
-- Mini-batch SGD
-- Early Stopping
-- Configurable Validation
+Training 全体を管理する。
 
-Must Not
+主な責務:
 
-- Dataset Generation
-- Feature Implementation
-- Search
+* Training Loop
+* Dataset の初期ロード
+* In-memory NumPy Array の準備
+* Mini-batch SGD
+* Validation
+* Loss Evaluation
+* Learning Rate Scheduler
+* Best Weight Checkpoint
+* Early Stopping
+* Training 結果のログ
+
+現在の Training は開始時に Dataset をメモリへロードし、
+各 epoch では NumPy 配列を再利用する。
+
+これにより epoch ごとの Parquet I/O を発生させない。
+
+## Must Not
+
+* Dataset Generation
+* Feature Implementation
+* Search
+* Self Play
 
 ---
 
 ## loss.py
-Responsibilities
 
-- Texel Loss
-- Target Score
-- Probability Conversion
+## Responsibilities
 
-Must Not
+Texel Loss に関する数学処理を提供する。
 
-- Dataset
-- Weight Update
-- Search
+* Score → Probability conversion
+* Target probability conversion
+* Texel Loss
 
----
+## Must Not
 
-## optimizer.py
-
-Responsibilities
-
-- Update Weight Array
-- Learning Rate
-- Optimizer State
-
-Must Not
-
-- Dataset
-- Loss
-- Search
-
----
-
-## gradient.py
-
-Responsibilities
-
-- Compute Texel gradients
-- Compute gradient vector
-- Accumulate gradients
-
-Must Not
-
-- Update weights
+* Dataset access
+* Weight update
+* Search
 
 ---
 
 ## loss_evaluator.py
 
-Responsibilities
+## Responsibilities
 
-- Evaluate train loss
-- Evaluate validation loss
+* Training Loss の計算
+* Validation Loss の計算
 
-Must Not
+Weight を更新せず、現在の Weight に対する Loss を評価する。
 
-- Weight update
+## Must Not
+
+* Weight Update
+* Dataset Generation
+* Search
+
+---
+
+## gradient.py
+
+## Responsibilities
+
+* Texel gradient の計算
+* Gradient vector の生成
+* Batch gradient の計算
+
+## Must Not
+
+* Weight update
+* Optimizer state management
+
+---
+
+## optimizer.py
+
+## Responsibilities
+
+* Weight Array の更新
+* Learning Rate の保持
+* Optimizer state の管理
+
+現在の主な Optimizer:
+
+* SGD
+
+## Must Not
+
+* Dataset access
+* Loss calculation
+* Gradient calculation
+* Search
 
 ---
 
 ## lr_scheduler.py
 
-Responsibilities
+## Responsibilities
 
-- ReduceLROnPlateau
-- Learning Rate Scheduling
+Learning Rate のスケジューリング。
 
-Must Not
+現在の方式:
 
-- Weight Update
-- Dataset
+* ReduceLROnPlateau
+
+主な責務:
+
+* Validation Loss の監視
+* Learning Rate の削減
+* Minimum Learning Rate の制御
+
+## Must Not
+
+* Weight Update
+* Dataset access
+* Loss calculation
 
 ---
 
 ## position.py
 
-Responsibilities
+## Responsibilities
 
-- TrainingPosition
+`TrainingPosition` データ構造を提供する。
 
-Must Not
+保持対象:
 
-- Feature calculation
-- Weight update
+* Board
+* Target CP
+* Source Depth
+* Feature Values
+
+## Must Not
+
+* Feature calculation
+* Weight update
+* Search
 
 ---
 
 ## evaluation_snapshot.py
 
-Responsibilities
+## Responsibilities
 
-- Hold evaluated score
-- Hold raw feature values
-- Hold NumPy feature vector
-- Provide immutable evaluation snapshot
+学習用の Evaluation Snapshot を保持する。
 
-Must Not
+主な情報:
 
-- Search
-- Weight Update
+* total
+* raw_features
+* feature_vector
+
+Feature Vector は Feature Registry の順序で保持する。
+
+## Must Not
+
+* Search
+* Weight Update
 
 ---
 
 ## feature_vector.py
 
-Responsibilities
+## Responsibilities
 
-- Snapshot ⇔ NumPy Vector conversion
-- Feature ordering
-- NumPy Vector との変換
+EvaluationSnapshot と NumPy Feature Vector の変換を管理する。
 
-Must Not
+主な責務:
 
-- Weight update
-- Evaluation
+* Feature ordering
+* Snapshot → NumPy Vector
+* NumPy Vector → Feature representation
+
+## Must Not
+
+* Weight update
+* Evaluation execution
+
+---
+
+## weight_vector.py
+
+## Responsibilities
+
+Training 用 Weight の NumPy 表現を管理する。
+
+主な責務:
+
+* WeightManager → NumPy Array
+* NumPy Array → WeightManager
+* Optimizer が扱う Weight Vector の提供
+
+## Must Not
+
+* Feature calculation
+* Loss calculation
+* Search
 
 ---
 
 ## config.py
 
-Responsibilities
+## Responsibilities
 
-- Training configuration
-- Development configuration
-- Production configuration
+Training 実験の設定を保持する。
 
-Current Configuration
+主な設定:
 
-- learning_rate
-- epochs
-- batch_size
-- max_train_samples
-- max_valid_samples
-- patience
-- train_loss_interval
-- validation_interval
-- best_weight_path
-- output_weight_path
+* learning_rate
+* epochs
+* batch_size
+* max_train_samples
+* max_valid_samples
+* patience
+* train_loss_interval
+* validation_interval
+* best_weight_path
+* output_weight_path
 
-Must Not
+Development 用と Production 用の設定を分離する。
 
-- Training loop
-- Weight update
+## Must Not
 
----
-
-# scripts/
-
-Responsibilities
-
-ライブラリを呼び出す実験コード。
-
-Must Not
-
-ライブラリ処理を持たない。
-
----
-
-## selfplay_eval.py
-
-Responsibilities
-
-- 2つの Weight を比較する
-- Match 結果を表示する
-
-Must Not
-
-- Mutation
-- Selection
-- Generation
-
----
-
-## evolve.py
-
-Responsibilities
-
-- evolve
-
----
-
-## epd.py
-
-Responsibilities
-
-- epd
+* Training loop
+* Weight update
+* Dataset generation
 
 ---
 
 ## benchmark.py
 
-Responsibilities
+## Responsibilities
 
-- 2つの Weight を比較する
-- Match 結果を表示する
+Training 処理の性能を測定する。
 
-Must Not
+主な計測項目:
 
-- Mutation
-- Selection
-- Generation
+* Dataset
+* Evaluation
+* Gradient
+* Optimizer
+* Total
 
-Evaluate whether benchmark.py and
-selfplay_eval.py should be unified.
+現在の Training では Dataset が事前にメモリへロードされるため、
+epoch 内の Dataset コストは基本的に発生しない。
+
+---
+
+# scripts/
+
+## Responsibilities
+
+ライブラリを呼び出して実験を実行する。
+
+Scripts は実験の入口であり、
+本体のアルゴリズムを実装しない。
+
+## Must Not
+
+* Core library logic
+* Feature implementation
+* Search implementation
+* Training algorithm implementation
+* Evolution algorithm implementation
+
+---
+
+## selfplay_eval.py
+
+## Responsibilities
+
+* 2つの Weight を比較する
+* Self Play を実行する
+* Match 結果を表示する
+
+## Must Not
+
+* Mutation
+* Selection
+* Generation management
+
+---
+
+## evolve.py
+
+## Responsibilities
+
+Evolution 実験を開始する。
+
+Evolution library を呼び出し、
+結果を表示・保存する。
+
+---
+
+## epd.py
+
+## Responsibilities
+
+EPD 関連処理の CLI entry point。
+
+---
+
+## benchmark.py
+
+## Responsibilities
+
+* 2つの Weight を比較する
+* Benchmark を実行する
+* Match / benchmark 結果を表示する
+
+## Must Not
+
+* Mutation
+* Selection
+* Generation management
+
+`benchmark.py` と `selfplay_eval.py` の責務には一部重複がある。
+
+統合は将来の整理候補だが、
+現在は不要なリファクタリングを行わない。
 
 ---
 
 ## train.py
 
-Responsibilities
+## Responsibilities
 
-- TrainingConfig の選択
-- WeightManager の生成
-- Best Weight の Resume
-- ParquetDataset の生成
-- Trainer の実行
-- 最終 Weight の保存
+* TrainingConfig の選択
+* WeightManager の生成
+* `--fresh` / Resume の選択
+* Training Dataset Directory の選択
+* `ParquetDataset` の生成
+* Trainer の実行
+* 最終 Weight の保存
 
-Must Not
+## Must Not
 
-- Dataset Generation
-- Feature Implementation
-- Training Algorithm の実装
+* Dataset Generation
+* Feature Implementation
+* Training Algorithm の実装
 
 ---
 
 ## build_training_dataset.py
 
-Responsibilities
+## Responsibilities
 
-- Lichess/chess-position-evaluations の読み込み
-- Streaming Dataset 処理
-- Mate 局面の除外
-- Minimum Depth によるフィルタリング
-- Centipawn 値の Clamp
-- EvaluationSnapshot の生成
-- Feature Vector の生成
-- Train / Validation 分割
-- Parquet への Streaming 保存
+Training Dataset を生成する。
 
-Output
+主な処理:
 
-- train.parquet
-- valid.parquet
+* `Lichess/chess-position-evaluations` の読み込み
+* Streaming Dataset 処理
+* Mate 局面の除外
+* Minimum Depth filtering
+* Centipawn Clamp
+* EvaluationSnapshot の生成
+* Feature Vector の生成
+* Train / Validation split
+* Parquet streaming write
 
-Stored Fields
+## Output
 
-- fen
-- target_cp
-- source_depth
-- feature_values
+```text
+train.parquet
+valid.parquet
+```
 
-Parquet metadata として以下を保存する。
+## Stored Fields
 
-- feature_names
-- feature_count
-- feature_schema_hash
+```text
+fen
+target_cp
+source_depth
+feature_values
+```
 
-Feature の構成を変更した場合は、この Script を再実行して Training Dataset を再生成する。
+## Parquet Metadata
+
+```text
+feature_names
+feature_count
+feature_schema_hash
+```
+
+Feature Registry を変更した場合は、
+対応する Training Dataset を再生成する。
 
 ---
 
 # tests/
 
-責務
+## Responsibilities
 
-pytest
+pytest によるコード検証を行う。
 
-Rule
+## Rules
 
-src の変更には対応する Test を追加する。
+* src の変更には対応する Test を追加・更新する
+* Bug 修正には可能な限り再発防止 Test を追加する
+* 既存 Test を理由なく削除しない
 
 ---
 
 # Dependency Map
 
+```text
 Board
-
-↓
-
+  ↓
 Evaluation
-
-↓
-
+  ↓
 Search
+```
 
-Evaluation
-↓
-Tuning
-
-Evaluation
-↓
+```text
 Search
-↓
+  ↓
+Benchmark
+```
+
+```text
+Search
+  ↓
 Self Play
-↓
+  ↓
 Evolution
+```
+
+```text
+Evaluation
+  ↓
+Tuning
+```
+
+```text
+Evaluation
+  ↓
+Evolution
+```
+
+Tuning と Evolution は Evaluation を利用する。
+
+Tuning と Evolution は Search への依存を必須としない。
 
 ---
 
 # Where To Change
 
-新しい評価関数
+## 新しい Evaluation Feature
 
-↓
+```text
+src/chess_ai_lab/evaluation/features/
+```
 
-evaluation/features/
+Feature Registry の変更が必要な場合:
 
----
+```text
+src/chess_ai_lab/evaluation/evaluator.py
+```
 
-Weight管理
-
-↓
-
-weight_manager.py
-
----
-
-探索改善
-
-↓
-
-engine/
+Feature Registry を変更した場合は、
+Training Dataset の互換性を確認する。
 
 ---
 
-Self Play改善
+## Weight 管理
 
-↓
-
-evolution/
-
----
-
-Learning Rate
-
-↓
-
-tuning/lr_scheduler.py
+```text
+src/chess_ai_lab/evaluation/weight_manager.py
+```
 
 ---
 
-Training Loop
+## Search 改善
 
-↓
-
-tuning/trainer.py
+```text
+src/chess_ai_lab/engine/
+```
 
 ---
 
-Bug Fix
+## Move Ordering 改善
 
-対象責務のファイルのみ変更する。
+```text
+src/chess_ai_lab/engine/move_ordering.py
+```
 
-責務を跨ぐ変更は禁止。
+---
+
+## Transposition Table 改善
+
+```text
+src/chess_ai_lab/engine/transposition.py
+```
+
+---
+
+## Self Play 改善
+
+```text
+src/chess_ai_lab/evolution/match.py
+```
+
+---
+
+## Evolution Algorithm 改善
+
+```text
+src/chess_ai_lab/evolution/strategy.py
+src/chess_ai_lab/evolution/simple_strategy.py
+```
+
+---
+
+## Evolution 実験設定
+
+```text
+src/chess_ai_lab/evolution/config.py
+```
+
+---
+
+## Benchmark 改善
+
+```text
+src/chess_ai_lab/benchmark/
+```
+
+---
+
+## Training Dataset 生成
+
+```text
+scripts/build_training_dataset.py
+```
+
+---
+
+## Training Dataset 読み込み・Cache
+
+```text
+src/chess_ai_lab/tuning/dataset.py
+```
+
+---
+
+## Training Loop
+
+```text
+src/chess_ai_lab/tuning/trainer.py
+```
+
+---
+
+## Texel Loss
+
+```text
+src/chess_ai_lab/tuning/loss.py
+src/chess_ai_lab/tuning/loss_evaluator.py
+```
+
+---
+
+## Gradient
+
+```text
+src/chess_ai_lab/tuning/gradient.py
+```
+
+---
+
+## Optimizer
+
+```text
+src/chess_ai_lab/tuning/optimizer.py
+```
+
+---
+
+## Learning Rate
+
+```text
+src/chess_ai_lab/tuning/lr_scheduler.py
+```
+
+---
+
+## Training Configuration
+
+```text
+src/chess_ai_lab/tuning/config.py
+```
+
+---
+
+## Training Performance
+
+```text
+src/chess_ai_lab/tuning/benchmark.py
+```
+
+---
+
+## Bug Fix
+
+原則として、Bug の責務を持つファイルだけを変更する。
+
+責務を跨ぐ変更が必要な場合は、
+変更理由と影響範囲を明確にする。
 
 ---
 
 # AI Instructions
 
-コード変更前に
+コード変更前に以下を確認する。
 
-対象責務のファイルを確認する。
+1. `docs/invariants.md`
+2. `docs/architecture.md`
+3. `docs/status.md`
+4. 関連する既存コード
+5. 関連する Test
 
-変更範囲を最小限にする。
+変更前に、今回の変更の責務と対象ファイルを特定する。
 
-責務が分からない場合は
+---
 
-新しいファイルを作る前に相談する。
+## Change Scope
+
+1回の作業では1つの目的だけを扱う。
+
+明示的に要求されていない変更を追加しない。
+
+特に以下を勝手に行わない。
+
+* 無関係なリファクタリング
+* 命名変更
+* API変更
+* ファイル構成変更
+* 設計変更
+* 依存関係変更
+* パフォーマンス最適化
+* コードスタイルの全面変更
+
+---
+
+## Responsibility Rule
+
+変更対象の責務が既存ファイルに明確に存在する場合、
+新しいファイルを作成せず既存ファイルを変更する。
+
+責務が複数ファイルにまたがる場合は、
+どのファイルに責務を置くべきかを確認してから変更する。
+
+責務が不明確な場合は推測せず、相談する。
+
+---
+
+## Testing Rule
+
+src を変更した場合は、
+対応する Test を追加または更新する。
+
+Bug 修正では再発防止 Test を優先する。
+
+---
+
+## Documentation Rule
+
+設計を変更した場合:
+
+```text
+architecture.md
+invariants.md
+```
+
+を確認・更新する。
+
+実装が一区切りした場合:
+
+```text
+status.md
+```
+
+を更新する。
+
+Codebase の責務やファイル構成が変わった場合:
+
+```text
+codebase.md
+```
+
+を更新する。
+
+---
+
+## Final Report
+
+実装後は以下を明示する。
+
+* 変更したファイル
+* 各ファイルの変更内容
+* 変更理由
+* 影響範囲
+* 実行した Test
+* Test 結果
+* 未解決の問題
+
+Git 操作を行った場合は、
+その操作内容も明示する。
