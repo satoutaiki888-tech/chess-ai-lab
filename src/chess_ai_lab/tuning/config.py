@@ -34,19 +34,19 @@ class TrainingConfig:
 
 
 DEV_CONFIG = TrainingConfig(
-    learning_rate=1.0,
-    epochs=30,
+    learning_rate=1,
+    epochs=5,
     batch_size=4096,
-    max_train_samples=50_000,
+    max_train_samples=None,
     max_valid_samples=10_000,
-    patience=3,
+    patience=10,
     train_loss_interval=10,
     validation_interval=5,
 )
 
 
 PRODUCTION_CONFIG = TrainingConfig(
-    learning_rate=1,
+    learning_rate=5,
     epochs=100,
     batch_size=4096,
     max_train_samples=None,
