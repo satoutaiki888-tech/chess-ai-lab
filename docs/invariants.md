@@ -213,10 +213,6 @@ TrainingPosition による互換展開を許可する。
 
 旧形式と新形式のデータを同一 Parquet Dataset 内で混在させてはならない。
 
-
-今回の `invariants.md` については、**ここまでで止めます**。  
-次の `docs/codebase.md` / `docs/status.md` にはまだ手を入れません。
-
 ---
 
 # Training Dataset
