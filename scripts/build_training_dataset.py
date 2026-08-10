@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import random
+import time
 from pathlib import Path
 
 from datasets import load_dataset
@@ -48,6 +49,54 @@ def build_feature_metadata() -> dict[bytes, bytes]:
     }
 
 
+def build_dataset_manifest(
+    *,
+    args: argparse.Namespace,
+    collected: int,
+    train_count: int,
+    valid_count: int,
+) -> dict:
+    """生成したDatasetの再現条件と実績を記録する。"""
+
+    feature_names = [
+        name
+        for name, _ in FEATURES
+    ]
+
+    canonical = json.dumps(
+        feature_names,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+
+    feature_schema_hash = hashlib.sha256(
+        canonical.encode("utf-8")
+    ).hexdigest()
+
+    return {
+        "dataset_format_version": 1,
+        "source": "Lichess/chess-position-evaluations",
+        "split": "train",
+        "max_samples": args.max_samples,
+        "actual_samples": collected,
+        "train_samples": train_count,
+        "validation_samples": valid_count,
+        "min_depth": args.min_depth,
+        "cp_limit": args.cp_limit,
+        "train_ratio": args.train_ratio,
+        "actual_train_ratio": (
+            train_count / collected
+            if collected
+            else 0.0
+        ),
+        "seed": args.seed,
+        "buffer_size": args.buffer_size,
+        "feature_names": feature_names,
+        "feature_count": len(feature_names),
+        "feature_schema_hash": feature_schema_hash,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build Texel training dataset."
@@ -63,7 +112,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-samples",
         type=int,
-        default=500_000,
+        default=1_000_000,
         help="Maximum number of positions.",
     )
 
@@ -102,7 +151,34 @@ def parse_args() -> argparse.Namespace:
         help="Rows written per Parquet flush.",
     )
 
-    return parser.parse_args()
+    parser.add_argument(
+        "--progress-interval",
+        type=int,
+        default=100_000,
+        help="Print progress every N collected samples.",
+    )
+
+    args = parser.parse_args()
+
+    if args.max_samples <= 0:
+        parser.error("--max-samples must be greater than 0.")
+
+    if args.min_depth < 0:
+        parser.error("--min-depth must be non-negative.")
+
+    if args.cp_limit <= 0:
+        parser.error("--cp-limit must be greater than 0.")
+
+    if not 0.0 < args.train_ratio < 1.0:
+        parser.error("--train-ratio must be between 0 and 1.")
+
+    if args.buffer_size <= 0:
+        parser.error("--buffer-size must be greater than 0.")
+
+    if args.progress_interval <= 0:
+        parser.error("--progress-interval must be greater than 0.")
+
+    return args
 
 
 def process_position(
@@ -204,6 +280,7 @@ def main() -> None:
 
     train_path = args.output_dir / "train.parquet"
     valid_path = args.output_dir / "valid.parquet"
+    manifest_path = args.output_dir / "dataset.json"
 
     train_writer: pq.ParquetWriter | None = None
     valid_writer: pq.ParquetWriter | None = None
@@ -214,6 +291,8 @@ def main() -> None:
     collected = 0
     train_count = 0
     valid_count = 0
+    started_at = time.perf_counter()
+    next_progress = args.progress_interval
 
     def flush_train() -> None:
         nonlocal train_writer, train_count
@@ -274,6 +353,14 @@ def main() -> None:
                 if len(valid_buffer) >= args.buffer_size:
                     flush_valid()
 
+            if collected >= next_progress:
+                elapsed = time.perf_counter() - started_at
+                print(
+                    f"Progress  : {collected:,} samples "
+                    f"({elapsed:.1f} sec)"
+                )
+                next_progress += args.progress_interval
+
             if collected >= args.max_samples:
                 break
 
@@ -288,9 +375,26 @@ def main() -> None:
         if valid_writer is not None:
             valid_writer.close()
 
+    manifest = build_dataset_manifest(
+        args=args,
+        collected=collected,
+        train_count=train_count,
+        valid_count=valid_count,
+    )
+
+    manifest_path.write_text(
+        json.dumps(
+            manifest,
+            ensure_ascii=False,
+            indent=2,
+        ) + "\n",
+        encoding="utf-8",
+    )
+
     print(f"Collected : {collected:,}")
     print(f"Train     : {train_count:,}")
     print(f"Valid     : {valid_count:,}")
+    print(f"Manifest  : {manifest_path}")
 
 
 if __name__ == "__main__":
